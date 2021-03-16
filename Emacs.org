@@ -1238,9 +1238,54 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
   :config
   (setq explicit-shell-file-name "fish"))
 #+end_src
+*** For better color support
+Make sure the =tic= program is available on your machine (could be part of =ncurses= package).
+#+begin_src emacs-lisp
+(use-package eterm-256color
+  :hook (term-mode . eterm-256color-mode))
+#+end_src
 ** vterm
+=vterm= enables the use of fully-fledged terminal applications within Emacs so that I don’t need an external terminal emulator.
+
+#+begin_src emacs-lisp
+(use-package vterm
+  :commands vterm
+  :config
+  (setq vterm-max-scrollback 10000))
+#+end_src
 ** shell-mode
 ** Eshell
+#+begin_src emacs-lisp
+(defun personal/configure-eshell() 
+  ;; Save command history when commands are entered
+  (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
+
+  ;; Truncate buffer for performace
+  (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+
+  ;; Bind some useful keys for evil-mode
+  (evil-define-key '(normal insert visual) eshell-mode-map (kbd "C-r") 'counsel-esh-history)
+  (evil-define-key '(normal insert visual) eshell-mode-map (kbd "<home>") 'eshell-bol)
+  (evil-normalize-keymaps)
+
+  (setq eshell-history-size         10000
+        eshell-buffer-maximum-lines 10000
+        eshell-hist-ignoredups t
+        eshell-scroll-to-bottom-on-input t))
+
+(use-package eshell-git-prompt)
+
+(use-package eshell
+  :hook (eshell-first-time-mode . personal/configure-eshell)
+  :config
+  (eshell-git-prompt-use-theme 'powerline))
+#+end_src
+
+Tip: If you want to write the output of a command into a buffer you can do something like:
+#+begin_example
+echo "Hello!" > #<buffer test-buffer>
+#+end_example
+
 * SystemUtilities
 ** Docker
 #+begin_src emacs-lisp
@@ -1251,6 +1296,10 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
   :config
   (require 'dockerfile-mode)
   (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode)))
+#+end_src
+** Ripgrep
+#+begin_src emacs-lisp
+(use-package ripgrep)
 #+end_src
 * Runtime Performance
 Dial the GC threshold back down so that garbage collection happens more frequently but in less time
