@@ -1,3 +1,15 @@
+;; The default is 800 kilobytes. Measured in bytes
+(setq gc-const-threshold (* 50 1000 1000))
+
+;; Profile emacs startup
+(add-hook 'emacs-startup-hook
+  (lambda ()
+(message "*** Emacs loaded in %s with %d garbage collections."
+       (format "%.2f seconds"
+               (float-time
+                (time-subtract after-init-time before-init-time)))
+       gcs-done)))
+
 ;; Initialize package sources
 (require 'package)
 
@@ -17,8 +29,11 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
-(require 'exec-path-from-shell)
-(exec-path-from-shell-initialize)
+(use-package exec-path-from-shell
+  :init
+  (setq exec-path-from-shell-check-startup-files nil)
+  :config
+  (exec-path-from-shell-initialize))
 
 ;; Change the user-emacs-directory to keep unwanted things out of ~/.emacs.d
 (setq user-emacs-directory (expand-file-name "~/.cache/emacs/")
@@ -151,6 +166,28 @@
 (use-package doom-modeline
   :init (doom-modeline-mode 1)
   :custom (doom-modeline-height 14))
+
+(use-package super-save
+  :defer 1
+  :diminish super-save-mode
+  :config
+  (super-save-mode +1)
+  (setq super-save-auto-save-when-idle t))
+
+(global-auto-revert-mode 1)
+
+(use-package paren
+  :config
+  (set-face-attribute 'show-paren-match-expression nil :background "#363e4a")
+  (show-paren-mode 1))
+
+(setq-default tab-width 2)
+(setq-default evil-shift-width tab-width)
+
+(setq-default indent-tabs-mode nil)
+
+(use-package evil-nerd-commenter
+  :bind ("M-/" . evilnc-comment-or-uncomment-lines))
 
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
@@ -502,6 +539,107 @@
 
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'personal/org-babel-tangle-config)))
 
+(use-package magit
+  :bind ("C-M-;" . magit-status)
+  :commands (magit-status)
+  :custom
+  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+
+(personal/leader-keys
+  "g" '(:ignore t :which-key "git")
+  "gs" 'magit-status
+  "gd" 'magit-diff-unstaged
+  "gc" 'magit-branch-or-checkout
+  "gl" '(:ignore t :which-key "log")
+  "glc" 'magit-log-current
+  "glf" 'magit-log-buffer-file
+  "gb" 'magit-branch
+  "gP" 'magit-push-current
+  "gp" 'magit-pull-branch
+  "gf" 'magit-fetch
+  "gF" 'magit-fetch-all
+  "gr" 'magit-rebase)
+
+;; NOTE: Make sure to configure a GitHub token before using this package!
+;; - https://magit.vc/manual/forge/Token-Creation.html#Token-Creation
+;; - https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started
+
+(use-package forge)
+
+(use-package magit-todos
+  :defer t)
+
+(use-package git-link
+  :commands git-link
+  :config
+  (setq git-link-open-in-browser t)
+  (personal/leader-keys
+    "gL" 'git-link))
+
+(use-package git-gutter-fringe)
+(use-package git-gutter
+  :diminish
+  :hook ((text-mode . git-gutter-mode)
+         (prog-mode . git-gutter-mode))
+  :config
+  (setq git-gutter:update-interval 2)
+  (require 'git-gutter-fringe)
+  (set-face-foreground 'git-gutter-fr:added "LightGreen")
+  (fringe-helper-define 'git-gutter-fr:added nil
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    ".........."
+    ".........."
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    ".........."
+    ".........."
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    "XXXXXXXXXX")
+
+  (set-face-foreground 'git-gutter-fr:modified "LightGoldenrod")
+  (fringe-helper-define 'git-gutter-fr:modified nil
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    ".........."
+    ".........."
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    ".........."
+    ".........."
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    "XXXXXXXXXX")
+
+  (set-face-foreground 'git-gutter-fr:deleted "LightCoral")
+  (fringe-helper-define 'git-gutter-fr:deleted nil
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    ".........."
+    ".........."
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    ".........."
+    ".........."
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    "XXXXXXXXXX")
+
+  ;; These characters are used in terminal mode
+  (setq git-gutter:modified-sign "≡")
+  (setq git-gutter:added-sign "≡")
+  (setq git-gutter:deleted-sign "≡")
+  (set-face-foreground 'git-gutter:added "LightGreen")
+  (set-face-foreground 'git-gutter:modified "LightGoldenrod")
+  (set-face-foreground 'git-gutter:deleted "LightCoral"))
+
 (defun personal/lsp-mode-setup ()
   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
   (lsp-headerline-breadcrumb-mode))
@@ -543,6 +681,8 @@
  :bind (:map ruby-mode-map
        ("\C-c r r" . inf-ruby)))
 
+(use-package rvm)
+
 (use-package inf-ruby
  :hook (ruby-mode . inf-ruby-minor-mode))
 
@@ -558,7 +698,7 @@
 
 (use-package typescript-mode
   :mode "\\.tsx?\\'"
-  :hook (typescript-mode . lsp)
+  :hook (typescript-mode . lsp-deferred)
   :config
   (setq typescript-indent-level 2))
 
@@ -568,7 +708,7 @@
   (setq-default tab-width 2))
 
 (use-package js2-mode
-  :hook (js2-mode . lsp)
+  :hook (js2-mode . lsp-deferred)
   :mode "\\.jsx?\\'"
   :config
   ;; Use js2-mode for Node scripts
@@ -629,6 +769,31 @@
 (use-package yaml-mode
   :mode "\\.ya?ml\\'")
 
+(defun personal/go-mode-defaults ()
+  (add-hook 'before-save-hook #'lsp-format-buffer t t)
+  (add-hook 'before-save-hook #'lsp-organize-imports t t)
+  (define-key 'help-command (kbd "G") 'godoc)
+
+  ;; Prefer goimports to gofmt if installed
+  (let ((goimports (executable-find "goimports")))
+    (when goimports
+      (setq gofmt-command goimports)))
+
+  ;; El-doc for go
+  (go-eldoc-setup)
+
+  ;; gofmt on save
+  (add-hook 'before-save-hook 'gofmt-before-save nil t))
+
+(use-package go-mode
+  :defer t
+  :hook (go-mode . lsp-deferred)
+  :config
+  (add-hook 'go-mode-hook #'personal/go-mode-defaults))
+
+(use-package go-eldoc
+  :defer t)
+
 (use-package flycheck
   :defer t
   :hook (lsp-mode . flycheck-mode))
@@ -678,22 +843,23 @@
     (setq projectile-project-search-path '("~/code")))
   (setq projectile-switch-project-action #'projectile-dired))
 
-(use-package magit
-    :custom
-    (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
-
-;; NOTE: Make sure to configure a GitHub token before using this package!
-;; - https://magit.vc/manual/forge/Token-Creation.html#Token-Creation
-;; - https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started
-
-(use-package forge)
-
-(use-package evil-nerd-commenter
-  :bind ("M-/" . evilnc-comment-or-uncomment-lines))
-
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
+
+(use-package restclient
+  :mode ("\\.http\\'" . restclient-mode))
 
 (use-package term
   :config
   (setq explicit-shell-file-name "fish"))
+
+(use-package docker
+  :commands docker)
+
+(use-package dockerfile-mode
+  :config
+  (require 'dockerfile-mode)
+  (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode)))
+
+;; Make gc pauses faster by decreasing the threshold
+(setq gc-cons-threshold (* 2 1000 1000))

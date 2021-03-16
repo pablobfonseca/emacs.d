@@ -4,6 +4,21 @@
 * Welcome to my Personal Emacs Config
 This file generates [[file:init.el][init.el]] which can be loaded by Emacs at startup.
 
+* Startup Performance
+Make startup faster by reducing the frequency of garbage collection and then use a hook to measure Emacs startup time
+#+begin_src emacs-lisp
+;; The default is 800 kilobytes. Measured in bytes
+(setq gc-const-threshold (* 50 1000 1000))
+
+;; Profile emacs startup
+(add-hook 'emacs-startup-hook
+  (lambda ()
+(message "*** Emacs loaded in %s with %d garbage collections."
+       (format "%.2f seconds"
+               (float-time
+                (time-subtract after-init-time before-init-time)))
+       gcs-done)))
+#+end_src
 * Tips for Use
 If you're looking at this file in Emacs, you can put your cursor on a link and press =C-c C-o= to open the link in your web browser.
  
@@ -34,8 +49,11 @@ Emacs has a built in package manager but it doesn't make it easy to automaticall
 
 ** Load exec-path
 #+begin_src emacs-lisp
-(require 'exec-path-from-shell)
-(exec-path-from-shell-initialize)
+(use-package exec-path-from-shell
+  :init
+  (setq exec-path-from-shell-check-startup-files nil)
+  :config
+  (exec-path-from-shell-initialize))
 #+end_src
 * Keep .emacs.d Clean
 I don't want a bunch of transient files showing up as untracked in the Git repo so I move them all to another location.
@@ -235,6 +253,46 @@ Prettify the modeline with [[https://github.com/Malabarba/smart-mode-line/][smar
   :custom (doom-modeline-height 14))
 #+end_src
 
+** Auto-Saving Changed Files
+#+begin_src emacs-lisp
+(use-package super-save
+  :defer 1
+  :diminish super-save-mode
+  :config
+  (super-save-mode +1)
+  (setq super-save-auto-save-when-idle t))
+#+end_src
+** Auto-Reverting Changed Files
+#+begin_src emacs-lisp
+(global-auto-revert-mode 1)
+#+end_src
+** Highlight Matching Braces
+#+begin_src emacs-lisp
+(use-package paren
+  :config
+  (set-face-attribute 'show-paren-match-expression nil :background "#363e4a")
+  (show-paren-mode 1))
+#+end_src
+* Editing Configuration
+** Tab Widths
+Default to an indentation size of 2 spaces since it's the norm for pretty much every language I use
+
+#+begin_src emacs-lisp
+(setq-default tab-width 2)
+(setq-default evil-shift-width tab-width)
+#+end_src
+** Use spaces instead of tabs for indentation
+#+begin_src emacs-lisp
+(setq-default indent-tabs-mode nil)
+#+end_src
+** Commenting
+Emacs' built in commenting functionality =comment-dwim= (usually bound to =M-;=) doesn't always comment things in the way you might expect so we use [[https://github.com/redguardtoo/evil-nerd-commenter][evil-nerd-commenter]] to provide a more familiar behavior.  I've bound it to =M-/= since other editors sometimes use this binding but you could also replace Emacs' =M-;= binding with this command.
+
+#+begin_src emacs-lisp
+(use-package evil-nerd-commenter
+  :bind ("M-/" . evilnc-comment-or-uncomment-lines))
+#+end_src
+
 * Keybindings Configuration
 ** EscCancels All
 #+begin_src emacs-lisp
@@ -315,8 +373,6 @@ Some tips can be found here:
 #+begin_src emacs-lisp
 (use-package command-log-mode)
 #+end_src
-** Which Key
-
 ** Ivy and Counsel
 
 [[https://oremacs.com/swiper/][Ivy]] is an excellent completion framework for Emacs.  It provides a minimal yet powerful selection menu that appears when you open files, switch buffers, and for many other tasks in Emacs.  Counsel is a customized set of commands to replace =find-file= with =counsel-find-file=, etc which provide useful commands for each of the default completion commands.
@@ -701,7 +757,124 @@ This snippet adds a hook to =org-mode= buffers so that =personal/org-babel-tangl
 #+end_src
 
 * Development
+** Git
+*** Magit
 
+[[https://magit.vc/][Magit]] is the best Git interface I've ever used.  Common Git operations are easy to execute quickly using Magit's command panel system.
+
+#+begin_src emacs-lisp
+(use-package magit
+  :bind ("C-M-;" . magit-status)
+  :commands (magit-status)
+  :custom
+  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+
+(personal/leader-keys
+  "g" '(:ignore t :which-key "git")
+  "gs" 'magit-status
+  "gd" 'magit-diff-unstaged
+  "gc" 'magit-branch-or-checkout
+  "gl" '(:ignore t :which-key "log")
+  "glc" 'magit-log-current
+  "glf" 'magit-log-buffer-file
+  "gb" 'magit-branch
+  "gP" 'magit-push-current
+  "gp" 'magit-pull-branch
+  "gf" 'magit-fetch
+  "gF" 'magit-fetch-all
+  "gr" 'magit-rebase)
+
+;; NOTE: Make sure to configure a GitHub token before using this package!
+;; - https://magit.vc/manual/forge/Token-Creation.html#Token-Creation
+;; - https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started
+#+end_src
+
+*** Forge
+#+begin_src emacs-lisp
+(use-package forge)
+#+end_src
+
+*** magit-todos
+This is an interesting extension to Magit that shows a TODOs section in your git status buffer containing all lines with TODO (or other similar words) in files contained within the repo. More information at the [[https://github.com/alphapapa/magit-todos][GitHub repo]].
+#+begin_src emacs-lisp
+(use-package magit-todos
+  :defer t)
+#+end_src
+*** git-link
+#+begin_src emacs-lisp
+(use-package git-link
+  :commands git-link
+  :config
+  (setq git-link-open-in-browser t)
+  (personal/leader-keys
+    "gL" 'git-link))
+#+end_src
+*** Git Gutter
+#+begin_src emacs-lisp
+(use-package git-gutter-fringe)
+(use-package git-gutter
+  :diminish
+  :hook ((text-mode . git-gutter-mode)
+         (prog-mode . git-gutter-mode))
+  :config
+  (setq git-gutter:update-interval 2)
+  (require 'git-gutter-fringe)
+  (set-face-foreground 'git-gutter-fr:added "LightGreen")
+  (fringe-helper-define 'git-gutter-fr:added nil
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    ".........."
+    ".........."
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    ".........."
+    ".........."
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    "XXXXXXXXXX")
+
+  (set-face-foreground 'git-gutter-fr:modified "LightGoldenrod")
+  (fringe-helper-define 'git-gutter-fr:modified nil
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    ".........."
+    ".........."
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    ".........."
+    ".........."
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    "XXXXXXXXXX")
+
+  (set-face-foreground 'git-gutter-fr:deleted "LightCoral")
+  (fringe-helper-define 'git-gutter-fr:deleted nil
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    ".........."
+    ".........."
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    ".........."
+    ".........."
+    "XXXXXXXXXX"
+    "XXXXXXXXXX"
+    "XXXXXXXXXX")
+
+  ;; These characters are used in terminal mode
+  (setq git-gutter:modified-sign "≡")
+  (setq git-gutter:added-sign "≡")
+  (setq git-gutter:deleted-sign "≡")
+  (set-face-foreground 'git-gutter:added "LightGreen")
+  (set-face-foreground 'git-gutter:modified "LightGoldenrod")
+  (set-face-foreground 'git-gutter:deleted "LightCoral"))
+#+end_src
 ** Languages
 
 *** IDE Features with lsp-mode
@@ -781,6 +954,8 @@ This package is built on the [[https://github.com/Alexander-Miller/treemacs][tre
  :bind (:map ruby-mode-map
        ("\C-c r r" . inf-ruby)))
 
+(use-package rvm)
+
 (use-package inf-ruby
  :hook (ruby-mode . inf-ruby-minor-mode))
 #+end_src
@@ -805,30 +980,30 @@ Set up nvm so that we can manage Node versions
 
 
 #+begin_src emacs-lisp
-(use-package typescript-mode
-  :mode "\\.tsx?\\'"
-  :hook (typescript-mode . lsp)
-  :config
-  (setq typescript-indent-level 2))
+  (use-package typescript-mode
+    :mode "\\.tsx?\\'"
+    :hook (typescript-mode . lsp-deferred)
+    :config
+    (setq typescript-indent-level 2))
 
-(defun personal/set-js-indentation ()
-  (setq js-indent-level 2)
-  (setq evil-shift-width js-indent-level)
-  (setq-default tab-width 2))
+  (defun personal/set-js-indentation ()
+    (setq js-indent-level 2)
+    (setq evil-shift-width js-indent-level)
+    (setq-default tab-width 2))
 
-(use-package js2-mode
-  :hook (js2-mode . lsp)
-  :mode "\\.jsx?\\'"
-  :config
-  ;; Use js2-mode for Node scripts
-  (add-to-list 'magic-mode-alist '("#!/usr/bin/env node" . js2-mode))
+  (use-package js2-mode
+    :hook (js2-mode . lsp-deferred)
+    :mode "\\.jsx?\\'"
+    :config
+    ;; Use js2-mode for Node scripts
+    (add-to-list 'magic-mode-alist '("#!/usr/bin/env node" . js2-mode))
 
-  ;; Don't use built-in syntax checking
-  (setq js2-mode-show-strict-warnings nil)
+    ;; Don't use built-in syntax checking
+    (setq js2-mode-show-strict-warnings nil)
 
-  ;; Set up proper indentation in JavascScript and JSON files
-  (add-hook 'js2-mode-hook #'personal/set-js-indentation)
-  (add-hook 'json-mode-hook #'personal/set-js-indentation))
+    ;; Set up proper indentation in JavascScript and JSON files
+    (add-hook 'js2-mode-hook #'personal/set-js-indentation)
+    (add-hook 'json-mode-hook #'personal/set-js-indentation))
 #+end_src
 
 *** Markdown
@@ -888,6 +1063,33 @@ Set up nvm so that we can manage Node versions
 #+begin_src emacs-lisp
 (use-package yaml-mode
   :mode "\\.ya?ml\\'")
+#+end_src
+*** Go
+#+begin_src emacs-lisp
+(defun personal/go-mode-defaults ()
+  (add-hook 'before-save-hook #'lsp-format-buffer t t)
+  (add-hook 'before-save-hook #'lsp-organize-imports t t)
+  (define-key 'help-command (kbd "G") 'godoc)
+
+  ;; Prefer goimports to gofmt if installed
+  (let ((goimports (executable-find "goimports")))
+    (when goimports
+      (setq gofmt-command goimports)))
+
+  ;; El-doc for go
+  (go-eldoc-setup)
+
+  ;; gofmt on save
+  (add-hook 'before-save-hook 'gofmt-before-save nil t))
+
+(use-package go-mode
+  :defer t
+  :hook (go-mode . lsp-deferred)
+  :config
+  (add-hook 'go-mode-hook #'personal/go-mode-defaults))
+
+(use-package go-eldoc
+  :defer t)
 #+end_src
 ** Productivity
 *** Syntax checking with Flycheck
@@ -968,30 +1170,6 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 
 #+end_src
 
-** Magit
-
-[[https://magit.vc/][Magit]] is the best Git interface I've ever used.  Common Git operations are easy to execute quickly using Magit's command panel system.
-
-#+begin_src emacs-lisp
-(use-package magit
-    :custom
-    (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
-
-;; NOTE: Make sure to configure a GitHub token before using this package!
-;; - https://magit.vc/manual/forge/Token-Creation.html#Token-Creation
-;; - https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started
-
-(use-package forge)
-
-#+end_src
-** Commenting
-Emacs' built in commenting functionality =comment-dwim= (usually bound to =M-;=) doesn't always comment things in the way you might expect so we use [[https://github.com/redguardtoo/evil-nerd-commenter][evil-nerd-commenter]] to provide a more familiar behavior.  I've bound it to =M-/= since other editors sometimes use this binding but you could also replace Emacs' =M-;= binding with this command.
-
-#+begin_src emacs-lisp
-(use-package evil-nerd-commenter
-  :bind ("M-/" . evilnc-comment-or-uncomment-lines))
-#+end_src
-
 ** Rainbow Delimiters
 
 [[https://github.com/Fanael/rainbow-delimiters][rainbow-delimiters]] is useful in programming modes because it colorizes nested parentheses and brackets according to their nesting depth.  This makes it a lot easier to visually match parentheses in Emacs Lisp code without having to count them yourself.
@@ -1001,6 +1179,11 @@ Emacs' built in commenting functionality =comment-dwim= (usually bound to =M-;=)
   :hook (prog-mode . rainbow-delimiters-mode))
 #+end_src
 
+** RESTClient Mode
+#+begin_src emacs-lisp
+(use-package restclient
+  :mode ("\\.http\\'" . restclient-mode))
+#+end_src
 * Terminals
 ** term-mode
 #+begin_src emacs-lisp
@@ -1011,6 +1194,23 @@ Emacs' built in commenting functionality =comment-dwim= (usually bound to =M-;=)
 ** vterm
 ** shell-mode
 ** Eshell
+* SystemUtilities
+** Docker
+#+begin_src emacs-lisp
+(use-package docker
+  :commands docker)
+
+(use-package dockerfile-mode
+  :config
+  (require 'dockerfile-mode)
+  (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode)))
+#+end_src
+* Runtime Performance
+Dial the GC threshold back down so that garbage collection happens more frequently but in less time
+#+begin_src emacs-lisp
+;; Make gc pauses faster by decreasing the threshold
+(setq gc-cons-threshold (* 2 1000 1000))
+#+end_src
 * Applications
 ** Some App
 
