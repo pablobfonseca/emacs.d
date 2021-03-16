@@ -1003,6 +1003,11 @@ Emacs' built in commenting functionality =comment-dwim= (usually bound to =M-;=)
 
 * Terminals
 ** term-mode
+#+begin_src emacs-lisp
+(use-package term
+  :config
+  (setq explicit-shell-file-name "fish"))
+#+end_src
 ** vterm
 ** shell-mode
 ** Eshell

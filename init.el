@@ -693,3 +693,7 @@
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
+
+(use-package term
+  :config
+  (setq explicit-shell-file-name "fish"))
