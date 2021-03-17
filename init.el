@@ -757,6 +757,14 @@
  (defadvice inf-ruby-console-auto (before activate-rvm-for-robe activate)
   (rvm-activate-corresponding-ruby)))
 
+(use-package python-mode
+  :straight nil
+  :hook (python-mode . lsp))
+
+(use-package pyvenv
+  :straight t
+  :hook (python-mode . pyvenv-mode))
+
 (use-package nvm
   :defer t)
 

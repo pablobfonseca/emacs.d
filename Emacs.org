@@ -1072,6 +1072,18 @@ This package is built on the [[https://github.com/Alexander-Miller/treemacs][tre
  (defadvice inf-ruby-console-auto (before activate-rvm-for-robe activate)
   (rvm-activate-corresponding-ruby)))
 #+end_src
+*** Python
+#+begin_src emacs-lisp
+  (use-package python-mode
+    :straight nil
+    :hook (python-mode . lsp))
+#+end_src
+**** pyvenv
+#+begin_src emacs-lisp
+  (use-package pyvenv
+    :straight t
+    :hook (python-mode . pyvenv-mode))
+#+end_src
 *** Typescript and Javascript
 
 Set up nvm so that we can manage Node versions
