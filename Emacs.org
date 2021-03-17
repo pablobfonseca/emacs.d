@@ -22,10 +22,11 @@ Make startup faster by reducing the frequency of garbage collection and then use
 * Tips for Use
 If you're looking at this file in Emacs, you can put your cursor on a link and press =C-c C-o= to open the link in your web browser.
  
-* Package System Setup
-Emacs has a built in package manager but it doesn't make it easy to automatically install packages on a new system the first time you pull down your configuration.  [[https://github.com/jwiegley/use-package][use-package]] is a really helpful package used in this configuration to make it a lot easier to automate the installation and configuration of everything else we use.
+* Package Management
+Set up ELPA, MELPA and Org package repositories and load =use-package= to manage package configuration.
+*NOTE:* Disabling tangling to test =straight.el=
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 ;; Initialize package sources
 (require 'package)
 
@@ -45,6 +46,31 @@ Emacs has a built in package manager but it doesn't make it easy to automaticall
 (require 'use-package)
 (setq use-package-always-ensure t)
 
+#+end_src
+** straight.el
+#+begin_src emacs-lisp
+;; Bootstrap straight.el
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+;; Always use straight to install on systems other than Linux
+(setq straight-use-package-by-default (not (eq system-type 'gnu/linux)))
+
+;; Use straight.el for use-package expressions
+(straight-use-package 'use-package)
+
+;; Load the helper package for commands like `straight-x-clean-unused-repos'
+(require 'straight-x)
 #+end_src
 
 ** Load exec-path
@@ -158,6 +184,7 @@ I am using the [[https://github.com/tonsky/FiraCode][Fira Code]] and [[https://f
           `(,updated-block))))
 
 (use-package unicode-fonts
+  :straight t
   :custom
   (unicode-fonts-skip-font-groups '(low-quality-glyphs))
   :config
@@ -293,6 +320,17 @@ Emacs' built in commenting functionality =comment-dwim= (usually bound to =M-;=)
   :bind ("M-/" . evilnc-comment-or-uncomment-lines))
 #+end_src
 
+* Configuration Files
+** Configuration file management with dotcrafter.el
+#+begin_src emacs-lisp
+  (use-package dotcrafter
+    :straight '(dotcrafter :host github
+                           :repo "daviwil/dotcrafter.el"
+                           :branch "future")
+    :custom
+    (dotcrafter-dotfiles-folder "~/.emacs.d")
+    (dotcrafter-org-files '("Emacs.org")))
+#+end_src
 * Keybindings Configuration
 ** EscCancels All
 #+begin_src emacs-lisp
@@ -418,7 +456,8 @@ Some tips can be found here:
 [[https://github.com/lewang/command-log-mode][command-log-mode]] is useful for displaying a panel showing each key binding you use in a panel on the right side of the frame.  Great for live streams and screencasts!
 
 #+begin_src emacs-lisp
-(use-package command-log-mode)
+  (use-package command-log-mode
+    :straight t)
 #+end_src
 ** Ivy and Counsel
 
@@ -502,6 +541,7 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 
   (use-package dired
     :ensure nil
+    :straight nil
     :defer 1
     :commands (dired dired-jump)
     :config
@@ -795,25 +835,26 @@ You can add more =src= block templates below by copying one of the lines and cha
 (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
 (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
 (add-to-list 'org-structure-template-alist '("py" . "src python"))
+(add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
+(add-to-list 'org-structure-template-alist '("json" . "src json"))
+(add-to-list 'org-structure-template-alist '("ruby" . "src ruby"))
 
 #+end_src
 
 ** Auto-Tangle Configuration Files
 
-This snippet adds a hook to =org-mode= buffers so that =personal/org-babel-tangle-config= gets executed each time such a buffer gets saved.  This function checks to see if the file being saved is the Emacs.org file you're looking at right now, and if so, automatically exports the configuration here to the associated output files.
-
+Handy tip from [[https://leanpub.com/lit-config/read#leanpub-auto-configuring-emacs-and--org-mode-for-literate-programming][this book]] on literate programming.
 
 #+begin_src emacs-lisp
-;; Automatically tangle our Emacs.org config file when we save it
-(defun personal/org-babel-tangle-config ()
-  (when (string-equal (buffer-file-name)
-                      (expand-file-name "~/.emacs.d/Emacs.org"))
+  ;; Since we don't want to disable org-confirm-babel-evaluate all
+  ;; of the time, do it around the after-save-hook
+  (defun personal/org-babel-tangle-dont-ask ()
     ;; Dynamic scoping to the rescue
     (let ((org-confirm-babel-evaluate nil))
-      (org-babel-tangle))))
+      (org-babel-tangle)))
 
-(add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'personal/org-babel-tangle-config)))
-
+  (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'personal/org-babel-tangle-dont-ask
+                                                'run-at-end 'only-in-org-mode)))
 #+end_src
 
 * Development
@@ -871,69 +912,69 @@ This is an interesting extension to Magit that shows a TODOs section in your git
 #+end_src
 *** Git Gutter
 #+begin_src emacs-lisp
-(use-package git-gutter-fringe)
-(use-package git-gutter
-  :diminish
-  :hook ((text-mode . git-gutter-mode)
-         (prog-mode . git-gutter-mode))
-  :config
-  (setq git-gutter:update-interval 2)
-  (require 'git-gutter-fringe)
-  (set-face-foreground 'git-gutter-fr:added "LightGreen")
-  (fringe-helper-define 'git-gutter-fr:added nil
-    "XXXXXXXXXX"
-    "XXXXXXXXXX"
-    "XXXXXXXXXX"
-    ".........."
-    ".........."
-    "XXXXXXXXXX"
-    "XXXXXXXXXX"
-    "XXXXXXXXXX"
-    ".........."
-    ".........."
-    "XXXXXXXXXX"
-    "XXXXXXXXXX"
-    "XXXXXXXXXX")
+  (use-package git-gutter
+    :straight git-gutter-fringe
+    :diminish
+    :hook ((text-mode . git-gutter-mode)
+           (prog-mode . git-gutter-mode))
+    :config
+    (setq git-gutter:update-interval 2)
+    (require 'git-gutter-fringe)
+    (set-face-foreground 'git-gutter-fr:added "LightGreen")
+    (fringe-helper-define 'git-gutter-fr:added nil
+      "XXXXXXXXXX"
+      "XXXXXXXXXX"
+      "XXXXXXXXXX"
+      ".........."
+      ".........."
+      "XXXXXXXXXX"
+      "XXXXXXXXXX"
+      "XXXXXXXXXX"
+      ".........."
+      ".........."
+      "XXXXXXXXXX"
+      "XXXXXXXXXX"
+      "XXXXXXXXXX")
 
-  (set-face-foreground 'git-gutter-fr:modified "LightGoldenrod")
-  (fringe-helper-define 'git-gutter-fr:modified nil
-    "XXXXXXXXXX"
-    "XXXXXXXXXX"
-    "XXXXXXXXXX"
-    ".........."
-    ".........."
-    "XXXXXXXXXX"
-    "XXXXXXXXXX"
-    "XXXXXXXXXX"
-    ".........."
-    ".........."
-    "XXXXXXXXXX"
-    "XXXXXXXXXX"
-    "XXXXXXXXXX")
+    (set-face-foreground 'git-gutter-fr:modified "LightGoldenrod")
+    (fringe-helper-define 'git-gutter-fr:modified nil
+      "XXXXXXXXXX"
+      "XXXXXXXXXX"
+      "XXXXXXXXXX"
+      ".........."
+      ".........."
+      "XXXXXXXXXX"
+      "XXXXXXXXXX"
+      "XXXXXXXXXX"
+      ".........."
+      ".........."
+      "XXXXXXXXXX"
+      "XXXXXXXXXX"
+      "XXXXXXXXXX")
 
-  (set-face-foreground 'git-gutter-fr:deleted "LightCoral")
-  (fringe-helper-define 'git-gutter-fr:deleted nil
-    "XXXXXXXXXX"
-    "XXXXXXXXXX"
-    "XXXXXXXXXX"
-    ".........."
-    ".........."
-    "XXXXXXXXXX"
-    "XXXXXXXXXX"
-    "XXXXXXXXXX"
-    ".........."
-    ".........."
-    "XXXXXXXXXX"
-    "XXXXXXXXXX"
-    "XXXXXXXXXX")
+    (set-face-foreground 'git-gutter-fr:deleted "LightCoral")
+    (fringe-helper-define 'git-gutter-fr:deleted nil
+      "XXXXXXXXXX"
+      "XXXXXXXXXX"
+      "XXXXXXXXXX"
+      ".........."
+      ".........."
+      "XXXXXXXXXX"
+      "XXXXXXXXXX"
+      "XXXXXXXXXX"
+      ".........."
+      ".........."
+      "XXXXXXXXXX"
+      "XXXXXXXXXX"
+      "XXXXXXXXXX")
 
-  ;; These characters are used in terminal mode
-  (setq git-gutter:modified-sign "≡")
-  (setq git-gutter:added-sign "≡")
-  (setq git-gutter:deleted-sign "≡")
-  (set-face-foreground 'git-gutter:added "LightGreen")
-  (set-face-foreground 'git-gutter:modified "LightGoldenrod")
-  (set-face-foreground 'git-gutter:deleted "LightCoral"))
+    ;; These characters are used in terminal mode
+    (setq git-gutter:modified-sign "≡")
+    (setq git-gutter:added-sign "≡")
+    (setq git-gutter:deleted-sign "≡")
+    (set-face-foreground 'git-gutter:added "LightGreen")
+    (set-face-foreground 'git-gutter:modified "LightGoldenrod")
+    (set-face-foreground 'git-gutter:deleted "LightCoral"))
 #+end_src
 ** Languages
 
@@ -948,40 +989,42 @@ The =which-key= integration adds helpful descriptions of the various keys so you
 
 #+begin_src emacs-lisp
 
-(defun personal/lsp-mode-setup ()
-  (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
-  (lsp-headerline-breadcrumb-mode))
+  (defun personal/lsp-mode-setup ()
+    (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+    (lsp-headerline-breadcrumb-mode))
 
-(use-package lsp-mode
-  :commands (lsp lsp-deferred)
-  :hook (lsp-mode . personal/lsp-mode-setup)
-  :config
-  (lsp-enable-which-key-integration t)
-  :bind (:map lsp-mode-map
-              ("TAB" . completion-at-point))
-  :custom (lsp-headerline-breadcrumb-enable nil))
+  (use-package lsp-mode
+    :straight t
+    :commands (lsp lsp-deferred)
+    :hook (lsp-mode . personal/lsp-mode-setup)
+    :config
+    (lsp-enable-which-key-integration t)
+    :bind (:map lsp-mode-map
+                ("TAB" . completion-at-point))
+    :custom (lsp-headerline-breadcrumb-enable nil))
 
-(personal/leader-keys 
-  "l" '(:ignore t :which-key "lsp")
-  "ld" 'xhref-find-definitions
-  "lr" 'xhref-find-references
-  "ln" 'lsp-ui-find-next-reference
-  "lp" 'lsp-ui-find-prev-reference
-  "ls" 'counsel-imenu
-  "le" 'lsp-ui-flycheck-list
-  "lS" 'lsp-ui-sideline-mode
-  "lX" 'lsp-execute-code-action)
+  (personal/leader-keys 
+    "l" '(:ignore t :which-key "lsp")
+    "ld" 'xhref-find-definitions
+    "lr" 'xhref-find-references
+    "ln" 'lsp-ui-find-next-reference
+    "lp" 'lsp-ui-find-prev-reference
+    "ls" 'counsel-imenu
+    "le" 'lsp-ui-flycheck-list
+    "lS" 'lsp-ui-sideline-mode
+    "lX" 'lsp-execute-code-action)
 
 #+end_src
 **** lsp-ui
 [[https://emacs-lsp.github.io/lsp-ui/][lsp-ui]] is a set of UI enchancements built on top of =lsp-mode= which make Emacs feel even more like an IDE. Check out the screenshots on the =lsp-ui= homepage to see examples of what it can do.
 
 #+begin_src emacs-lisp
-(use-package lsp-ui
-  :hook (lsp-mode . lsp-ui-mode)
-  :custom
-  (lsp-ui-doc-position 'bottom))
-  
+  (use-package lsp-ui
+    :straight t
+    :hook (lsp-mode . lsp-ui-mode)
+    :custom
+    (lsp-ui-doc-position 'bottom))
+
 #+end_src
 
 **** lsp-treemacs
@@ -1005,19 +1048,20 @@ This package is built on the [[https://github.com/Alexander-Miller/treemacs][tre
 
 *** Ruby
 #+begin_src emacs-lisp
-(use-package ruby-mode
- :mode ("\\.rb\\'" "Rakefile\\'" "Gemfile\\'")
- :hook (ruby-mode . lsp)
- :interpreter "ruby"
- :init
- (add-hook 'ruby-mode-hook (lambda () (rvm-activate-corresponding-ruby)))
- :bind (:map ruby-mode-map
-       ("\C-c r r" . inf-ruby)))
+  (use-package ruby-mode
+   :mode ("\\.rb\\'" "Rakefile\\'" "Gemfile\\'")
+   :hook (ruby-mode . lsp)
+   :interpreter "ruby"
+   :config
+   (add-hook 'ruby-mode-hook (lambda () (rvm-activate-corresponding-ruby)))
+   :bind (:map ruby-mode-map
+         ("\C-c r r" . inf-ruby)))
 
-(use-package rvm)
+  (use-package bundler)
+  (use-package rvm)
 
-(use-package inf-ruby
- :hook (ruby-mode . inf-ruby-minor-mode))
+  (use-package inf-ruby
+   :hook (ruby-mode . inf-ruby-minor-mode))
 #+end_src
 **** Robe
 #+begin_src emacs-lisp
@@ -1069,33 +1113,35 @@ Set up nvm so that we can manage Node versions
 *** Markdown
 
 #+begin_src emacs-lisp
-(use-package markdown-mode
-  :mode "\\.md\\'"
-  :config
-  (setq markdown-command "marked")
-  (defun personal/set-markdown-header-font-sizes ()
-    (dolist (face '((markdown-header-face-1 . 1.2)
-                    (markdown-header-face-2 . 1.1)
-                    (markdown-header-face-3 . 1.0)
-                    (markdown-header-face-4 . 1.0)
-                    (markdown-header-face-5 . 1.0)))
-      (set-face-attribute (car face) nil :weight 'normal :height (cdr face))))
-      (defun personal/markdown-mode-hook ()
-        (personal/set-markdown-header-font-sizes))
-  (add-hook 'markdown-mode-hook 'personal/markdown-mode-hook))
+  (use-package markdown-mode
+    :straight t
+    :mode "\\.md\\'"
+    :config
+    (setq markdown-command "marked")
+    (defun personal/set-markdown-header-font-sizes ()
+      (dolist (face '((markdown-header-face-1 . 1.2)
+                      (markdown-header-face-2 . 1.1)
+                      (markdown-header-face-3 . 1.0)
+                      (markdown-header-face-4 . 1.0)
+                      (markdown-header-face-5 . 1.0)))
+        (set-face-attribute (car face) nil :weight 'normal :height (cdr face))))
+        (defun personal/markdown-mode-hook ()
+          (personal/set-markdown-header-font-sizes))
+    (add-hook 'markdown-mode-hook 'personal/markdown-mode-hook))
 #+end_src
 *** HTML (web mode)
 #+begin_src emacs-lisp
-  (use-package web-mode
-    :mode "(\\.\\(html?\\|ejs\\|tsx\\|jsx\\)\\'"
-    :config
-  (setq-default web-mode-code-indent-offset 2)
-  (setq-default web-mode-markup-indent-offset 2)
-  (setq-default web-mode-attribute-indent-offset 2))
+    (use-package web-mode
+      :mode "(\\.\\(html?\\|ejs\\|tsx\\|jsx\\)\\'"
+      :config
+    (setq-default web-mode-code-indent-offset 2)
+    (setq-default web-mode-markup-indent-offset 2)
+    (setq-default web-mode-attribute-indent-offset 2))
 
-  ;; 1. Start the server with `httpd-start`
-  ;; 2. Use `impatient-mode` on any buffer
-  (use-package impatient-mode)
+    ;; 1. Start the server with `httpd-start`
+    ;; 2. Use `impatient-mode` on any buffer
+    (use-package impatient-mode
+      :straight t)
 #+end_src
 **** CSS
 #+begin_src emacs-lisp
@@ -1158,6 +1204,17 @@ Set up nvm so that we can manage Node versions
 (use-package go-eldoc
   :defer t)
 #+end_src
+*** Rust
+#+begin_src emacs-lisp
+  (use-package rust-mode
+    :hook (rust-mode . lsp)
+    :mode "\\.rs\\'"
+    :init (setq rust-format-on-save t))
+
+  (use-package cargo
+    :straight t
+    :defer t)
+#+end_src
 ** Productivity
 *** Syntax checking with Flycheck
 #+begin_src emacs-lisp
@@ -1205,9 +1262,7 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 (use-package company
   :after lsp-mode
   :hook (lsp-mode . company-mode)
-  :bind (:map company-active-map
-         ("<tab>" . company-complete-selection))
-        (:map lsp-mode-map
+  :bind (:map lsp-mode-map
          ("<tab>" . company-indent-or-complete-common))
   :custom
   (company-minimum-prefix-length 1)
@@ -1342,4 +1397,3 @@ return 31310
    bar=<<the-value()>>
 
  #+end_src
-

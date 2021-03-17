@@ -10,24 +10,28 @@
                 (time-subtract after-init-time before-init-time)))
        gcs-done)))
 
-;; Initialize package sources
-(require 'package)
+;; Bootstrap straight.el
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
 
-(setq package-archives '(("melpa" . "https://melpa.org/packages/")
-			 ("melpa-stable" . "https://stable.melpa.org/packages/")
-			 ("org" . "https://orgmode.org/elpa/")
-			 ("elpa" . "https://elpa.gnu.org/packages/")))
+;; Always use straight to install on systems other than Linux
+(setq straight-use-package-by-default (not (eq system-type 'gnu/linux)))
 
-(package-initialize)
-(unless package-archive-contents
-  (package-refresh-contents))
+;; Use straight.el for use-package expressions
+(straight-use-package 'use-package)
 
-;; Initialize use-package
-(unless (package-installed-p 'use-package)
-  (package-install 'use-package))
-
-(require 'use-package)
-(setq use-package-always-ensure t)
+;; Load the helper package for commands like `straight-x-clean-unused-repos'
+(require 'straight-x)
 
 (use-package exec-path-from-shell
   :init
@@ -97,6 +101,7 @@
           `(,updated-block))))
 
 (use-package unicode-fonts
+  :straight t
   :custom
   (unicode-fonts-skip-font-groups '(low-quality-glyphs))
   :config
@@ -189,6 +194,14 @@
 (use-package evil-nerd-commenter
   :bind ("M-/" . evilnc-comment-or-uncomment-lines))
 
+(use-package dotcrafter
+  :straight '(dotcrafter :host github
+                         :repo "daviwil/dotcrafter.el"
+                         :branch "future")
+  :custom
+  (dotcrafter-dotfiles-folder "~/.emacs.d")
+  (dotcrafter-org-files '("Emacs.org")))
+
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
@@ -275,7 +288,8 @@
    "t" '(:ignore t :which-key "toggles")
    "tt" '(counsel-load-theme :which-key "choose theme")))
 
-(use-package command-log-mode)
+(use-package command-log-mode
+  :straight t)
 
 (use-package ivy
   :diminish
@@ -339,6 +353,7 @@
 
 (use-package dired
   :ensure nil
+  :straight nil
   :defer 1
   :commands (dired dired-jump)
   :config
@@ -571,16 +586,19 @@
 (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
 (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
 (add-to-list 'org-structure-template-alist '("py" . "src python"))
+(add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
+(add-to-list 'org-structure-template-alist '("json" . "src json"))
+(add-to-list 'org-structure-template-alist '("ruby" . "src ruby"))
 
-;; Automatically tangle our Emacs.org config file when we save it
-(defun personal/org-babel-tangle-config ()
-  (when (string-equal (buffer-file-name)
-                      (expand-file-name "~/.emacs.d/Emacs.org"))
-    ;; Dynamic scoping to the rescue
-    (let ((org-confirm-babel-evaluate nil))
-      (org-babel-tangle))))
+;; Since we don't want to disable org-confirm-babel-evaluate all
+;; of the time, do it around the after-save-hook
+(defun personal/org-babel-tangle-dont-ask ()
+  ;; Dynamic scoping to the rescue
+  (let ((org-confirm-babel-evaluate nil))
+    (org-babel-tangle)))
 
-(add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'personal/org-babel-tangle-config)))
+(add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'personal/org-babel-tangle-dont-ask
+                                              'run-at-end 'only-in-org-mode)))
 
 (use-package magit
   :bind ("C-M-;" . magit-status)
@@ -619,8 +637,8 @@
   (personal/leader-keys
     "gL" 'git-link))
 
-(use-package git-gutter-fringe)
 (use-package git-gutter
+  :straight git-gutter-fringe
   :diminish
   :hook ((text-mode . git-gutter-mode)
          (prog-mode . git-gutter-mode))
@@ -688,6 +706,7 @@
   (lsp-headerline-breadcrumb-mode))
 
 (use-package lsp-mode
+  :straight t
   :commands (lsp lsp-deferred)
   :hook (lsp-mode . personal/lsp-mode-setup)
   :config
@@ -708,6 +727,7 @@
   "lX" 'lsp-execute-code-action)
 
 (use-package lsp-ui
+  :straight t
   :hook (lsp-mode . lsp-ui-mode)
   :custom
   (lsp-ui-doc-position 'bottom))
@@ -719,11 +739,12 @@
  :mode ("\\.rb\\'" "Rakefile\\'" "Gemfile\\'")
  :hook (ruby-mode . lsp)
  :interpreter "ruby"
- :init
+ :config
  (add-hook 'ruby-mode-hook (lambda () (rvm-activate-corresponding-ruby)))
  :bind (:map ruby-mode-map
        ("\C-c r r" . inf-ruby)))
 
+(use-package bundler)
 (use-package rvm)
 
 (use-package inf-ruby
@@ -765,6 +786,7 @@
   (add-hook 'json-mode-hook #'personal/set-js-indentation))
 
 (use-package markdown-mode
+  :straight t
   :mode "\\.md\\'"
   :config
   (setq markdown-command "marked")
@@ -788,7 +810,8 @@
 
 ;; 1. Start the server with `httpd-start`
 ;; 2. Use `impatient-mode` on any buffer
-(use-package impatient-mode)
+(use-package impatient-mode
+  :straight t)
 
 (use-package css-mode
   :hook (css-mode . lsp)
@@ -842,6 +865,15 @@
 (use-package go-eldoc
   :defer t)
 
+(use-package rust-mode
+  :hook (rust-mode . lsp)
+  :mode "\\.rs\\'"
+  :init (setq rust-format-on-save t))
+
+(use-package cargo
+  :straight t
+  :defer t)
+
 (use-package flycheck
   :defer t
   :hook (lsp-mode . flycheck-mode))
@@ -868,9 +900,7 @@
 (use-package company
   :after lsp-mode
   :hook (lsp-mode . company-mode)
-  :bind (:map company-active-map
-         ("<tab>" . company-complete-selection))
-        (:map lsp-mode-map
+  :bind (:map lsp-mode-map
          ("<tab>" . company-indent-or-complete-common))
   :custom
   (company-minimum-prefix-length 1)
