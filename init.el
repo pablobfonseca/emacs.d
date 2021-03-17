@@ -790,6 +790,11 @@
 ;; 2. Use `impatient-mode` on any buffer
 (use-package impatient-mode)
 
+(use-package css-mode
+  :hook (css-mode . lsp)
+  :config
+  (setq-default css-indent-offset 2))
+
 (use-package emmet-mode
   :diminish (emmet-mode . "ε")
   :bind* (("C-)" . emmet-next-edit-point)

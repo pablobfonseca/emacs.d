@@ -1097,6 +1097,13 @@ Set up nvm so that we can manage Node versions
   ;; 2. Use `impatient-mode` on any buffer
   (use-package impatient-mode)
 #+end_src
+**** CSS
+#+begin_src emacs-lisp
+(use-package css-mode
+  :hook (css-mode . lsp)
+  :config
+  (setq-default css-indent-offset 2))
+#+end_src
 **** Emmet mode
 #+begin_src emacs-lisp
 (use-package emmet-mode
