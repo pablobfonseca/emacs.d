@@ -17,3 +17,4 @@ cache/
 .lsp-session*
 .cache
 /#init.el#
+/straight/
