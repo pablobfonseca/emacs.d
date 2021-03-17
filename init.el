@@ -805,6 +805,7 @@
   :mode "(\\.\\(html?\\|ejs\\|tsx\\|jsx\\)\\'"
   :config
 (setq-default web-mode-code-indent-offset 2)
+(setq-default web-mode-css-indent-offset 2)
 (setq-default web-mode-markup-indent-offset 2)
 (setq-default web-mode-attribute-indent-offset 2))
 
