@@ -205,14 +205,35 @@
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
+(global-set-key (kbd "C-M-u") 'universal-argument)
+
+(defun personal/evil-hook ()
+  (dolist (mode '(custom-mode
+                  eshell-mode
+                  git-rebase-mode
+                  term-mode))
+    (add-to-list 'evil-emacs-state-modes mode)))
+
+(defun personal/dont-arrow-me-bro ()
+  (interactive)
+  (message "Arrow keys are bad, you know?"))
+
+(use-package undo-tree
+  :init
+  (global-undo-tree-mode 1))
+
 (use-package evil
   :init
   (setq evil-want-integration t)
   (setq evil-want-keybinding nil)
   (setq evil-want-C-u-scroll t)
   (setq evil-want-C-i-jump nil)
-  ;; :hook (evil-mode . personal/evil-hook)
+  (setq evil-respect-visual-line-mode t)
+  (setq evil-undo-system 'undo-tree)
+  :hook (evil-mode . personal/evil-hook)
   :config
+  (add-hook 'evil-mode-hook 'personal/evil-hook)
+  (evil-mode 1)
   (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
   (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
 
@@ -221,12 +242,27 @@
   (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
 
   (evil-set-initial-state 'messages-buffer-mode 'normal)
-  (evil-set-initial-state 'dashboard-mode 'normal))
+  (evil-set-initial-state 'dashboard-mode 'normal)
 
-(evil-mode)
+  ;; Disable arrow keys in normal and visual modes
+  (define-key evil-normal-state-map (kbd "<left>") 'personal/dont-arrow-me-bro)
+  (define-key evil-normal-state-map (kbd "<right>") 'personal/dont-arrow-me-bro)
+  (define-key evil-normal-state-map (kbd "<down>") 'personal/dont-arrow-me-bro)
+  (define-key evil-normal-state-map (kbd "<up>") 'personal/dont-arrow-me-bro)
+  (evil-global-set-key 'motion (kbd "<left>") 'persona/dont-arrow-me-bro)
+  (evil-global-set-key 'motion (kbd "<right>") 'persona/dont-arrow-me-bro)
+  (evil-global-set-key 'motion (kbd "<down>") 'persona/dont-arrow-me-bro)
+  (evil-global-set-key 'motion (kbd "<up>") 'persona/dont-arrow-me-bro)
+
+  (evil-set-initial-state 'messages-buffer-mode 'normal)
+  (evil-set-initial-state 'dashboard-mode 'normal))
 
 (use-package evil-collection
   :after evil
+  :config
+  (evil-collection-init)
+  :custom
+  (evil-collection-ouutline-bind-tab-p nil)
   :config
   (evil-collection-init))
 
@@ -744,18 +780,25 @@
  :bind (:map ruby-mode-map
        ("\C-c r r" . inf-ruby)))
 
-(use-package bundler)
-(use-package rvm)
+(use-package bundler
+  :straight t)
+(use-package rvm
+  :straight t)
 
 (use-package inf-ruby
+  :straight t
  :hook (ruby-mode . inf-ruby-minor-mode))
 
 (use-package robe
- :hook (ruby-mode . robe-mode)
- :bind ("C-M-." . robe-jump)
- :config
- (defadvice inf-ruby-console-auto (before activate-rvm-for-robe activate)
-  (rvm-activate-corresponding-ruby)))
+  :straight t
+  :hook (ruby-mode . robe-mode)
+  :bind ("C-M-." . robe-jump)
+  :config
+  (defadvice inf-ruby-console-auto (before activate-rvm-for-robe activate)
+    (rvm-activate-corresponding-ruby)))
+
+(use-package rubocop
+  :straight t)
 
 (use-package python-mode
   :straight nil
@@ -812,10 +855,11 @@
 (use-package web-mode
   :mode "(\\.\\(html?\\|ejs\\|tsx\\|jsx\\)\\'"
   :config
-(setq-default web-mode-code-indent-offset 2)
-(setq-default web-mode-css-indent-offset 2)
-(setq-default web-mode-markup-indent-offset 2)
-(setq-default web-mode-attribute-indent-offset 2))
+  (setq web-mode-enable-auto-pairing nil)
+  (setq-default web-mode-code-indent-offset 2)
+  (setq-default web-mode-css-indent-offset 2)
+  (setq-default web-mode-markup-indent-offset 2)
+  (setq-default web-mode-attribute-indent-offset 2))
 
 ;; 1. Start the server with `httpd-start`
 ;; 2. Use `impatient-mode` on any buffer
@@ -826,6 +870,9 @@
   :hook (css-mode . lsp)
   :config
   (setq-default css-indent-offset 2))
+
+(use-package haml-mode
+  :straight t)
 
 (use-package emmet-mode
   :diminish (emmet-mode . "ε")
@@ -854,6 +901,9 @@
   (add-hook 'before-save-hook #'lsp-organize-imports t t)
   (define-key 'help-command (kbd "G") 'godoc)
 
+  (setq tab-width 4)
+  (setq evil-shift-width tab-width)
+
   ;; Prefer goimports to gofmt if installed
   (let ((goimports (executable-find "goimports")))
     (when goimports
@@ -875,6 +925,7 @@
   :defer t)
 
 (use-package rust-mode
+  :straight t
   :hook (rust-mode . lsp)
   :mode "\\.rs\\'"
   :init (setq rust-format-on-save t))
@@ -882,6 +933,11 @@
 (use-package cargo
   :straight t
   :defer t)
+
+(use-package elm-mode
+  :straight t
+  :config
+  (add-hook 'elm-mode-hook 'elm-format-on-save-mode))
 
 (use-package flycheck
   :defer t
@@ -909,8 +965,6 @@
 (use-package company
   :after lsp-mode
   :hook (lsp-mode . company-mode)
-  :bind (:map lsp-mode-map
-         ("<tab>" . company-indent-or-complete-common))
   :custom
   (company-minimum-prefix-length 1)
   (company-idle-delay 0.0))

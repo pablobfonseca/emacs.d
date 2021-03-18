@@ -339,6 +339,11 @@ Emacs' built in commenting functionality =comment-dwim= (usually bound to =M-;=)
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
 #+end_src
+** Rebing C-u
+Re-bind =C-M-u= for =universal-argument= since =evil-mode= takes over =C-u= for buffer scrolling.
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-M-u") 'universal-argument)
+#+end_src
 
 ** Let's Be Evil
 
@@ -349,30 +354,64 @@ Some tips can be found here:
   This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil-mode]] for a Vi-like modal editing experience.  [[https://github.com/noctuid/general.el][general.el]] is used for easy keybinding configuration that integrates well with which-key.  [[https://github.com/emacs-evil/evil-collection][evil-collection]] is used to automatically configure various Emacs modes with Vi-like keybindings for evil-mode.
 
 #+begin_src emacs-lisp
-(use-package evil
-  :init
-  (setq evil-want-integration t)
-  (setq evil-want-keybinding nil)
-  (setq evil-want-C-u-scroll t)
-  (setq evil-want-C-i-jump nil)
-  ;; :hook (evil-mode . personal/evil-hook)
-  :config
-  (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
-  (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
+  (defun personal/evil-hook ()
+    (dolist (mode '(custom-mode
+                    eshell-mode
+                    git-rebase-mode
+                    term-mode))
+      (add-to-list 'evil-emacs-state-modes mode)))
 
-  ;; Use visual line motions even outside of visual-line-mode-buffers
-  (evil-global-set-key 'motion "j" 'evil-next-visual-line)
-  (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
+  (defun personal/dont-arrow-me-bro ()
+    (interactive)
+    (message "Arrow keys are bad, you know?"))
 
-  (evil-set-initial-state 'messages-buffer-mode 'normal)
-  (evil-set-initial-state 'dashboard-mode 'normal))
+  (use-package undo-tree
+    :init
+    (global-undo-tree-mode 1))
 
-(evil-mode)
+  (use-package evil
+    :init
+    (setq evil-want-integration t)
+    (setq evil-want-keybinding nil)
+    (setq evil-want-C-u-scroll t)
+    (setq evil-want-C-i-jump nil)
+    (setq evil-respect-visual-line-mode t)
+    (setq evil-undo-system 'undo-tree)
+    :hook (evil-mode . personal/evil-hook)
+    :config
+    (add-hook 'evil-mode-hook 'personal/evil-hook)
+    (evil-mode 1)
+    (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+    (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
 
-(use-package evil-collection
-  :after evil
-  :config
-  (evil-collection-init))
+    ;; Use visual line motions even outside of visual-line-mode-buffers
+    (evil-global-set-key 'motion "j" 'evil-next-visual-line)
+    (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
+
+    (evil-set-initial-state 'messages-buffer-mode 'normal)
+    (evil-set-initial-state 'dashboard-mode 'normal)
+
+    ;; Disable arrow keys in normal and visual modes
+    (define-key evil-normal-state-map (kbd "<left>") 'personal/dont-arrow-me-bro)
+    (define-key evil-normal-state-map (kbd "<right>") 'personal/dont-arrow-me-bro)
+    (define-key evil-normal-state-map (kbd "<down>") 'personal/dont-arrow-me-bro)
+    (define-key evil-normal-state-map (kbd "<up>") 'personal/dont-arrow-me-bro)
+    (evil-global-set-key 'motion (kbd "<left>") 'persona/dont-arrow-me-bro)
+    (evil-global-set-key 'motion (kbd "<right>") 'persona/dont-arrow-me-bro)
+    (evil-global-set-key 'motion (kbd "<down>") 'persona/dont-arrow-me-bro)
+    (evil-global-set-key 'motion (kbd "<up>") 'persona/dont-arrow-me-bro)
+
+    (evil-set-initial-state 'messages-buffer-mode 'normal)
+    (evil-set-initial-state 'dashboard-mode 'normal))
+
+  (use-package evil-collection
+    :after evil
+    :config
+    (evil-collection-init)
+    :custom
+    (evil-collection-ouutline-bind-tab-p nil)
+    :config
+    (evil-collection-init))
 #+end_src
 
 *** evil-multiedit
@@ -1057,21 +1096,31 @@ This package is built on the [[https://github.com/Alexander-Miller/treemacs][tre
    :bind (:map ruby-mode-map
          ("\C-c r r" . inf-ruby)))
 
-  (use-package bundler)
-  (use-package rvm)
+  (use-package bundler
+    :straight t)
+  (use-package rvm
+    :straight t)
 
   (use-package inf-ruby
+    :straight t
    :hook (ruby-mode . inf-ruby-minor-mode))
 #+end_src
 **** Robe
 #+begin_src emacs-lisp
-(use-package robe
- :hook (ruby-mode . robe-mode)
- :bind ("C-M-." . robe-jump)
- :config
- (defadvice inf-ruby-console-auto (before activate-rvm-for-robe activate)
-  (rvm-activate-corresponding-ruby)))
+  (use-package robe
+    :straight t
+    :hook (ruby-mode . robe-mode)
+    :bind ("C-M-." . robe-jump)
+    :config
+    (defadvice inf-ruby-console-auto (before activate-rvm-for-robe activate)
+      (rvm-activate-corresponding-ruby)))
 #+end_src
+**** Rubocop
+#+begin_src emacs-lisp
+  (use-package rubocop
+    :straight t)
+#+end_src
+
 *** Python
 #+begin_src emacs-lisp
   (use-package python-mode
@@ -1143,18 +1192,21 @@ Set up nvm so that we can manage Node versions
 #+end_src
 *** HTML (web mode)
 #+begin_src emacs-lisp
-    (use-package web-mode
-      :mode "(\\.\\(html?\\|ejs\\|tsx\\|jsx\\)\\'"
-      :config
+  (use-package web-mode
+    :mode "(\\.\\(html?\\|ejs\\|tsx\\|jsx\\)\\'"
+    :config
+    (setq web-mode-enable-auto-pairing nil)
     (setq-default web-mode-code-indent-offset 2)
     (setq-default web-mode-css-indent-offset 2)
     (setq-default web-mode-markup-indent-offset 2)
     (setq-default web-mode-attribute-indent-offset 2))
-
-    ;; 1. Start the server with `httpd-start`
-    ;; 2. Use `impatient-mode` on any buffer
-    (use-package impatient-mode
-      :straight t)
+#+end_src
+**** Impatient mode
+#+begin_src emacs-lisp
+  ;; 1. Start the server with `httpd-start`
+  ;; 2. Use `impatient-mode` on any buffer
+  (use-package impatient-mode
+    :straight t)
 #+end_src
 **** CSS
 #+begin_src emacs-lisp
@@ -1162,6 +1214,11 @@ Set up nvm so that we can manage Node versions
   :hook (css-mode . lsp)
   :config
   (setq-default css-indent-offset 2))
+#+end_src
+**** HAML
+#+begin_src emacs-lisp
+  (use-package haml-mode
+    :straight t)
 #+end_src
 **** Emmet mode
 #+begin_src emacs-lisp
@@ -1192,34 +1249,38 @@ Set up nvm so that we can manage Node versions
 #+end_src
 *** Go
 #+begin_src emacs-lisp
-(defun personal/go-mode-defaults ()
-  (add-hook 'before-save-hook #'lsp-format-buffer t t)
-  (add-hook 'before-save-hook #'lsp-organize-imports t t)
-  (define-key 'help-command (kbd "G") 'godoc)
+  (defun personal/go-mode-defaults ()
+    (add-hook 'before-save-hook #'lsp-format-buffer t t)
+    (add-hook 'before-save-hook #'lsp-organize-imports t t)
+    (define-key 'help-command (kbd "G") 'godoc)
 
-  ;; Prefer goimports to gofmt if installed
-  (let ((goimports (executable-find "goimports")))
-    (when goimports
-      (setq gofmt-command goimports)))
+    (setq tab-width 4)
+    (setq evil-shift-width tab-width)
 
-  ;; El-doc for go
-  (go-eldoc-setup)
+    ;; Prefer goimports to gofmt if installed
+    (let ((goimports (executable-find "goimports")))
+      (when goimports
+        (setq gofmt-command goimports)))
 
-  ;; gofmt on save
-  (add-hook 'before-save-hook 'gofmt-before-save nil t))
+    ;; El-doc for go
+    (go-eldoc-setup)
 
-(use-package go-mode
-  :defer t
-  :hook (go-mode . lsp-deferred)
-  :config
-  (add-hook 'go-mode-hook #'personal/go-mode-defaults))
+    ;; gofmt on save
+    (add-hook 'before-save-hook 'gofmt-before-save nil t))
 
-(use-package go-eldoc
-  :defer t)
+  (use-package go-mode
+    :defer t
+    :hook (go-mode . lsp-deferred)
+    :config
+    (add-hook 'go-mode-hook #'personal/go-mode-defaults))
+
+  (use-package go-eldoc
+    :defer t)
 #+end_src
 *** Rust
 #+begin_src emacs-lisp
   (use-package rust-mode
+    :straight t
     :hook (rust-mode . lsp)
     :mode "\\.rs\\'"
     :init (setq rust-format-on-save t))
@@ -1227,6 +1288,13 @@ Set up nvm so that we can manage Node versions
   (use-package cargo
     :straight t
     :defer t)
+#+end_src
+*** Elm
+#+begin_src emacs-lisp
+  (use-package elm-mode
+    :straight t
+    :config
+    (add-hook 'elm-mode-hook 'elm-format-on-save-mode))
 #+end_src
 ** Productivity
 *** Syntax checking with Flycheck
@@ -1275,8 +1343,6 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 (use-package company
   :after lsp-mode
   :hook (lsp-mode . company-mode)
-  :bind (:map lsp-mode-map
-         ("<tab>" . company-indent-or-complete-common))
   :custom
   (company-minimum-prefix-length 1)
   (company-idle-delay 0.0))
@@ -1377,13 +1443,13 @@ echo "Hello!" > #<buffer test-buffer>
 * SystemUtilities
 ** Docker
 #+begin_src emacs-lisp
-(use-package docker
-  :commands docker)
+  (use-package docker
+    :commands docker)
 
-(use-package dockerfile-mode
-  :config
-  (require 'dockerfile-mode)
-  (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode)))
+  (use-package dockerfile-mode
+    :config
+    (require 'dockerfile-mode)
+    (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode)))
 #+end_src
 ** Ripgrep
 #+begin_src emacs-lisp
