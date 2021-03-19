@@ -55,6 +55,129 @@
 
 (set-default-coding-systems 'utf-8)
 
+;; Make ESC quit prompts
+(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+
+(global-set-key (kbd "C-M-u") 'universal-argument)
+
+(defun personal/evil-hook ()
+  (dolist (mode '(custom-mode
+                  eshell-mode
+                  git-rebase-mode
+                  term-mode))
+    (add-to-list 'evil-emacs-state-modes mode)))
+
+(defun personal/dont-arrow-me-bro ()
+  (interactive)
+  (message "Arrow keys are bad, you know?"))
+
+(use-package undo-tree
+  :init
+  (global-undo-tree-mode 1))
+
+(use-package evil
+  :init
+  (setq evil-want-integration t)
+  (setq evil-want-keybinding nil)
+  (setq evil-want-C-u-scroll t)
+  (setq evil-want-C-i-jump nil)
+  (setq evil-respect-visual-line-mode t)
+  (setq evil-undo-system 'undo-tree)
+  :hook (evil-mode . personal/evil-hook)
+  :config
+  (add-hook 'evil-mode-hook 'personal/evil-hook)
+  (evil-mode 1)
+  (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+  (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
+
+  ;; Use visual line motions even outside of visual-line-mode-buffers
+  (evil-global-set-key 'motion "j" 'evil-next-visual-line)
+  (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
+
+  (evil-set-initial-state 'messages-buffer-mode 'normal)
+  (evil-set-initial-state 'dashboard-mode 'normal)
+
+  ;; Disable arrow keys in normal and visual modes
+  (define-key evil-normal-state-map (kbd "<left>") 'personal/dont-arrow-me-bro)
+  (define-key evil-normal-state-map (kbd "<right>") 'personal/dont-arrow-me-bro)
+  (define-key evil-normal-state-map (kbd "<down>") 'personal/dont-arrow-me-bro)
+  (define-key evil-normal-state-map (kbd "<up>") 'personal/dont-arrow-me-bro)
+  (evil-global-set-key 'motion (kbd "<left>") 'persona/dont-arrow-me-bro)
+  (evil-global-set-key 'motion (kbd "<right>") 'persona/dont-arrow-me-bro)
+  (evil-global-set-key 'motion (kbd "<down>") 'persona/dont-arrow-me-bro)
+  (evil-global-set-key 'motion (kbd "<up>") 'persona/dont-arrow-me-bro)
+
+  (evil-set-initial-state 'messages-buffer-mode 'normal)
+  (evil-set-initial-state 'dashboard-mode 'normal))
+
+(use-package evil-collection
+  :after evil
+  :config
+  (evil-collection-init)
+  :custom
+  (evil-collection-ouutline-bind-tab-p nil)
+  :config
+  (evil-collection-init))
+
+(use-package evil-multiedit
+  :config
+  ;; Highlights all matches of the selection in the buffer.
+  (define-key evil-visual-state-map "R" 'evil-multiedit-match-all)
+
+  ;; Match the word under cursor (i.e. make it an edit region). Consecutive
+  ;; presses will incrementally add the next unmatched match.
+  (define-key evil-normal-state-map (kbd "M-d") 'evil-multiedit-match-and-next)
+  ;; Match selected region.
+  (define-key evil-visual-state-map (kbd "M-d") 'evil-multiedit-match-and-next)
+
+  ;; Same as M-d but in reverse.
+  (define-key evil-normal-state-map (kbd "M-D") 'evil-multiedit-match-and-prev)
+  (define-key evil-visual-state-map (kbd "M-D") 'evil-multiedit-match-and-prev)
+
+  ;; OPTIONAL: If you prefer to grab symbols rather than words, use
+  ;; `evil-multiedit-match-symbol-and-next` (or prev).
+
+  ;; Restore the last group of multiedit regions.
+  (define-key evil-visual-state-map (kbd "C-M-D") 'evil-multiedit-restore)
+
+  ;; RET will toggle the region under the cursor
+  (define-key evil-multiedit-state-map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
+
+  ;; ...and in visual mode, RET will disable all fields outside the selected
+  ;; region
+  (define-key evil-motion-state-map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
+
+  ;; For moving between edit regions
+  (define-key evil-multiedit-state-map (kbd "C-n") 'evil-multiedit-next)
+  (define-key evil-multiedit-state-map (kbd "C-p") 'evil-multiedit-prev)
+  (define-key evil-multiedit-insert-state-map (kbd "C-n") 'evil-multiedit-next)
+  (define-key evil-multiedit-insert-state-map (kbd "C-p") 'evil-multiedit-prev)
+
+  ;; Allows you to invoke evil-multiedit with a regular expression
+  (evil-ex-define-cmd "ie[dit]" 'evil-multiedit-ex-match))
+
+(use-package evil-surround
+  :config
+  (global-evil-surround-mode 1))
+
+(use-package which-key
+  :init (which-key-mode)
+  :diminish which-key-mode
+  :config
+  (setq which-key-idle-delay 0.3))
+
+(use-package general
+  :config
+  (general-create-definer personal/leader-keys
+    :keymaps '(normal insert visual emacs)
+    :prefix "SPC"
+    :global-prefix "C-SPC")
+
+  (personal/leader-keys
+   "t" '(:ignore t :which-key "toggles")
+   "tw" 'whitespace-mode
+   "tt" '(counsel-load-theme :which-key "choose theme")))
+
 (setq inhibit-startup-message t)
 
 (scroll-bar-mode -1)              ; Disable visible scrollbar
@@ -207,131 +330,34 @@
   (dotcrafter-dotfiles-folder "~/.emacs.d")
   (dotcrafter-org-files '("Emacs.org")))
 
-;; Make ESC quit prompts
-(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-
-(global-set-key (kbd "C-M-u") 'universal-argument)
-
-(defun personal/evil-hook ()
-  (dolist (mode '(custom-mode
-                  eshell-mode
-                  git-rebase-mode
-                  term-mode))
-    (add-to-list 'evil-emacs-state-modes mode)))
-
-(defun personal/dont-arrow-me-bro ()
-  (interactive)
-  (message "Arrow keys are bad, you know?"))
-
-(use-package undo-tree
-  :init
-  (global-undo-tree-mode 1))
-
-(use-package evil
-  :init
-  (setq evil-want-integration t)
-  (setq evil-want-keybinding nil)
-  (setq evil-want-C-u-scroll t)
-  (setq evil-want-C-i-jump nil)
-  (setq evil-respect-visual-line-mode t)
-  (setq evil-undo-system 'undo-tree)
-  :hook (evil-mode . personal/evil-hook)
-  :config
-  (add-hook 'evil-mode-hook 'personal/evil-hook)
-  (evil-mode 1)
-  (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
-  (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
-
-  ;; Use visual line motions even outside of visual-line-mode-buffers
-  (evil-global-set-key 'motion "j" 'evil-next-visual-line)
-  (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
-
-  (evil-set-initial-state 'messages-buffer-mode 'normal)
-  (evil-set-initial-state 'dashboard-mode 'normal)
-
-  ;; Disable arrow keys in normal and visual modes
-  (define-key evil-normal-state-map (kbd "<left>") 'personal/dont-arrow-me-bro)
-  (define-key evil-normal-state-map (kbd "<right>") 'personal/dont-arrow-me-bro)
-  (define-key evil-normal-state-map (kbd "<down>") 'personal/dont-arrow-me-bro)
-  (define-key evil-normal-state-map (kbd "<up>") 'personal/dont-arrow-me-bro)
-  (evil-global-set-key 'motion (kbd "<left>") 'persona/dont-arrow-me-bro)
-  (evil-global-set-key 'motion (kbd "<right>") 'persona/dont-arrow-me-bro)
-  (evil-global-set-key 'motion (kbd "<down>") 'persona/dont-arrow-me-bro)
-  (evil-global-set-key 'motion (kbd "<up>") 'persona/dont-arrow-me-bro)
-
-  (evil-set-initial-state 'messages-buffer-mode 'normal)
-  (evil-set-initial-state 'dashboard-mode 'normal))
-
-(use-package evil-collection
-  :after evil
-  :config
-  (evil-collection-init)
-  :custom
-  (evil-collection-ouutline-bind-tab-p nil)
-  :config
-  (evil-collection-init))
-
-(use-package evil-multiedit
-  :config
-  ;; Highlights all matches of the selection in the buffer.
-  (define-key evil-visual-state-map "R" 'evil-multiedit-match-all)
-
-  ;; Match the word under cursor (i.e. make it an edit region). Consecutive
-  ;; presses will incrementally add the next unmatched match.
-  (define-key evil-normal-state-map (kbd "M-d") 'evil-multiedit-match-and-next)
-  ;; Match selected region.
-  (define-key evil-visual-state-map (kbd "M-d") 'evil-multiedit-match-and-next)
-
-  ;; Same as M-d but in reverse.
-  (define-key evil-normal-state-map (kbd "M-D") 'evil-multiedit-match-and-prev)
-  (define-key evil-visual-state-map (kbd "M-D") 'evil-multiedit-match-and-prev)
-
-  ;; OPTIONAL: If you prefer to grab symbols rather than words, use
-  ;; `evil-multiedit-match-symbol-and-next` (or prev).
-
-  ;; Restore the last group of multiedit regions.
-  (define-key evil-visual-state-map (kbd "C-M-D") 'evil-multiedit-restore)
-
-  ;; RET will toggle the region under the cursor
-  (define-key evil-multiedit-state-map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
-
-  ;; ...and in visual mode, RET will disable all fields outside the selected
-  ;; region
-  (define-key evil-motion-state-map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
-
-  ;; For moving between edit regions
-  (define-key evil-multiedit-state-map (kbd "C-n") 'evil-multiedit-next)
-  (define-key evil-multiedit-state-map (kbd "C-p") 'evil-multiedit-prev)
-  (define-key evil-multiedit-insert-state-map (kbd "C-n") 'evil-multiedit-next)
-  (define-key evil-multiedit-insert-state-map (kbd "C-p") 'evil-multiedit-prev)
-
-  ;; Allows you to invoke evil-multiedit with a regular expression
-  (evil-ex-define-cmd "ie[dit]" 'evil-multiedit-ex-match))
-
-(use-package evil-surround
-  :config
-  (global-evil-surround-mode 1))
-
-(use-package which-key
-  :init (which-key-mode)
-  :diminish which-key-mode
-  :config
-  (setq which-key-idle-delay 0.3))
-
-(use-package general
-  :config
-  (general-create-definer personal/leader-keys
-    :keymaps '(normal insert visual emacs)
-    :prefix "SPC"
-    :global-prefix "C-SPC")
-
-  (personal/leader-keys
-   "t" '(:ignore t :which-key "toggles")
-   "tw" 'whitespace-mode
-   "tt" '(counsel-load-theme :which-key "choose theme")))
+(personal/leader-keys
+  "f"  '(:ignore t :which-key "dotfiles")
+  "fe" '((lambda () (interactive) (find-file "~/.emacs.d/Emacs.org")) :which-key "edit config"))
 
 (use-package command-log-mode
   :straight t)
+
+(use-package helpful
+  :custom
+  (counsel-describe-function-function #'helpful-callable)
+  (counsel-describe-variable-function #'helpful-variable)
+  :bind
+  ([remap describe-function] . counsel-describe-function)
+  ([remap describe-command] . helpful-command)
+  ([remap describe-variable] . counsel-describe-variable)
+  ([remap describe-key] . helpful-key))
+
+(use-package hydra
+  :defer 1)
+
+(defhydra hydra-text-scale (:timeout 4)
+  "scale text"
+  ("j" text-scale-increase "in")
+  ("k" text-scale-decrease "out")
+  ("f" nil "finished" :exit t))
+
+(personal/leader-keys
+  "ts" '(hydra-text-scale/body :which-key "scale text"))
 
 (use-package ivy
   :diminish
@@ -394,32 +420,83 @@
   (counsel-mode 1)
   (setq ivy-initial-inputs-alist nil)) ;; Don't start searches with ^
 
+;; Improves sorting for fuzzy-matched results
+(use-package flx
+  :after ivy
+  :defer t
+  :init
+  (setq ivy-flx-limit 10000))
+
+(use-package wgrep)
+
+(use-package ivy-posframe
+  :disabled
+  :custom
+  (ivy-posframe-width 115)
+  (ivy-posframe-min-width 115)
+  (ivy-posframe-height 10)
+  :config
+  (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-center)))
+  (setq ivy-posframe-parameters '((parent-frame . nil)
+                                  (left-fringe . 8)
+                                  (right-fringe . 8)))
+  (ivy-posframe-mode 1))
+
+(use-package prescient
+  :after counsel
+  :config
+  (prescient-persist-mode 1))
+
+(use-package ivy-prescient
+  :after prescient
+  :config
+  (ivy-prescient-mode 1))
+
+(personal/leader-keys
+  "r" '(ivy-resume :which-key "ivy resume")
+  "f" '(:ignore t :which-key "files")
+  "ff" '(counsel-find-file :which-key "open file")
+  "C-f" 'counsel-find-file
+  "fr" '(counsel-recentf :which-key "recent files")
+  "fR" '(revert-buffer :which-key "revert file")
+  "fj" '(counsel-file-jump :which-key "jump to file"))
+
 (use-package swiper
   :after ivy
   :bind (("C-s" . swiper)
          ("C-r" . swiper)))
 
-(use-package helpful
-  :custom
-  (counsel-describe-function-function #'helpful-callable)
-  (counsel-describe-variable-function #'helpful-variable)
-  :bind
-  ([remap describe-function] . counsel-describe-function)
-  ([remap describe-command] . helpful-command)
-  ([remap describe-variable] . counsel-describe-variable)
-  ([remap describe-key] . helpful-key))
-
-(use-package hydra
-  :defer 1)
-
-(defhydra hydra-text-scale (:timeout 4)
-  "scale text"
-  ("j" text-scale-increase "in")
-  ("k" text-scale-decrease "out")
-  ("f" nil "finished" :exit t))
+(use-package avy
+  :commands (avy-goto-char avy-goto-word-0 avy-goto-line))
 
 (personal/leader-keys
-  "ts" '(hydra-text-scale/body :which-key "scale text"))
+  "j" '(:ignore t :which-key "jump")
+  "jj" '(avy-goto-char :which-key "jump to char")
+  "jw" '(avy-goto-word-0 :which-key "jump to word")
+  "jl" '(avy-goto-line :which-key "jump to line"))
+
+(use-package default-text-scale
+  :defer 1
+  :config
+  (default-text-scale-mode))
+
+(use-package ace-window
+  :bind (("M-o" . ace-window))
+  :custom
+  (aw-scope 'frame)
+  (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+  (aw-minibuffer-flag t)
+  :config
+  (ace-window-display-mode 1))
+
+(defun personal/org-mode-visual-fill ()
+  (setq visual-fill-column-width 110
+        visual-fill-column-center-text t)
+  (visual-fill-column-mode 1))
+
+(use-package visual-fill-column
+  :defer t
+  :hook (org-mode . personal/org-mode-visual-fill))
 
 (use-package all-the-icons-dired)
 
@@ -502,134 +579,134 @@
   (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
 
 (defun personal/org-mode-setup ()
-      (org-indent-mode)
-      (variable-pitch-mode 1)
-      (visual-line-mode 1)
-      (setq org-src-tab-acts-natively t))
+  (org-indent-mode)
+  (variable-pitch-mode 1)
+  (visual-line-mode 1)
+  (setq org-src-tab-acts-natively t))
 
-    (use-package org
-      :hook (org-mode . personal/org-mode-setup)
-      :config
-      (setq org-ellipsis " ▾")
+(use-package org
+  :hook (org-mode . personal/org-mode-setup)
+  :config
+  (setq org-ellipsis " ▾")
 
-      (setq org-agenda-start-with-log-mode t)
-      (setq org-log-done 'time)
-      (setq org-log-into-drawer t)
+  (setq org-agenda-start-with-log-mode t)
+  (setq org-log-done 'time)
+  (setq org-log-into-drawer t)
 
-      (setq org-hide-emphasis-markers t)
-      (setq org-agenda-files
-            '("~/Dropbox/Study/Emacs/OrgFiles/Tasks.org"
-              "~/Dropbox/Study/Emacs/OrgFiles/Habit.org"
-              "~/Dropbox/Study/Emacs/OrgFiles/Birthdays.org"))
+  (setq org-hide-emphasis-markers t)
+  (setq org-agenda-files
+        '("~/Dropbox/Study/Emacs/OrgFiles/Tasks.org"
+          "~/Dropbox/Study/Emacs/OrgFiles/Habit.org"
+          "~/Dropbox/Study/Emacs/OrgFiles/Birthdays.org"))
 
-      (require 'org-habit)
-      (add-to-list 'org-modules 'org-habit)
-      (setq org-habit-graph-column 60)
+  (require 'org-habit)
+  (add-to-list 'org-modules 'org-habit)
+  (setq org-habit-graph-column 60)
 
-      (setq org-todo-keywords
-            '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
-              (sequence "BACKLOG(b)" "PLAN(p)" "READY(r)" "ACTIVE(a)" "REVIEW(v)" "WAIT(@a/!)" "HOLD(h)" "|" "COMPLETED(c)" "CANC(k@)")))
+  (setq org-todo-keywords
+        '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
+          (sequence "BACKLOG(b)" "PLAN(p)" "READY(r)" "ACTIVE(a)" "REVIEW(v)" "WAIT(@a/!)" "HOLD(h)" "|" "COMPLETED(c)" "CANC(k@)")))
 
-      (setq org-refile-targets
-            '(("Archive.org" :maxlevel . 1)
-              ("Tasks.org" :maxlevel . 1)))
+  (setq org-refile-targets
+        '(("Archive.org" :maxlevel . 1)
+          ("Tasks.org" :maxlevel . 1)))
 
-      ;; Save Org buffers after refiling!
-      (advice-add 'org-refile :after 'org-save-all-org-buffers)
+  ;; Save Org buffers after refiling!
+  (advice-add 'org-refile :after 'org-save-all-org-buffers)
 
-      (setq org-tag-alist
-            '((:startgroup)
-              ; Put mutually exclusive tags here
-              (:endgroup)
-              ("@errand" . ?E)
-              ("@home" . ?H)
-              ("@work" . ?W)
-              ("agenda" . ?a)
-              ("planning" . ?p)
-              ("publish" . ?P)
-              ("batch" . ?b)
-              ("note" . ?n)
-              ("idea" . ?i)
-              ("thinking" . ?t)
-              ("recurring" . ?r)))
+  (setq org-tag-alist
+        '((:startgroup)
+                                        ; Put mutually exclusive tags here
+          (:endgroup)
+          ("@errand" . ?E)
+          ("@home" . ?H)
+          ("@work" . ?W)
+          ("agenda" . ?a)
+          ("planning" . ?p)
+          ("publish" . ?P)
+          ("batch" . ?b)
+          ("note" . ?n)
+          ("idea" . ?i)
+          ("thinking" . ?t)
+          ("recurring" . ?r)))
 
-      ;; Configure custom agenda views
-      (setq org-agenda-custom-commands
-            '(("d" "Dashboard"
-               ((agenda "" ((org-deadline-warning-days 7)))
-                (todo "NEXT"
-                      ((org-agenda-overriding-header "Next Tasks")))
-                (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))))
+  ;; Configure custom agenda views
+  (setq org-agenda-custom-commands
+        '(("d" "Dashboard"
+           ((agenda "" ((org-deadline-warning-days 7)))
+            (todo "NEXT"
+                  ((org-agenda-overriding-header "Next Tasks")))
+            (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))))
 
-              ("n" "Next Tasks"
-               ((todo "NEXT"
-                      ((org-agenda-overriding-header "Next Tasks")))))
+          ("n" "Next Tasks"
+           ((todo "NEXT"
+                  ((org-agenda-overriding-header "Next Tasks")))))
 
-              ("W" "Work Tasks" tags-todo "+work-email")
+          ("W" "Work Tasks" tags-todo "+work-email")
 
-              ;; Low-effort next actions
-              ("e" tags-todo "+TODO=\"NEXT\"+Effort<15&+Effort>0"
-               ((org-agenda-overriding-header "Low Effort Tasks")
-                (org-agenda-max-todos 20)
-                (org-agenda-files org-agenda-files)))
+          ;; Low-effort next actions
+          ("e" tags-todo "+TODO=\"NEXT\"+Effort<15&+Effort>0"
+           ((org-agenda-overriding-header "Low Effort Tasks")
+            (org-agenda-max-todos 20)
+            (org-agenda-files org-agenda-files)))
 
-              ("w" "Workflow Status"
-               ((todo "WAIT"
-                      ((org-agenda-overriding-header "Waiting on External")
-                       (org-agenda-files org-agenda-files)))
-                (todo "REVIEW"
-                      ((org-agenda-overriding-header "In Review")
-                       (org-agenda-files org-agenda-files)))
-                (todo "PLAN"
-                      ((org-agenda-overriding-header "In Planning")
-                       (org-agenda-todo-list-sublevels nil)
-                       (org-agenda-files org-agenda-files)))
-                (todo "BACKLOG"
-                      ((org-agenda-overriding-header "Project Backlog")
-                       (org-agenda-todo-list-sublevels nil)
-                       (org-agenda-files org-agenda-files)))
-                (todo "READY"
-                      ((org-agenda-overriding-header "Ready for Work")
-                       (org-agenda-files org-agenda-files)))
-                (todo "ACTIVE"
-                      ((org-agenda-overriding-header "Active Projects")
-                       (org-agenda-files org-agenda-files)))
-                (todo "COMPLETED"
-                      ((org-agenda-overriding-header "Completed Projects")
-                       (org-agenda-files org-agenda-files)))
-                (todo "CANC"
-                      ((org-agenda-overriding-header "Cancelled Projects")
-                       (org-agenda-files org-agenda-files)))))))
+          ("w" "Workflow Status"
+           ((todo "WAIT"
+                  ((org-agenda-overriding-header "Waiting on External")
+                   (org-agenda-files org-agenda-files)))
+            (todo "REVIEW"
+                  ((org-agenda-overriding-header "In Review")
+                   (org-agenda-files org-agenda-files)))
+            (todo "PLAN"
+                  ((org-agenda-overriding-header "In Planning")
+                   (org-agenda-todo-list-sublevels nil)
+                   (org-agenda-files org-agenda-files)))
+            (todo "BACKLOG"
+                  ((org-agenda-overriding-header "Project Backlog")
+                   (org-agenda-todo-list-sublevels nil)
+                   (org-agenda-files org-agenda-files)))
+            (todo "READY"
+                  ((org-agenda-overriding-header "Ready for Work")
+                   (org-agenda-files org-agenda-files)))
+            (todo "ACTIVE"
+                  ((org-agenda-overriding-header "Active Projects")
+                   (org-agenda-files org-agenda-files)))
+            (todo "COMPLETED"
+                  ((org-agenda-overriding-header "Completed Projects")
+                   (org-agenda-files org-agenda-files)))
+            (todo "CANC"
+                  ((org-agenda-overriding-header "Cancelled Projects")
+                   (org-agenda-files org-agenda-files)))))))
 
-      (setq org-capture-templates
-            `(("t" "Tasks / Projects")
-              ("tt" "Task" entry (file+olp "~/Dropbox/Study/Emacs/OrgFiles/Tasks.org" "Inbox")
-               "* TODO %?\n  %U\n  %a\n  %i" :empty-lines 1)
+  (setq org-capture-templates
+        `(("t" "Tasks / Projects")
+          ("tt" "Task" entry (file+olp "~/Dropbox/Study/Emacs/OrgFiles/Tasks.org" "Inbox")
+           "* TODO %?\n  %U\n  %a\n  %i" :empty-lines 1)
 
-              ("j" "Journal Entries")
-              ("jj" "Journal" entry
-               (file+olp+datetree "~/Dropbox/Study/Emacs/OrgFiles/Journal.org")
-               "\n* %<%I:%M %p> - Journal :journal:\n\n%?\n\n"
-               :clock-in :clock-resume
-               :empty-lines 1)
-              ("jm" "Meeting" entry
-               (file+olp+datetree "~/Dropbox/Study/Emacs/OrgFiles/Journal.org")
-               "* %<%I:%M %p> - %a :meetings:\n\n%?\n\n"
-               :clock-in :clock-resume
-               :empty-lines 1)
+          ("j" "Journal Entries")
+          ("jj" "Journal" entry
+           (file+olp+datetree "~/Dropbox/Study/Emacs/OrgFiles/Journal.org")
+           "\n* %<%I:%M %p> - Journal :journal:\n\n%?\n\n"
+           :clock-in :clock-resume
+           :empty-lines 1)
+          ("jm" "Meeting" entry
+           (file+olp+datetree "~/Dropbox/Study/Emacs/OrgFiles/Journal.org")
+           "* %<%I:%M %p> - %a :meetings:\n\n%?\n\n"
+           :clock-in :clock-resume
+           :empty-lines 1)
 
-              ("w" "Workflows")
-              ("we" "Checking Email" entry (file+olp+datetree "~/Dropbox/Study/Emacs/OrgFiles/Journal.org")
-               "* Checking Email :email:\n\n%?" :clock-in :clock-resume :empty-lines 1)
+          ("w" "Workflows")
+          ("we" "Checking Email" entry (file+olp+datetree "~/Dropbox/Study/Emacs/OrgFiles/Journal.org")
+           "* Checking Email :email:\n\n%?" :clock-in :clock-resume :empty-lines 1)
 
-              ("m" "Metrics Capture")
-              ("mw" "Weight" table-line (file+headline "~/Dropbox/Study/Emacs/OrgFiles/Metrics.org" "Weight")
-               "| %U | %^{Weight} | %^{Notes} |" :kill-buffer t)))
+          ("m" "Metrics Capture")
+          ("mw" "Weight" table-line (file+headline "~/Dropbox/Study/Emacs/OrgFiles/Metrics.org" "Weight")
+           "| %U | %^{Weight} | %^{Notes} |" :kill-buffer t)))
 
-      (define-key global-map (kbd "C-c c")
-        (lambda () (interactive) (org-capture)))
+  (define-key global-map (kbd "C-c c")
+    (lambda () (interactive) (org-capture)))
 
-      (personal/org-font-setup))
+  (personal/org-font-setup)
 
 (use-package org-bullets
     :after org
@@ -671,6 +748,25 @@
 
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'personal/org-babel-tangle-dont-ask
                                               'run-at-end 'only-in-org-mode)))
+
+(use-package evil-org
+  :after org
+  :hook ((org-mode . evil-org-mode)
+         (org-agenda-mode . evil-org-mode)
+         (evil-org-mode . (lambda () (evil-org-set-key-theme '(navigation todo insert textobjects additional)))))
+  :config
+  (require 'evil-org-agenda)
+  (evil-org-agenda-set-keys))
+
+(personal/leader-keys
+  "o" '(:ignore t :which-key "org mode")
+  "oi" '(:ignore t :which-key "insert")
+  "oil" '(org-insert-link :which-key "insert link")
+  "on" '(org-toggle-narrow-to-subtree :which-key "toggle narrow")
+  "oa" '(org-agenda :which-key "status")
+  "ot" '(org-todo-list :which-key "todos")
+  "oc" '(org-capture t :which-key "capture")
+  "ox" '(org-export-dispatch t :which-key "export")))
 
 (use-package magit
   :bind ("C-M-;" . magit-status)
