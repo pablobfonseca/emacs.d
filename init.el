@@ -81,6 +81,7 @@
 (setq vc-follow-symlinks t)
 
 (use-package doom-themes
+  :defer t
   :init (load-theme 'doom-dracula t))
 
 (set-face-attribute 'default nil :font "Fira Code" :family "Retina" :height 155)
@@ -193,6 +194,10 @@
 
 (use-package evil-nerd-commenter
   :bind ("M-/" . evilnc-comment-or-uncomment-lines))
+
+(use-package ws-butler
+:hook ((text-mode . ws-butler-mode)
+       (prog-mode . ws-butler-mode)))
 
 (use-package dotcrafter
   :straight '(dotcrafter :host github
@@ -322,6 +327,7 @@
 
   (personal/leader-keys
    "t" '(:ignore t :which-key "toggles")
+   "tw" 'whitespace-mode
    "tt" '(counsel-load-theme :which-key "choose theme")))
 
 (use-package command-log-mode
@@ -330,32 +336,60 @@
 (use-package ivy
   :diminish
   :bind (("C-s" . swiper)
-	 :map ivy-minibuffer-map
-	 ("TAB" . ivy-alt-done)
-	 ("C-l" . ivy-alt-done)
-	 ("C-j" . ivy-next-line)
-	 ("C-k" . ivy-previous-line)
-	 :map ivy-switch-buffer-map
-	 ("C-k" . ivy-previous-line)
-	 ("C-l" . ivy-done)
-	 ("C-d" . ivy-switch-buffer-kill)
-	 :map ivy-reverse-i-search-map
-	 ("C-k" . ivy-previous-line)
-	 ("C-d" . ivy-reverse-i-search-kill))
+         :map ivy-minibuffer-map
+         ("TAB" . ivy-alt-done)
+         ("C-l" . ivy-alt-done)
+         ("C-j" . ivy-next-line)
+         ("C-k" . ivy-previous-line)
+         :map ivy-switch-buffer-map
+         ("C-k" . ivy-previous-line)
+         ("C-l" . ivy-done)
+         ("C-d" . ivy-switch-buffer-kill)
+         :map ivy-reverse-i-search-map
+         ("C-k" . ivy-previous-line)
+         ("C-d" . ivy-reverse-i-search-kill))
+  :init
+  (ivy-mode 1)
   :config
-  (ivy-mode 1))
+  (setq ivy-use-virtual-buffers t)
+  (setq ivy-wrap t)
+  (setq ivy-count-format "(%d/%d) ")
+  (setq enable-recursive-minibuffers t)
+
+  ;; Use different regex strategies per completion command
+  (push '(completion-at-point . ivy--regex-fuzzy) ivy-re-builders-alist)
+  (push '(swiper . ivy--regex-ignore-order) ivy-re-builders-alist)
+  (push '(counsel-M-x . ivy--regex-ignore-order) ivy-re-builders-alist)
+
+
+  ;; Set minibuffer heght for different commands
+  (setf (alist-get 'swiper ivy-height-alist) 15)
+  (setf (alist-get 'counsel-switch-buffer ivy-height-alist) 7))
 
 (use-package ivy-rich
   :init
-  (ivy-rich-mode 1))
+  (ivy-rich-mode 1)
+  :after counsel
+  :config
+  (setq ivy-format-function #'ivy-format-function-line)
+  (setq ivy-rich-display-transformers-list
+        (plist-put ivy-rich-display-transformers-list
+                   'ivy-switch-buffer
+                   '(:columns
+                     ((ivy-rich-candidate (:width 40))
+                      (ivy-rich-switch-buffer-indicators (:width 4 :face error :align right)); return the buffer indicators
+                      (ivy-rich-switch-buffer-major-mode (:width 12 :face warning))          ; return the major mode info
+                      (ivy-rich-switch-buffer-project (:width 15 :face success))             ; return project name using `projectile'
+                      (ivy-rich-switch-buffer-path (:width (lambda (x) (ivy-rich-switch-buffer-shorten-path x (ivy-rich-minibuffer-width 0.3))))))))))  ; return file path relative to project root or `default-directory' if project is nil
 
 (use-package counsel
   :bind (("M-x" . counsel-M-x)
-	 ("C-M-j" . counsel-switch-buffer)
-	 ("C-x b" . counsel-ibuffer)
-	 ("C-x C-f" . counsel-find-file)
-	 :map minibuffer-local-map
-	 ("C-r" . 'counsel-minibuffer-history))
+         ("C-M-j" . counsel-switch-buffer)
+         ("C-x b" . counsel-ibuffer)
+         ("C-x C-f" . counsel-find-file)
+         ("C-M-l" . counsel-imenu)
+         :map minibuffer-local-map
+         ("C-r" . 'counsel-minibuffer-history))
   :config
   (counsel-mode 1)
   (setq ivy-initial-inputs-alist nil)) ;; Don't start searches with ^
@@ -363,7 +397,7 @@
 (use-package swiper
   :after ivy
   :bind (("C-s" . swiper)
-	 ("C-r" . swiper)))
+         ("C-r" . swiper)))
 
 (use-package helpful
   :custom
@@ -375,7 +409,9 @@
   ([remap describe-variable] . counsel-describe-variable)
   ([remap describe-key] . helpful-key))
 
-(use-package hydra)
+(use-package hydra
+  :defer 1)
+
 (defhydra hydra-text-scale (:timeout 4)
   "scale text"
   ("j" text-scale-increase "in")
@@ -751,7 +787,7 @@
               ("TAB" . completion-at-point))
   :custom (lsp-headerline-breadcrumb-enable nil))
 
-(personal/leader-keys 
+(personal/leader-keys
   "l" '(:ignore t :which-key "lsp")
   "ld" 'xhref-find-definitions
   "lr" 'xhref-find-references
@@ -773,7 +809,7 @@
 
 (use-package ruby-mode
  :mode ("\\.rb\\'" "Rakefile\\'" "Gemfile\\'")
- :hook (ruby-mode . lsp)
+ :hook (ruby-mode . lsp-deferred)
  :interpreter "ruby"
  :config
  (add-hook 'ruby-mode-hook (lambda () (rvm-activate-corresponding-ruby)))
