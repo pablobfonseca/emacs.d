@@ -61,6 +61,28 @@
 
 (set-default-coding-systems 'utf-8)
 
+;; Align your code in a pretty way
+(global-set-key (kbd "C-x \\") 'align-regexp)
+
+;; Font size
+(global-set-key (kbd "C-+") 'text-scale-increase)
+(global-set-key (kbd "C--") 'text-scale-decrease)
+
+;; Window switching. (C-x o goes to the next window)
+(global-set-key (kbd "C-x O") (lambda ()
+                                (interactive)
+                                (other-window -1))) ;; back one
+
+;; Start vterm or switch to it if it's active
+(global-set-key (kbd "C-x m") 'vterm)
+
+;; replace buffer-menu with ibuffer
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+
+;; Magit creates some global keybindings by default
+;; but it's a nice to complement them with this one
+(global-set-key (kbd "C-c g") 'magit-file-dispatch)
+
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 

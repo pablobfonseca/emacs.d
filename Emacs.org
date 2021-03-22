@@ -112,6 +112,32 @@ Avoid constant errors about the encoding system by setting the default to UTF-8
 (set-default-coding-systems 'utf-8)
 #+end_src
 * Keybindings Configuration
+** Global keybindings
+#+begin_src emacs-lisp
+  ;; Align your code in a pretty way
+  (global-set-key (kbd "C-x \\") 'align-regexp)
+
+  ;; Font size
+  (global-set-key (kbd "C-+") 'text-scale-increase)
+  (global-set-key (kbd "C--") 'text-scale-decrease)
+
+  ;; Window switching. (C-x o goes to the next window)
+  (global-set-key (kbd "C-x O") (lambda ()
+                                  (interactive)
+                                  (other-window -1))) ;; back one
+
+  ;; Start vterm or switch to it if it's active
+  (global-set-key (kbd "C-x m") 'vterm)
+
+  ;; replace buffer-menu with ibuffer
+  (global-set-key (kbd "C-x C-b") 'ibuffer)
+
+  ;; Magit creates some global keybindings by default
+  ;; but it's a nice to complement them with this one
+  (global-set-key (kbd "C-c g") 'magit-file-dispatch)
+
+
+#+end_src
 ** EscCancels All
 #+begin_src emacs-lisp
 
