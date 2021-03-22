@@ -1215,7 +1215,6 @@ The =which-key= integration adds helpful descriptions of the various keys so you
     (lsp-ui-doc-position 'bottom))
 
 #+end_src
-
 **** lsp-treemacs
 
 [[https://github.com/emacs-lsp/lsp-treemacs][lsp-treemacs]] provides nice tree views for different aspects of your code like symbols in a file, references of a symbol, or diagnostic messages (errors and warnings) that are found in your code.
@@ -1604,12 +1603,6 @@ echo "Hello!" > #<buffer test-buffer>
 ** Ripgrep
 #+begin_src emacs-lisp
 (use-package ripgrep)
-#+end_src
-* Runtime Performance
-Dial the GC threshold back down so that garbage collection happens more frequently but in less time
-#+begin_src emacs-lisp
-;; Make gc pauses faster by decreasing the threshold
-(setq gc-cons-threshold (* 2 1000 1000))
 #+end_src
 * Applications
 ** Some App
