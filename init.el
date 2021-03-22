@@ -53,6 +53,12 @@
         (expand-file-name (format "emacs-custom-%s.el" (user-uid)) temporary-file-directory)))
 (load custom-file t)
 
+;; store all backup and autosave files in the tmp dir
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
+
 (set-default-coding-systems 'utf-8)
 
 ;; Make ESC quit prompts
@@ -180,12 +186,20 @@
 
 (setq inhibit-startup-message t)
 
-(scroll-bar-mode -1)              ; Disable visible scrollbar
-(tool-bar-mode -1)                ; Disable the toolbar
-(tooltip-mode -1)                 ; Disable the tooltips
-(set-fringe-mode 10)              ; Give some breathing room
-(menu-bar-mode -1)                ; Disable the menu bar
-(setq ring-bell-function 'ignore) ; Ignore bell
+    (scroll-bar-mode -1)              ; Disable visible scrollbar
+    (tool-bar-mode -1)                ; Disable the toolbar
+    (tooltip-mode -1)                 ; Disable the tooltips
+    (set-fringe-mode 10)              ; Give some breathing room
+    (menu-bar-mode -1)                ; Disable the menu bar
+    (setq ring-bell-function 'ignore) ; Ignore bell
+
+    ;; nice scrolling
+    (setq scroll-margin 0
+          scroll-conservatively 100000
+          scroll-preserve-screen-position 1)
+
+  ;; enable y/n answers
+(fset 'yes-or-no-p 'y-or-n-p)
 
 (column-number-mode)
 
@@ -238,6 +252,10 @@
       "Miscellaneous Symbols and Pictographs"
       "Transport and Map Symbols"))
   (unicode-fonts-setup))
+
+;; Enable emoji, and stop the UI from freezing when trying to display them
+(when (fboundp 'set-fontset-font)
+  (set-fontset-font t 'unicode "Apple Color Emoji" nil 'prepend))
 
 (use-package emojify
   :hook (erc-mode . emojify-mode)
@@ -313,6 +331,18 @@
 (setq-default tab-width 2)
 (setq-default evil-shift-width tab-width)
 
+;; hippie expand is dabbrev expand on steroids
+(setq hippie-expand-try-functions-list '(try-expand-dabbrev
+                                         try-expand-dabbrev-all-buffers
+                                         try-expand-dabbrev-from-kill
+                                         try-complete-file-name-partially
+                                         try-complete-file-name
+                                         try-expand-all-abbrevs
+                                         try-expand-list
+                                         try-expand-line
+                                         try-complete-listp-symbol-partially
+                                         try-complete-listp-symbol))
+
 (setq-default indent-tabs-mode nil)
 
 (use-package evil-nerd-commenter
@@ -358,6 +388,9 @@
 
 (personal/leader-keys
   "ts" '(hydra-text-scale/body :which-key "scale text"))
+
+;; meaningful names for buffers with the same name
+;; (use-p
 
 (use-package ivy
   :diminish
@@ -965,7 +998,11 @@
   (setq js2-mode-show-strict-warnings nil)
 
   ;; Set up proper indentation in JavascScript and JSON files
-  (add-hook 'js2-mode-hook #'personal/set-js-indentation)
+  (add-hook 'js2-mode-hook #'personal/set-js-indentation))
+
+(use-package json-mode
+  :straight nil
+  :config
   (add-hook 'json-mode-hook #'personal/set-js-indentation))
 
 (use-package markdown-mode

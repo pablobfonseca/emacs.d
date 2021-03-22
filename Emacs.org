@@ -98,6 +98,14 @@ I don't want a bunch of transient files showing up as untracked in the Git repo 
         (expand-file-name (format "emacs-custom-%s.el" (user-uid)) temporary-file-directory)))
 (load custom-file t)
 #+end_src
+** Backup files
+#+begin_src emacs-lisp
+  ;; store all backup and autosave files in the tmp dir
+  (setq backup-directory-alist
+        `((".*" . ,temporary-file-directory)))
+  (setq auto-save-file-name-transforms
+        `((".*" ,temporary-file-directory t)))
+#+end_src
 * Default Coding System
 Avoid constant errors about the encoding system by setting the default to UTF-8
 #+begin_src emacs-lisp
@@ -266,16 +274,25 @@ Some tips can be found here:
 * General Configuration
 ** User Interface
 
+
 Make Emacs more minimal
 #+begin_src emacs-lisp
-(setq inhibit-startup-message t)
+      (setq inhibit-startup-message t)
 
-(scroll-bar-mode -1)              ; Disable visible scrollbar
-(tool-bar-mode -1)                ; Disable the toolbar
-(tooltip-mode -1)                 ; Disable the tooltips
-(set-fringe-mode 10)              ; Give some breathing room
-(menu-bar-mode -1)                ; Disable the menu bar
-(setq ring-bell-function 'ignore) ; Ignore bell
+      (scroll-bar-mode -1)              ; Disable visible scrollbar
+      (tool-bar-mode -1)                ; Disable the toolbar
+      (tooltip-mode -1)                 ; Disable the tooltips
+      (set-fringe-mode 10)              ; Give some breathing room
+      (menu-bar-mode -1)                ; Disable the menu bar
+      (setq ring-bell-function 'ignore) ; Ignore bell
+
+      ;; nice scrolling
+      (setq scroll-margin 0
+            scroll-conservatively 100000
+            scroll-preserve-screen-position 1)
+
+    ;; enable y/n answers
+  (fset 'yes-or-no-p 'y-or-n-p)
 #+end_src
 
 Enable line numbers and customize their format.
@@ -304,7 +321,6 @@ Don't warn for following symlinked files
 #+begin_src emacs-lisp
 (setq vc-follow-symlinks t)
 #+end_src
-
 ** Theme
 
 [[https://github.com/hlissner/emacs-doom-themes][doom-themes]] is a great set of themes with a lot of variety and support for many different Emacs modes.  Taking a look at the [[https://github.com/hlissner/emacs-doom-themes/tree/screenshots][screenshots]] might help you decide which one you like best.  You can also run =M-x counsel-load-theme= to choose between them easily.
@@ -361,9 +377,13 @@ I am using the [[https://github.com/tonsky/FiraCode][Fira Code]] and [[https://f
  
 *** Emojis in buffers
 #+begin_src emacs-lisp
-(use-package emojify
-  :hook (erc-mode . emojify-mode)
-  :commands emojify-mode)
+  ;; Enable emoji, and stop the UI from freezing when trying to display them
+  (when (fboundp 'set-fontset-font)
+    (set-fontset-font t 'unicode "Apple Color Emoji" nil 'prepend))
+
+  (use-package emojify
+    :hook (erc-mode . emojify-mode)
+    :commands emojify-mode)
 #+end_src
 
 ** Mode Line
@@ -451,7 +471,7 @@ Prettify the modeline with [[https://github.com/Malabarba/smart-mode-line/][smar
 #+end_src
 ** Auto-Reverting Changed Files
 #+begin_src emacs-lisp
-(global-auto-revert-mode 1)
+  (global-auto-revert-mode 1)
 #+end_src
 ** Highlight Matching Braces
 #+begin_src emacs-lisp
@@ -461,13 +481,29 @@ Prettify the modeline with [[https://github.com/Malabarba/smart-mode-line/][smar
   (show-paren-mode 1))
 #+end_src
 * Editing Configuration
-** Tab Widths
+** Tabs Width
 Default to an indentation size of 2 spaces since it's the norm for pretty much every language I use
-
 #+begin_src emacs-lisp
-(setq-default tab-width 2)
-(setq-default evil-shift-width tab-width)
+  (setq-default tab-width 2)
+  (setq-default evil-shift-width tab-width)
 #+end_src
+
+** Hippie Expand
+#+begin_src emacs-lisp
+  ;; hippie expand is dabbrev expand on steroids
+  (setq hippie-expand-try-functions-list '(try-expand-dabbrev
+                                           try-expand-dabbrev-all-buffers
+                                           try-expand-dabbrev-from-kill
+                                           try-complete-file-name-partially
+                                           try-complete-file-name
+                                           try-expand-all-abbrevs
+                                           try-expand-list
+                                           try-expand-line
+                                           try-complete-listp-symbol-partially
+                                           try-complete-listp-symbol))
+
+#+end_src
+
 ** Use spaces instead of tabs for indentation
 #+begin_src emacs-lisp
 (setq-default indent-tabs-mode nil)
@@ -528,6 +564,7 @@ Emacs' built in commenting functionality =comment-dwim= (usually bound to =M-;=)
 #+end_src
 ** Text Scaling
 
+
 This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to design a transient key binding for quickly adjusting the scale of the text on screen.  We define a hydra that is bound to =C-s t s= and, once activated, =j= and =k= increase and decrease the text scale.  You can press any other key (or =f= specifically) to exit the transient key map.
 
 #+begin_src emacs-lisp
@@ -542,6 +579,11 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 
   (personal/leader-keys
     "ts" '(hydra-text-scale/body :which-key "scale text"))
+#+end_src
+** Uniquify
+#+begin_src emacs-lisp
+    ;; meaningful names for buffers with the same name
+  ;; (use-p
 #+end_src
 * Ivy and Counsel
 
@@ -1316,7 +1358,11 @@ Set up nvm so that we can manage Node versions
     (setq js2-mode-show-strict-warnings nil)
 
     ;; Set up proper indentation in JavascScript and JSON files
-    (add-hook 'js2-mode-hook #'personal/set-js-indentation)
+    (add-hook 'js2-mode-hook #'personal/set-js-indentation))
+
+  (use-package json-mode
+    :straight nil
+    :config
     (add-hook 'json-mode-hook #'personal/set-js-indentation))
 #+end_src
 
