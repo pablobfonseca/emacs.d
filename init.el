@@ -186,19 +186,19 @@
 
 (setq inhibit-startup-message t)
 
-    (scroll-bar-mode -1)              ; Disable visible scrollbar
-    (tool-bar-mode -1)                ; Disable the toolbar
-    (tooltip-mode -1)                 ; Disable the tooltips
-    (set-fringe-mode 10)              ; Give some breathing room
-    (menu-bar-mode -1)                ; Disable the menu bar
-    (setq ring-bell-function 'ignore) ; Ignore bell
+(scroll-bar-mode -1)              ; Disable visible scrollbar
+(tool-bar-mode -1)                ; Disable the toolbar
+(tooltip-mode -1)                 ; Disable the tooltips
+(set-fringe-mode 10)              ; Give some breathing room
+(menu-bar-mode -1)                ; Disable the menu bar
+(setq ring-bell-function 'ignore) ; Ignore bell
 
-    ;; nice scrolling
-    (setq scroll-margin 0
-          scroll-conservatively 100000
-          scroll-preserve-screen-position 1)
+;; nice scrolling
+(setq scroll-margin 0
+      scroll-conservatively 100000
+      scroll-preserve-screen-position 1)
 
-  ;; enable y/n answers
+;; enable y/n answers
 (fset 'yes-or-no-p 'y-or-n-p)
 
 (column-number-mode)
@@ -388,9 +388,6 @@
 
 (personal/leader-keys
   "ts" '(hydra-text-scale/body :which-key "scale text"))
-
-;; meaningful names for buffers with the same name
-;; (use-p
 
 (use-package ivy
   :diminish
