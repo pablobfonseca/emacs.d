@@ -207,6 +207,9 @@
    "tw" 'whitespace-mode
    "tt" '(counsel-load-theme :which-key "choose theme")))
 
+;; Open emacs maximized
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+
 (setq inhibit-startup-message t)
 
 (scroll-bar-mode -1)              ; Disable visible scrollbar
