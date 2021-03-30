@@ -561,7 +561,8 @@ Emacs' built in commenting functionality =comment-dwim= (usually bound to =M-;=)
 #+begin_src emacs-lisp
   (personal/leader-keys
     "f"  '(:ignore t :which-key "dotfiles")
-    "fe" '((lambda () (interactive) (find-file "~/.emacs.d/Emacs.org")) :which-key "edit config"))
+    "fe" '((lambda () (interactive) (find-file "~/.emacs.d/Emacs.org")) :which-key "edit config")
+    "fz" '((lambda () (interactive) (find-file "~/.emacs.d/Zsh.org")) :which-key "edit zsh config"))
 #+end_src
 * UI Configuration
 ** Command Log Mode

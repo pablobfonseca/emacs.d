@@ -384,7 +384,8 @@
 
 (personal/leader-keys
   "f"  '(:ignore t :which-key "dotfiles")
-  "fe" '((lambda () (interactive) (find-file "~/.emacs.d/Emacs.org")) :which-key "edit config"))
+  "fe" '((lambda () (interactive) (find-file "~/.emacs.d/Emacs.org")) :which-key "edit config")
+  "fz" '((lambda () (interactive) (find-file "~/.emacs.d/Zsh.org")) :which-key "edit zsh config"))
 
 (use-package command-log-mode
   :straight t)
