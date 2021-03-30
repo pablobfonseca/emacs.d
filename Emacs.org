@@ -75,12 +75,13 @@ Set up ELPA, MELPA and Org package repositories and load =use-package= to manage
 
 ** Load exec-path
 #+begin_src emacs-lisp
-(use-package exec-path-from-shell
-  :init
-  (setq exec-path-from-shell-check-startup-files nil)
-  :config
-  (exec-path-from-shell-initialize))
-#+end_src
+  (use-package exec-path-from-shell
+    :init
+    (setq exec-path-from-shell-check-startup-files nil)
+    :config
+    (when (memq window-system '(mac ns x))
+      (exec-path-from-shell-initialize)))
+    #+end_src
 * Keep .emacs.d Clean
 I don't want a bunch of transient files showing up as untracked in the Git repo so I move them all to another location.
 #+begin_src emacs-lisp
@@ -781,6 +782,8 @@ The keybindings for this are =C+M+-= and =C+M+==
     :defer 1
     :commands (dired dired-jump)
     :config
+    (when (string= system-type "darwin")
+      (setq dired-use-ls-dired nil))
     (setq dired-omit-files "^\\.[^.].*"
           dired-omit-verbose nil
           dired-hide-details-hide-symlinks-targets nil)
@@ -1308,7 +1311,7 @@ This package is built on the [[https://github.com/Alexander-Miller/treemacs][tre
 #+begin_src emacs-lisp
    (use-package ruby-mode
     :mode ("\\.rb\\'" "Rakefile\\'" "Gemfile\\'")
-    :hook (ruby-mode . lsp-deferred)
+    :hook (ruby-mode . lsp)
     :interpreter "ruby"
     :config
     (setq ruby-insert-encoding-magic-comment nil)
@@ -1703,7 +1706,7 @@ This is an example of configuring another non-Emacs application using org-mode. 
 
 #+NAME: the-value
  #+begin_src emacs-lisp :tangle no
-(message "foo")
+(+ 1 1)
  #+end_src
 
  #+begin_src conf-unix :tangle ~/Dropbox/Study/Emacs/OrgFiles/foo.conf :noweb yes

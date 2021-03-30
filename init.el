@@ -37,7 +37,8 @@
   :init
   (setq exec-path-from-shell-check-startup-files nil)
   :config
-  (exec-path-from-shell-initialize))
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize)))
 
 ;; Change the user-emacs-directory to keep unwanted things out of ~/.emacs.d
 (setq user-emacs-directory (expand-file-name "~/.cache/emacs/")
@@ -566,6 +567,8 @@
   :defer 1
   :commands (dired dired-jump)
   :config
+  (when (string= system-type "darwin")
+    (setq dired-use-ls-dired nil))
   (setq dired-omit-files "^\\.[^.].*"
         dired-omit-verbose nil
         dired-hide-details-hide-symlinks-targets nil)
@@ -966,7 +969,7 @@
 
 (use-package ruby-mode
  :mode ("\\.rb\\'" "Rakefile\\'" "Gemfile\\'")
- :hook (ruby-mode . lsp-deferred)
+ :hook (ruby-mode . lsp)
  :interpreter "ruby"
  :config
  (setq ruby-insert-encoding-magic-comment nil)
