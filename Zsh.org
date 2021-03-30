@@ -5,16 +5,16 @@
 This file generates [[file:zshrc][zshrc]] file which can be loaded by ZSH at startup.
 
 * envvars
-#+begin_src shell
-  export PATH="/usr/local/sbin:$PATH"
+#+begin_src shell :tangle ./zshenv
+   export PATH="/usr/local/sbin:$PATH"
 
-  export HISTSIZE=20000
-  export SAVEHIST=20000
+   export HISTSIZE=20000
+   export SAVEHIST=20000
 
-  export DOTFILES=$HOME/.dotfiles
+   export DOTFILES=$HOME/.dotfiles
 
-  export LC_ALL=en_US.UTF-8
-  export LANG=en_US.UTF-8
+   export LC_ALL=en_US.UTF-8
+   export LANG=en_US.UTF-8
 #+end_src
 ** Go
 #+begin_src shell
@@ -24,10 +24,21 @@ This file generates [[file:zshrc][zshrc]] file which can be loaded by ZSH at sta
   export PATH=$PATH:$GOPATH/bin
   export PATH=$PATH:$GOROOT/bin
 #+end_src
+** Rust
+#+begin_src shell :tangle ./zshenv
+source "$HOME/.cargo/env"
+#+end_src
 
 * fzf
 #+begin_src shell
   export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
+
+  # export FZF_DEFAULT_OPTS='--height=50% --min-height=15 --preview="bat --style=numbers --color=always {} | head -500" --preview-window=right:60%:wrap'
+  export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
+
+
+  export FZF_CTRL_T_COMMAND=$FZF_DEFAULT_COMMAND
+  export FZF_COMPLETE=1
 
   # Auto-suggestions
   [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -42,6 +53,26 @@ This file generates [[file:zshrc][zshrc]] file which can be loaded by ZSH at sta
 #+begin_src shell
 autoload -U compinit
 compinit
+#+end_src
+
+* zplug
+#+begin_src shell
+source ~/.zplug/init.zsh
+#+end_src
+** Plugins
+#+begin_src shell
+  zplug "b4b4r07/enhancd"
+
+  # Install plugins if there are plugins that have not been installed
+  if ! zplug check --verbose; then
+      printf "Install? [y/N]: "
+      if read -q; then
+          echo; zplug install
+      fi
+  fi
+
+  # Then, source plugins and add commands to $PATH
+  zplug load --verbose
 #+end_src
 * httptoolkit
  This section will be reset each time a HTTP Toolkit terminal is opened
@@ -99,7 +130,7 @@ function search_route {
       local rb
       rb=$((echo system; rvm list | grep ruby | cut -c 4-) |
                awk '{print $1}' |
-               fzf -l 30 +m --reverse) && rvm use $rb
+               fzf) && rvm use $rb
   }
 
 #+end_src
@@ -107,7 +138,7 @@ function search_route {
 #+begin_src shell
   nvmlist() {
       local njs
-      njs=$((nvm ls --no-colors --no-alias | cut -c 8-) | awk '{print $1}' | fzf -l 30 +m --reverse) && nvm use $njs
+      njs=$((nvm ls --no-colors --no-alias | cut -c 8-) | awk '{print $1}' | fzf) && nvm use $njs
   }
 #+end_src
 
@@ -116,6 +147,7 @@ function search_route {
   alias path="echo $PATH | tr -s ':' '\n'"
   alias reload!='source ~/.zshrc'
   alias brew_update='brew update && brew upgrade && brew cleanup'
+  alias code="cd ~/code && cd"
 #+end_src
 
 * Starship theme
