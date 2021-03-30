@@ -79,10 +79,6 @@
 ;; replace buffer-menu with ibuffer
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
-;; Magit creates some global keybindings by default
-;; but it's a nice to complement them with this one
-(global-set-key (kbd "C-c g") 'magit-file-dispatch)
-
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
@@ -137,6 +133,11 @@
 
   (evil-set-initial-state 'messages-buffer-mode 'normal)
   (evil-set-initial-state 'dashboard-mode 'normal))
+
+(use-package evil-matchit
+  :straight t
+  :config
+  (global-evil-matchit-mode 1))
 
 (use-package evil-collection
   :after evil
@@ -243,10 +244,10 @@
   :defer t
   :init (load-theme 'doom-dracula t))
 
-(set-face-attribute 'default nil :font "Fira Code" :family "Retina" :height 155)
+(set-face-attribute 'default nil :font "FuraCode Nerd Font" :family "Retina" :height 155)
 
 ;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil :font "Fira Code" :family "Retina" :height 155)
+(set-face-attribute 'fixed-pitch nil :font "FuraCode Nerd Font" :family "Retina" :height 155)
 
 ;; Set the variable pitch face
 (set-face-attribute 'variable-pitch nil :font "Cantarell" :height 160 :weight 'regular)
@@ -541,6 +542,9 @@
   (aw-minibuffer-flag t)
   :config
   (ace-window-display-mode 1))
+
+(use-package transpose-frame
+  :straight t)
 
 (defun personal/org-mode-visual-fill ()
   (setq visual-fill-column-width 110
@@ -939,7 +943,7 @@
 
 (personal/leader-keys
   "l" '(:ignore t :which-key "lsp")
-  "ld" 'xhref-find-definitions
+  "ld" 'lsp-find-definition
   "lr" 'xhref-find-references
   "ln" 'lsp-ui-find-next-reference
   "lp" 'lsp-ui-find-prev-reference
@@ -962,6 +966,7 @@
  :hook (ruby-mode . lsp-deferred)
  :interpreter "ruby"
  :config
+ (setq ruby-insert-encoding-magic-comment nil)
  (add-hook 'ruby-mode-hook (lambda () (rvm-activate-corresponding-ruby)))
  :bind (:map ruby-mode-map
        ("\C-c r r" . inf-ruby)))
@@ -986,6 +991,18 @@
 (use-package rubocop
   :straight t)
 
+(use-package rspec-mode
+  :straight t
+  :after ruby-mode
+  :init
+  (progn
+    (setq rspec-use-spring-when-possible nil)
+    (setq rspec-use-rake-flag nil))
+  :config
+  (rspec-install-snippets)
+  (setq rspec-use-rvm t)
+  (add-hook 'after-init-hook 'inf-ruby-switch-setup))
+
 (use-package python-mode
   :straight nil
   :hook (python-mode . lsp))
@@ -1004,6 +1021,8 @@
   (setq typescript-indent-level 2))
 
 (defun personal/set-js-indentation ()
+  ;; electric-layout-mode doesn't play nice with smartparens
+  (setq-local electrict-layout-rules '((?\{ . around) (?\} . around)))
   (setq js-indent-level 2)
   (setq evil-shift-width js-indent-level)
   (setq-default tab-width 2))
@@ -1049,7 +1068,8 @@
   (setq-default web-mode-code-indent-offset 2)
   (setq-default web-mode-css-indent-offset 2)
   (setq-default web-mode-markup-indent-offset 2)
-  (setq-default web-mode-attribute-indent-offset 2))
+  (setq web-mode-content-types-alist '(("jsx" . "\\.js[x]?\\'")))
+  (setq-default web-mode-attr-indent-offset 2))
 
 ;; 1. Start the server with `httpd-start`
 ;; 2. Use `impatient-mode` on any buffer
