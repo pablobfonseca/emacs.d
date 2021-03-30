@@ -5,18 +5,15 @@
 This file generates [[file:zshrc][zshrc]] file which can be loaded by ZSH at startup.
 * envvars
 #+begin_src shell :tangle ./zsh/zshenv
-   export PATH="/usr/local/sbin:$PATH"
-
-   export HISTSIZE=20000
-   export SAVEHIST=20000
-
-   export DOTFILES=$HOME/.dotfiles
-
-   export LC_ALL=en_US.UTF-8
-   export LANG=en_US.UTF-8
+  export PATH="/usr/local/sbin:$PATH"
+  export HISTSIZE=20000
+  export SAVEHIST=20000
+  export DOTFILES=$HOME/.dotfiles
+  export LC_ALL=en_US.UTF-8
+  export LANG=en_US.UTF-8
 #+end_src
 ** Go
-#+begin_src shell
+#+begin_src shell :tangle ./zsh/zshenv
   export GOPATH=$HOME/code/go-workspace
   export GOROOT=/usr/local/opt/go/libexec
   export GOBIN=$GOPATH/bin
@@ -29,19 +26,19 @@ source "$HOME/.cargo/env"
 #+end_src
 
 * fzf
-#+begin_src shell
+** envvars
+#+begin_src shell :tangle ./zsh/zshenv
   export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
   export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
   export FZF_CTRL_T_COMMAND=$FZF_DEFAULT_COMMAND
   export FZF_COMPLETE=1
+#+end_src
 
+** config
+#+begin_src shell
   [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 #+end_src
 
-* zsh-autosuggestions
-#+begin_src shell
-  source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-#+end_src
 * zsh-syntax-highlighting
 #+begin_src shell
   source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
@@ -59,6 +56,7 @@ source ~/.zplug/init.zsh
 #+end_src
 ** Plugins
 #+begin_src shell
+  zplug "zsh-users/zsh-autosuggestions"
   zplug "b4b4r07/enhancd"
 
   # Install plugins if there are plugins that have not been installed
@@ -70,7 +68,7 @@ source ~/.zplug/init.zsh
   fi
 
   # Then, source plugins and add commands to $PATH
-  zplug load --verbose
+  zplug load
 #+end_src
 * httptoolkit
  This section will be reset each time a HTTP Toolkit terminal is opened
@@ -88,7 +86,7 @@ source ~/.zplug/init.zsh
  #+end_src
 
 * rvm
-#+begin_src shell
+#+begin_src shell :tangle ./zsh/zshenv
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"
 #+end_src
@@ -143,9 +141,11 @@ function search_route {
 * Aliases
 #+begin_src shell
   alias path="echo $PATH | tr -s ':' '\n'"
-  alias reload!='source ~/.zshrc'
-  alias brew_update='brew update && brew upgrade && brew cleanup'
+  alias reload!="source ~/.zshrc"
+  alias brew_update="brew update && brew upgrade && brew cleanup"
   alias code="cd ~/code && cd"
+  alias untar="tar -zxvf"
+  alias genpass="openssl rand -base64 20"
 #+end_src
 
 * Starship theme
