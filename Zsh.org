@@ -1,0 +1,124 @@
+#+TITLE: @pablobfonseca's ZSH Configuration
+#+PROPERTY: header-args:shell :tangle ./zshrc :mkdirp yes
+
+* Welcome to my Zsh Config
+This file generates [[file:zshrc][zshrc]] file which can be loaded by ZSH at startup.
+
+* envvars
+#+begin_src shell
+  export PATH="/usr/local/sbin:$PATH"
+
+  export HISTSIZE=20000
+  export SAVEHIST=20000
+
+  export DOTFILES=$HOME/.dotfiles
+
+  export LC_ALL=en_US.UTF-8
+  export LANG=en_US.UTF-8
+#+end_src
+** Go
+#+begin_src shell
+  export GOPATH=$HOME/code/go-workspace
+  export GOROOT=/usr/local/opt/go/libexec
+  export GOBIN=$GOPATH/bin
+  export PATH=$PATH:$GOPATH/bin
+  export PATH=$PATH:$GOROOT/bin
+#+end_src
+
+* fzf
+#+begin_src shell
+  export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
+
+  # Auto-suggestions
+  [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+#+end_src
+
+* zsh-syntax-highlighting
+#+begin_src shell
+  source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+#+end_src
+
+* Enable completion
+#+begin_src shell
+autoload -U compinit
+compinit
+#+end_src
+* httptoolkit
+ This section will be reset each time a HTTP Toolkit terminal is opened
+ #+begin_src shell
+   if [ -n "$HTTP_TOOLKIT_ACTIVE" ]; then
+       # When HTTP Toolkit is active, we inject various overrides into PATH
+       export PATH="/Users/pablofonseca/.local/share/httptoolkit-server/client/1.0.2/overrides/path:$PATH"
+
+       if command -v winpty >/dev/null 2>&1; then
+           # Work around for winpty's hijacking of certain commands
+           alias php=php
+           alias node=node
+       fi
+   fi
+ #+end_src
+
+* rvm
+#+begin_src shell
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"
+#+end_src
+
+* nvm
+#+begin_src shell
+  [[ -s $HOME/.nvm/nvm.sh ]] && . $HOME/.nvm/nvm.sh
+#+end_src
+
+* Functions
+** search_route
+#+begin_src shell
+function search_route {
+  bin/rails routes | rg $1
+}
+#+end_src
+
+** bundle_search
+#+begin_src shell
+  function bundle_search() {
+      pattern="$1"; shift
+      ag $pattern $(bundle show --paths "$@")
+  }
+#+end_src
+
+** take
+#+begin_src shell
+  function take {
+      mkdir $1
+      cd $1
+  }
+#+end_src
+
+** rvmlist
+#+begin_src shell
+  rvmlist() {
+      local rb
+      rb=$((echo system; rvm list | grep ruby | cut -c 4-) |
+               awk '{print $1}' |
+               fzf -l 30 +m --reverse) && rvm use $rb
+  }
+
+#+end_src
+** nvmlist
+#+begin_src shell
+  nvmlist() {
+      local njs
+      njs=$((nvm ls --no-colors --no-alias | cut -c 8-) | awk '{print $1}' | fzf -l 30 +m --reverse) && nvm use $njs
+  }
+#+end_src
+
+* Aliases
+#+begin_src shell
+  alias path="echo $PATH | tr -s ':' '\n'"
+  alias reload!='source ~/.zshrc'
+  alias brew_update='brew update && brew upgrade && brew cleanup'
+#+end_src
+
+* Starship theme
+#+begin_src shell
+  eval "$(starship init zsh)"
+#+end_src
