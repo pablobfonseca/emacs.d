@@ -1,0 +1,11 @@
+export PATH="/usr/local/sbin:$PATH"
+
+export HISTSIZE=20000
+export SAVEHIST=20000
+
+export DOTFILES=$HOME/.dotfiles
+
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+
+source "$HOME/.cargo/env"

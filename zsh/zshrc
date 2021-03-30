@@ -5,11 +5,7 @@ export PATH=$PATH:$GOPATH/bin
 export PATH=$PATH:$GOROOT/bin
 
 export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
-
-# export FZF_DEFAULT_OPTS='--height=50% --min-height=15 --preview="bat --style=numbers --color=always {} | head -500" --preview-window=right:60%:wrap'
 export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
-
-
 export FZF_CTRL_T_COMMAND=$FZF_DEFAULT_COMMAND
 export FZF_COMPLETE=1
 

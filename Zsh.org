@@ -1,11 +1,10 @@
 #+TITLE: @pablobfonseca's ZSH Configuration
-#+PROPERTY: header-args:shell :tangle ./zshrc :mkdirp yes
+#+PROPERTY: header-args:shell :tangle ./zsh/zshrc :mkdirp yes
 
 * Welcome to my Zsh Config
 This file generates [[file:zshrc][zshrc]] file which can be loaded by ZSH at startup.
-
 * envvars
-#+begin_src shell :tangle ./zshenv
+#+begin_src shell :tangle ./zsh/zshenv
    export PATH="/usr/local/sbin:$PATH"
 
    export HISTSIZE=20000
@@ -25,18 +24,14 @@ This file generates [[file:zshrc][zshrc]] file which can be loaded by ZSH at sta
   export PATH=$PATH:$GOROOT/bin
 #+end_src
 ** Rust
-#+begin_src shell :tangle ./zshenv
+#+begin_src shell :tangle ./zsh/zshenv
 source "$HOME/.cargo/env"
 #+end_src
 
 * fzf
 #+begin_src shell
   export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
-
-  # export FZF_DEFAULT_OPTS='--height=50% --min-height=15 --preview="bat --style=numbers --color=always {} | head -500" --preview-window=right:60%:wrap'
   export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
-
-
   export FZF_CTRL_T_COMMAND=$FZF_DEFAULT_COMMAND
   export FZF_COMPLETE=1
 
