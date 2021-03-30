@@ -75,7 +75,7 @@ source ~/.zplug/init.zsh
  #+begin_src shell
    if [ -n "$HTTP_TOOLKIT_ACTIVE" ]; then
        # When HTTP Toolkit is active, we inject various overrides into PATH
-       export PATH="/Users/pablofonseca/.local/share/httptoolkit-server/client/1.0.2/overrides/path:$PATH"
+       export PATH="$HOME/.local/share/httptoolkit-server/client/1.0.2/overrides/path:$PATH"
 
        if command -v winpty >/dev/null 2>&1; then
            # Work around for winpty's hijacking of certain commands
@@ -92,8 +92,35 @@ export PATH="$PATH:$HOME/.rvm/bin"
 #+end_src
 
 * nvm
+** envvars
+#+begin_src shell :tangle ./zsh/zshenv
+export NVM_DIR="$HOME/.nvm"
+#+end_src
+
+** config
 #+begin_src shell
-  [[ -s $HOME/.nvm/nvm.sh ]] && . $HOME/.nvm/nvm.sh
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+  autoload -U add-zsh-hook
+  load-nvmrc() {
+      local node_version="$(nvm version)"
+      local nvmrc_path="$(nvm_find_nvmrc)"
+
+      if [ -n "$nvmrc_path" ]; then
+          local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
+
+          if [ "$nvmrc_node_version" = "N/A" ]; then
+              nvm install
+          elif [ "$nvmrc_node_version" != "$node_version" ]; then
+              nvm use
+          fi
+      elif [ "$node_version" != "$(nvm version default)" ]; then
+          echo "Reverting to nvm default version"
+          nvm use default
+      fi
+  }
+  add-zsh-hook chpwd load-nvmrc
+  load-nvmrc
 #+end_src
 
 * Functions
@@ -146,6 +173,10 @@ function search_route {
   alias code="cd ~/code && cd"
   alias untar="tar -zxvf"
   alias genpass="openssl rand -base64 20"
+  alias st="git st"
+  alias check3000="lsof -i :3000"
+  alias ll="ls -alF"
+  alias vimup="nvim +PlugUpdate"
 #+end_src
 
 * Starship theme
