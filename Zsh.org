@@ -11,6 +11,7 @@ This file generates [[file:zshrc][zshrc]] file which can be loaded by ZSH at sta
   export DOTFILES=$HOME/.dotfiles
   export LC_ALL=en_US.UTF-8
   export LANG=en_US.UTF-8
+  export CLICOLOR=1
 #+end_src
 ** Go
 #+begin_src shell :tangle ./zsh/zshenv
