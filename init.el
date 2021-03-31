@@ -939,7 +939,7 @@
 
 (use-package lsp-mode
   :straight t
-  :commands (lsp lsp-deferred)
+  :commands lsp
   :hook (lsp-mode . personal/lsp-mode-setup)
   :config
   (lsp-enable-which-key-integration t)
@@ -961,11 +961,11 @@
 (use-package lsp-ui
   :straight t
   :hook (lsp-mode . lsp-ui-mode)
-  :custom
-  (lsp-ui-doc-position 'bottom))
-
-(use-package lsp-treemacs
-  :after lsp)
+  :config
+  (setq lsp-ui-sideline-enable t)
+  (setq lsp-ui-sideline-show-hover nil)
+  (setq lsp-ui-doc-position 'bottom)
+  (lsp-ui-doc-show))
 
 (use-package ruby-mode
  :mode ("\\.rb\\'" "Rakefile\\'" "Gemfile\\'")
@@ -1022,7 +1022,7 @@
 
 (use-package typescript-mode
   :mode "\\.tsx?\\'"
-  :hook (typescript-mode . lsp-deferred)
+  :hook (typescript-mode . lsp)
   :config
   (setq typescript-indent-level 2))
 
@@ -1034,7 +1034,7 @@
   (setq-default tab-width 2))
 
 (use-package js2-mode
-  :hook (js2-mode . lsp-deferred)
+  :hook (js2-mode . lsp)
   :mode "\\.jsx?\\'"
   :config
   ;; Use js2-mode for Node scripts
@@ -1133,7 +1133,7 @@
 
 (use-package go-mode
   :defer t
-  :hook (go-mode . lsp-deferred)
+  :hook (go-mode . lsp)
   :config
   (add-hook 'go-mode-hook #'personal/go-mode-defaults))
 
@@ -1152,7 +1152,8 @@
 
 (use-package elm-mode
   :straight t
-  :hook (elm-mode . lsp-deferred))
+  :config
+  (setq elm-format-on-save t))
 
 (use-package flycheck
   :defer t
