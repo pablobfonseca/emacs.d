@@ -1152,8 +1152,7 @@
 
 (use-package elm-mode
   :straight t
-  :config
-  (add-hook 'elm-mode-hook 'elm-format-on-save-mode))
+  :hook (elm-mode . lsp-deferred))
 
 (use-package flycheck
   :defer t

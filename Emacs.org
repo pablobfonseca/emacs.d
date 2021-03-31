@@ -1537,8 +1537,7 @@ Set up nvm so that we can manage Node versions
 #+begin_src emacs-lisp
   (use-package elm-mode
     :straight t
-    :config
-    (add-hook 'elm-mode-hook 'elm-format-on-save-mode))
+    :hook (elm-mode . lsp-deferred))
 #+end_src
 ** Productivity
 *** Syntax checking with Flycheck
