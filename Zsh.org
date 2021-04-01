@@ -6,6 +6,7 @@ This file generates [[file:zshrc][zshrc]] file which can be loaded by ZSH at sta
 * envvars
 #+begin_src shell :tangle ./zsh/zshenv
   export PATH="/usr/local/sbin:$PATH"
+  export PATH="/usr/local/mysql/bin:$PATH"
   export HISTSIZE=20000
   export SAVEHIST=20000
   export DOTFILES=$HOME/.dotfiles
