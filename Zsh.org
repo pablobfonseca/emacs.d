@@ -22,6 +22,17 @@ This file generates [[file:zshrc][zshrc]] file which can be loaded by ZSH at sta
   export PATH=$PATH:$GOPATH/bin
   export PATH=$PATH:$GOROOT/bin
 #+end_src
+** Haskell
+*** envvars
+#+begin_src shell :tangle ./zsh/zshenv
+  export PATH="$HOME/.local/bin:$PATH"
+
+#+end_src
+
+*** config
+#+begin_src shell
+  [ -f "$HOME/.ghcup/env" ] && source "$HOME/.ghcup/env" # ghcup-env
+#+end_src
 ** Rust
 #+begin_src shell :tangle ./zsh/zshenv
 source "$HOME/.cargo/env"
