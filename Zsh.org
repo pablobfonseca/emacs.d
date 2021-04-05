@@ -100,9 +100,11 @@ source ~/.zplug/init.zsh
 
 * rvm
 #+begin_src shell :tangle ./zsh/zshenv
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin"
-#+end_src
+  # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+  export PATH="$PATH:$HOME/.rvm/bin"
+  export PATH="$HOME/.gem/bin:$PATH"
+  export GEM_HOME=$HOME/.gem
+  #+end_src
 
 * nvm
 ** envvars
