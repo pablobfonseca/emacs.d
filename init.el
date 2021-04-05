@@ -1151,6 +1151,16 @@
   :straight t
   :defer t)
 
+(use-package lsp-haskell
+  :straight t
+  :defer t)
+
+(use-package haskell-mode
+  :straight t
+  :config
+  (add-hook 'haskell-mode-hook #'lsp)
+  (add-hook 'haskell-literate-mode-hook #'lsp))
+
 (use-package elm-mode
   :straight t
   :config

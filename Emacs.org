@@ -1508,6 +1508,18 @@ Set up nvm so that we can manage Node versions
     :straight t
     :defer t)
 #+end_src
+*** Haskell
+#+begin_src emacs-lisp
+  (use-package lsp-haskell
+    :straight t
+    :defer t)
+
+  (use-package haskell-mode
+    :straight t
+    :config
+    (add-hook 'haskell-mode-hook #'lsp)
+    (add-hook 'haskell-literate-mode-hook #'lsp))
+#+end_src
 *** Elm
 #+begin_src emacs-lisp
   (use-package elm-mode
