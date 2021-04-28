@@ -1216,7 +1216,7 @@
 
 (use-package term
   :config
-  (setq explicit-shell-file-name "fish"))
+  (setq explicit-shell-file-name "zsh"))
 
 (use-package eterm-256color
   :hook (term-mode . eterm-256color-mode))
@@ -1249,6 +1249,13 @@
   :hook (eshell-first-time-mode . personal/configure-eshell)
   :config
   (eshell-git-prompt-use-theme 'powerline))
+
+(use-package eshell-toggle
+  :bind ("C-x C-t" . eshell-toggle)
+  :custom
+  (eshell-toggle-size-fraction 3)
+  (eshell-toggle-use-project-root t)
+  (eshell-toggle-run-command nil))
 
 (use-package docker
   :commands docker)
