@@ -91,5 +91,8 @@ alias st="git st"
 alias check3000="lsof -i :3000"
 alias ll="ls -alF"
 alias vimup="nvim +PlugUpdate"
+alias bselect="git bselect"
+
+eval $(opam env)
 
 eval "$(starship init zsh)"
