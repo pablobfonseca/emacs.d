@@ -1156,6 +1156,13 @@
   :config
   (setq elm-format-on-save t))
 
+(use-package tuareg
+  :hook (tuareg-mode . lsp)
+  :straight t)
+
+(use-package utop
+  :straight t)
+
 (use-package flycheck
   :defer t
   :hook (lsp-mode . flycheck-mode))

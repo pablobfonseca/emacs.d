@@ -1515,6 +1515,15 @@ Set up nvm so that we can manage Node versions
     :config
     (setq elm-format-on-save t))
 #+end_src
+*** oCaml
+#+begin_src emacs-lisp
+  (use-package tuareg
+    :hook (tuareg-mode . lsp)
+    :straight t)
+
+  (use-package utop
+    :straight t)
+#+end_src
 ** Productivity
 *** Syntax checking with Flycheck
 #+begin_src emacs-lisp
