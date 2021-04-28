@@ -1349,8 +1349,8 @@ This is an interesting extension to Magit that shows a TODOs section in your git
 
 Set up nvm so that we can manage Node versions
 #+begin_src emacs-lisp
-(use-package nvm
-  :defer t)
+  (use-package nvm
+    :straight t)
 #+end_src
 
   This is a basic configuration for the TypeScript language so that =.ts= files activate =typescript-mode= when opened.  We're also adding a hook to =typescript-mode-hook= to call =lsp-deferred= so that we activate =lsp-mode= to get LSP features every time we edit TypeScript code.

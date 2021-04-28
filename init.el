@@ -1019,7 +1019,7 @@
   :hook (python-mode . pyvenv-mode))
 
 (use-package nvm
-  :defer t)
+  :straight t)
 
 (use-package typescript-mode
   :mode "\\.tsx?\\'"
