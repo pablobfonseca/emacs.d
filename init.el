@@ -966,10 +966,7 @@
   :straight t
   :hook (lsp-mode . lsp-ui-mode)
   :config
-  (setq lsp-ui-sideline-enable t)
-  (setq lsp-ui-sideline-show-hover nil)
-  (setq lsp-ui-doc-position 'bottom)
-  (lsp-ui-doc-show))
+  (setq lsp-ui-doc-position 'bottom))
 
 (use-package ruby-mode
  :mode ("\\.rb\\'" "Rakefile\\'" "Gemfile\\'")
