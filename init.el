@@ -225,6 +225,10 @@
       scroll-conservatively 100000
       scroll-preserve-screen-position 1)
 
+;; remap scroll-other-window
+(global-set-key (kbd "C-M-e") 'scroll-other-window)
+(global-set-key (kbd "C-M-y") 'scroll-other-window-down)
+
 ;; enable y/n answers
 (fset 'yes-or-no-p 'y-or-n-p)
 
