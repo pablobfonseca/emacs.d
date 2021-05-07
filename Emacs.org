@@ -1336,8 +1336,7 @@ This is an interesting extension to Magit that shows a TODOs section in your git
     :straight t
     :hook (python-mode . pyvenv-mode))
 #+end_src
-*** Typescript and Javascript
-
+*** Typescript and JavaScript
 Set up nvm so that we can manage Node versions
 #+begin_src emacs-lisp
   (use-package nvm

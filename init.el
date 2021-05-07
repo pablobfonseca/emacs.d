@@ -1224,6 +1224,7 @@
       (setq refmt-command refmt-bin)))
   )
 
+(use-package vimrc-mode
   :straight t)
 
 (use-package flycheck
