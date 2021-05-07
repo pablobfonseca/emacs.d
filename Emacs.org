@@ -1763,6 +1763,12 @@ echo "Hello!" > #<buffer test-buffer>
 #+begin_src emacs-lisp
 (use-package ripgrep)
 #+end_src
+* Tools
+** Crux
+#+begin_src emacs-lisp
+  (use-package crux
+    :straight t)
+#+end_src
 * Applications
 ** Some App
 

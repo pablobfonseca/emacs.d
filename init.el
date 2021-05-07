@@ -1329,3 +1329,6 @@
   (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode)))
 
 (use-package ripgrep)
+
+(use-package crux
+  :straight t)
