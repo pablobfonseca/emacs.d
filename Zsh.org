@@ -192,7 +192,7 @@ function search_route {
   alias check3000="lsof -i :3000"
   alias ll="ls -alF"
   alias vimup="nvim +PlugUpdate"
-  alias bselect="git bselect"
+  alias bs="git bselect"
 #+end_src
 
 * Languages
