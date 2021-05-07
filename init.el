@@ -1157,11 +1157,73 @@
   :config
   (setq elm-format-on-save t))
 
-(use-package tuareg
-  :hook (tuareg-mode . lsp)
+(use-package caml
   :straight t)
 
+(use-package tuareg
+  :hook (tuareg-mode . lsp)
+  :mode ("\\.ml[ily]?$" . tuareg-mode)
+  :straight t)
+
+;; (use-package merlin
+;;   :straight t
+;;   :custom
+;;   (merlin-completion-with-doc t)
+;;   :bind (:map merlin-mode-map
+;;               ("M-." . merlin-locate)
+;;               ("M-," . merlin-pop-stack)
+;;               ("M-?" . merlin-occurrences)
+;;               ("C-c C-j" . merlin-jump)
+;;               ("C-c i" . merlin-locate-ident)
+;;               ("C-c C-e" . merlin-iedit-occurrences))
+;;   :hook
+;;   ;; Start merlin on ml files
+;;   ((reason-mode tuareg-mode caml-mode) . merlin-mode))
+
 (use-package utop
+  :custom
+  (utop-edit-command nil)
+  :hook
+  (tuareg-mode . (lambda ()
+                   (setq utop-command "utop -emacs")
+                   (utop-minor-mode)))
+  (reason-mode . (lambda ()
+                   (setq utop-command "rtop -emacs")
+                   (setq utop-prompt
+                         (lambda ()
+                           (let ((prompt (format "rtop[%d]> " utop-command-number)))
+                             (add-text-properties 0 (lenght prompt) '(face utop-prompt) prompt)
+                             prompt)))
+                   (utop-minor-mode)))
+  :straight t)
+
+(defun shell-cmd (cmd)
+  "Returns the stdout output of a shell command or nil if the command returned an error"
+  (car (ignore-errors (apply 'process-lines (split-string cmd)))))
+
+(setq opam-p (shell-cmd "which opam"))
+(setq reason-p (shell-cmd "which refmt"))
+
+(use-package reason-mode
+  :straight t
+  :if reason-p
+  :config
+  (add-hook 'reason-mode-hook (lambda ()
+                                (add-hook 'before-save-hook #'refmt-before-save)))
+  (let* ((refmt-bin (or (shell-cmd "refmt ----where")
+                        (shell-cmd "which refmt")))
+         (merlin-bin (or (shell-cmd "ocamlerlin ----where")
+                         (shell-cmd "which ocamlmerlin")))
+         (merlin-base-dir (when merlin-bin
+                            (replace-regexp-in-string "bin/ocamlmerlin$" "" merlin-bin))))
+    ;; Add npm merlin.el to the emacs load path and tell emacs where to find ocamlerlin
+    (when merlin-bin
+      (add-to-list 'load-path (concat merlin-base-dir "share/emacs/site-lisp/"))
+      (setq merlin-command merlin-bin))
+    (when refmt-bin
+      (setq refmt-command refmt-bin)))
+  )
+
   :straight t)
 
 (use-package flycheck
