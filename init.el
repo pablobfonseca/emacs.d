@@ -504,16 +504,6 @@
                                   (right-fringe . 8)))
   (ivy-posframe-mode 1))
 
-(use-package prescient
-  :after counsel
-  :config
-  (prescient-persist-mode 1))
-
-(use-package ivy-prescient
-  :after prescient
-  :config
-  (ivy-prescient-mode 1))
-
 (personal/leader-keys
   "r" '(ivy-resume :which-key "ivy resume")
   "f" '(:ignore t :which-key "files")
