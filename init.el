@@ -637,7 +637,7 @@
 
 (defun personal/org-mode-setup ()
   (org-indent-mode)
-  (variable-pitch-mode 1)
+  (flyspell-mode)
   (visual-line-mode 1)
   (setq org-src-tab-acts-natively t))
 
