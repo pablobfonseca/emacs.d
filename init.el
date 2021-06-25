@@ -103,6 +103,7 @@
   (global-undo-tree-mode 1))
 
 (use-package evil
+  :straight t
   :init
   (setq evil-want-integration t)
   (setq evil-want-keybinding nil)
@@ -301,63 +302,69 @@
   (set-fontset-font t 'unicode "Apple Color Emoji" nil 'prepend))
 
 (use-package emojify
+  :straight t
   :hook (erc-mode . emojify-mode)
   :commands emojify-mode)
 
 (setq display-time-format "%l:%M %p %b %y"
       display-time-default-load-average nil)
 
-(use-package diminish)
+(use-package diminish
+  :straight t)
 
 (use-package smart-mode-line
+  :straight t
   :disabled
   :config
   (setq sml/no-confirm-load-theme t)
   (sml/setup)
   (sml/apply-theme 'respectful)  ; Respect the theme colors
   (setq sml/mode-width 'right
-      sml/name-width 60)
+        sml/name-width 60)
 
   (setq-default mode-line-format
-  `("%e"
-      ,(when personal/exwm-enabled
-          '(:eval (format "[%d] " exwm-workspace-current-index)))
-      mode-line-front-space
-      evil-mode-line-tag
-      mode-line-mule-info
-      mode-line-client
-      mode-line-modified
-      mode-line-remote
-      mode-line-frame-identification
-      mode-line-buffer-identification
-      sml/pos-id-separator
-      (vc-mode vc-mode)
-      " "
-      ;mode-line-position
-      sml/pre-modes-separator
-      mode-line-modes
-      " "
-      mode-line-misc-info))
+                `("%e"
+                  ,(when personal/exwm-enabled
+                     '(:eval (format "[%d] " exwm-workspace-current-index)))
+                  mode-line-front-space
+                  evil-mode-line-tag
+                  mode-line-mule-info
+                  mode-line-client
+                  mode-line-modified
+                  mode-line-remote
+                  mode-line-frame-identification
+                  mode-line-buffer-identification
+                  sml/pos-id-separator
+                  (vc-mode vc-mode)
+                  " "
+                                        ;mode-line-position
+                  sml/pre-modes-separator
+                  mode-line-modes
+                  " "
+                  mode-line-misc-info))
 
   (setq rm-excluded-modes
-    (mapconcat
-      'identity
-      ; These names must start with a space!
-      '(" GitGutter" " MRev" " company"
-      " Helm" " Undo-Tree" " Projectile.*" " Z" " Ind"
-      " Org-Agenda.*" " ElDoc" " SP/s" " cider.*")
-      "\\|")))
+        (mapconcat
+         'identity
+                                        ; These names must start with a space!
+         '(" GitGutter" " MRev" " company"
+           " Helm" " Undo-Tree" " Projectile.*" " Z" " Ind"
+           " Org-Agenda.*" " ElDoc" " SP/s" " cider.*")
+         "\\|")))
 
 ;; You must run (all-the-icons-install-fonts) one time after
 ;; installing the package!
 
-(use-package all-the-icons)
+(use-package all-the-icons
+  :straight t)
 
 (use-package doom-modeline
+  :straight t
   :init (doom-modeline-mode 1)
   :custom (doom-modeline-height 14))
 
 (use-package super-save
+  :straight t
   :defer 1
   :diminish super-save-mode
   :config
@@ -367,6 +374,7 @@
 (global-auto-revert-mode 1)
 
 (use-package paren
+  :straight t
   :config
   (set-face-attribute 'show-paren-match-expression nil :background "#363e4a")
   (show-paren-mode 1))
@@ -389,11 +397,13 @@
 (setq-default indent-tabs-mode nil)
 
 (use-package evil-nerd-commenter
+  :straight t
   :bind ("M-/" . evilnc-comment-or-uncomment-lines))
 
 (use-package ws-butler
-:hook ((text-mode . ws-butler-mode)
-       (prog-mode . ws-butler-mode)))
+  :straight t
+  :hook ((text-mode . ws-butler-mode)
+         (prog-mode . ws-butler-mode)))
 
 (use-package dotcrafter
   :straight '(dotcrafter :host github
@@ -412,6 +422,7 @@
   :straight t)
 
 (use-package helpful
+  :straight t
   :custom
   (counsel-describe-function-function #'helpful-callable)
   (counsel-describe-variable-function #'helpful-variable)
@@ -422,6 +433,7 @@
   ([remap describe-key] . helpful-key))
 
 (use-package hydra
+  :straight t
   :defer 1)
 
 (defhydra hydra-text-scale (:timeout 4)
@@ -434,6 +446,7 @@
   "ts" '(hydra-text-scale/body :which-key "scale text"))
 
 (use-package ivy
+  :straight t
   :diminish
   :bind (("C-s" . swiper)
          :map ivy-minibuffer-map
@@ -467,6 +480,7 @@
   (setf (alist-get 'counsel-switch-buffer ivy-height-alist) 7))
 
 (use-package ivy-rich
+  :straight t
   :init
   (ivy-rich-mode 1)
   :after counsel
@@ -483,6 +497,7 @@
                       (ivy-rich-switch-buffer-path (:width (lambda (x) (ivy-rich-switch-buffer-shorten-path x (ivy-rich-minibuffer-width 0.3))))))))))  ; return file path relative to project root or `default-directory' if project is nil
 
 (use-package counsel
+  :straight t
   :bind (("M-x" . counsel-M-x)
          ("C-M-j" . counsel-switch-buffer)
          ("C-x b" . counsel-ibuffer)
@@ -496,14 +511,17 @@
 
 ;; Improves sorting for fuzzy-matched results
 (use-package flx
+  :straight t
   :after ivy
   :defer t
   :init
   (setq ivy-flx-limit 10000))
 
-(use-package wgrep)
+(use-package wgrep
+  :straight t)
 
 (use-package ivy-posframe
+  :straight t
   :disabled
   :custom
   (ivy-posframe-width 115)
@@ -532,6 +550,7 @@
          ("C-r" . swiper)))
 
 (use-package avy
+  :straight t
   :commands (avy-goto-char avy-goto-word-0 avy-goto-line))
 
 (personal/leader-keys
@@ -541,11 +560,13 @@
   "jl" '(avy-goto-line :which-key "jump to line"))
 
 (use-package default-text-scale
+  :straight t
   :defer 1
   :config
   (default-text-scale-mode))
 
 (use-package ace-window
+  :straight t
   :bind (("M-o" . ace-window))
   :custom
   (aw-scope 'frame)
@@ -563,10 +584,12 @@
   (visual-fill-column-mode 1))
 
 (use-package visual-fill-column
+  :straight t
   :defer t
   :hook (org-mode . personal/org-mode-visual-fill))
 
-(use-package all-the-icons-dired)
+(use-package all-the-icons-dired
+  :straight t)
 
 (use-package dired
   :ensure nil
@@ -596,6 +619,7 @@
               (hl-line-mode 1)))
 
   (use-package dired-rainbow
+    :straight t
     :defer 2
     :config
     (dired-rainbow-define-chmod directory "#6cb2eb" "d.*")
@@ -620,9 +644,11 @@
     (dired-rainbow-define-chmod executable-unix "#38c172" "-.*x.*"))
 
   (use-package dired-single
+    :straight t
     :defer t)
 
   (use-package dired-collapse
+    :straight t
     :defer t))
 
 (defun personal/org-font-setup ()
@@ -779,10 +805,11 @@
   (personal/org-font-setup)
 
 (use-package org-bullets
-    :after org
-    :hook (org-mode . org-bullets-mode)
-    :custom
-    (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+  :straight t
+  :after org
+  :hook (org-mode . org-bullets-mode)
+  :custom
+  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 
 (defun personal/org-mode-visual-fill ()
   (setq visual-fill-column-width 100
@@ -790,6 +817,7 @@
   (visual-fill-column-mode))
 
 (use-package visual-fill-column
+  :straight t
   :defer t
   :hook (org-mode . personal/org-mode-visual-fill))
 
@@ -822,6 +850,7 @@
                                               'run-at-end 'only-in-org-mode)))
 
 (use-package evil-org
+  :straight t
   :after org
   :hook ((org-mode . evil-org-mode)
          (org-agenda-mode . evil-org-mode)
@@ -841,6 +870,7 @@
   "ox" '(org-export-dispatch t :which-key "export")))
 
 (use-package magit
+  :straight t
   :bind ("C-M-;" . magit-status)
   :commands (magit-status)
   :custom
@@ -865,12 +895,15 @@
 ;; - https://magit.vc/manual/forge/Token-Creation.html#Token-Creation
 ;; - https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started
 
-(use-package forge)
+(use-package forge
+  :straight t)
 
 (use-package magit-todos
+  :straight t
   :defer t)
 
 (use-package git-link
+  :straight t
   :commands git-link
   :config
   (setq git-link-open-in-browser t)
@@ -1040,6 +1073,7 @@
   (setq-default tab-width 2))
 
 (use-package js2-mode
+  :straight t
   :hook (js2-mode . lsp)
   :mode "\\.jsx?\\'"
   :config
@@ -1100,12 +1134,13 @@
   :straight t)
 
 (use-package emmet-mode
+  :straight
   :diminish (emmet-mode . "ε")
   :bind* (("C-)" . emmet-next-edit-point)
           ("C-(" . emmet-prev-edit-point))
   :commands (emmet-mode
-            emmet-next-edit-point
-            emmet-prev-edit-point)
+             emmet-next-edit-point
+             emmet-prev-edit-point)
   :custom
   (emmet-indentation 2)
   (emmet-move-cursor-between-quotes t)
@@ -1141,12 +1176,14 @@
   (add-hook 'before-save-hook 'gofmt-before-save nil t))
 
 (use-package go-mode
+  :straight t
   :defer t
   :hook (go-mode . lsp)
   :config
   (add-hook 'go-mode-hook #'personal/go-mode-defaults))
 
 (use-package go-eldoc
+  :straight t
   :defer t)
 
 (use-package rust-mode
@@ -1245,18 +1282,22 @@
   :straight t)
 
 (use-package flycheck
+  :straight t
   :defer t
   :hook (lsp-mode . flycheck-mode))
 
 (use-package yasnippet
+  :straight t
   :hook (prog-mode . yas-minor-mode)
   :config
   (yas-reload-all))
 
 (use-package smartparens
+  :straight t
   :hook (prog-mode . smartparens-mode))
 
 (use-package rainbow-mode
+  :straight t
   :defer t
   :hook (org-mode
          emacs-lisp-mode
@@ -1265,9 +1306,11 @@
          js2-mode))
 
 (use-package know-your-http-well
+  :straight t
   :defer t)
 
 (use-package company
+  :straight t
   :after lsp-mode
   :hook (lsp-mode . company-mode)
   :custom
@@ -1275,6 +1318,7 @@
   (company-idle-delay 0.0))
 
 (use-package company-box
+  :straight t
   :hook (company-mode . company-box-mode))
 
 (use-package projectile
@@ -1292,24 +1336,29 @@
   (setq projectile-switch-project-action #'projectile-dired))
 
 (use-package rainbow-delimiters
+  :straight t
   :hook (prog-mode . rainbow-delimiters-mode))
 
 (use-package restclient
+  :straight t
   :mode ("\\.http\\'" . restclient-mode))
 
 (use-package term
+  :straight t
   :config
   (setq explicit-shell-file-name "zsh"))
 
 (use-package eterm-256color
+  :straight t
   :hook (term-mode . eterm-256color-mode))
 
 (use-package vterm
+  :straight t
   :commands vterm
   :config
   (setq vterm-max-scrollback 10000))
 
-(defun personal/configure-eshell() 
+(defun personal/configure-eshell()
   ;; Save command history when commands are entered
   (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
 
@@ -1326,7 +1375,8 @@
         eshell-hist-ignoredups t
         eshell-scroll-to-bottom-on-input t))
 
-(use-package eshell-git-prompt)
+(use-package eshell-git-prompt
+  :straight t)
 
 (use-package eshell
   :hook (eshell-first-time-mode . personal/configure-eshell)
@@ -1334,6 +1384,7 @@
   (eshell-git-prompt-use-theme 'powerline))
 
 (use-package eshell-toggle
+  :straight t
   :bind ("C-x C-t" . eshell-toggle)
   :custom
   (eshell-toggle-size-fraction 3)
@@ -1341,14 +1392,17 @@
   (eshell-toggle-run-command nil))
 
 (use-package docker
+  :straight t
   :commands docker)
 
 (use-package dockerfile-mode
+  :straight t
   :config
   (require 'dockerfile-mode)
   (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode)))
 
-(use-package ripgrep)
+(use-package ripgrep
+  :straight t)
 
 (use-package crux
   :straight t)

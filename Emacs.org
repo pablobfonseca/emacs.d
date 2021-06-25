@@ -173,6 +173,7 @@ Some tips can be found here:
     (global-undo-tree-mode 1))
 
   (use-package evil
+    :straight t
     :init
     (setq evil-want-integration t)
     (setq evil-want-keybinding nil)
@@ -425,6 +426,7 @@ I am using the [[https://github.com/tonsky/FiraCode][Fira Code]] and [[https://f
     (set-fontset-font t 'unicode "Apple Color Emoji" nil 'prepend))
 
   (use-package emojify
+    :straight t
     :hook (erc-mode . emojify-mode)
     :commands emojify-mode)
 #+end_src
@@ -439,51 +441,53 @@ I am using the [[https://github.com/tonsky/FiraCode][Fira Code]] and [[https://f
 
 The [[https://github.com/myrjola/diminish.el][diminish]] package hides pesky minor modes from the modelines.
 #+begin_src emacs-lisp
-(use-package diminish)
+  (use-package diminish
+    :straight t)
 #+end_src
 
 *** Smart Mode Line
 Prettify the modeline with [[https://github.com/Malabarba/smart-mode-line/][smart-mode-line]]. Really need to re-evaluate the ordering of =mode-line-format=. Also not sure if =rm-excluded-modes= is needed anymore if I set up =diminish= correctly.
 
 #+begin_src emacs-lisp
-(use-package smart-mode-line
-  :disabled
-  :config
-  (setq sml/no-confirm-load-theme t)
-  (sml/setup)
-  (sml/apply-theme 'respectful)  ; Respect the theme colors
-  (setq sml/mode-width 'right
-      sml/name-width 60)
+  (use-package smart-mode-line
+    :straight t
+    :disabled
+    :config
+    (setq sml/no-confirm-load-theme t)
+    (sml/setup)
+    (sml/apply-theme 'respectful)  ; Respect the theme colors
+    (setq sml/mode-width 'right
+          sml/name-width 60)
 
-  (setq-default mode-line-format
-  `("%e"
-      ,(when personal/exwm-enabled
-          '(:eval (format "[%d] " exwm-workspace-current-index)))
-      mode-line-front-space
-      evil-mode-line-tag
-      mode-line-mule-info
-      mode-line-client
-      mode-line-modified
-      mode-line-remote
-      mode-line-frame-identification
-      mode-line-buffer-identification
-      sml/pos-id-separator
-      (vc-mode vc-mode)
-      " "
-      ;mode-line-position
-      sml/pre-modes-separator
-      mode-line-modes
-      " "
-      mode-line-misc-info))
+    (setq-default mode-line-format
+                  `("%e"
+                    ,(when personal/exwm-enabled
+                       '(:eval (format "[%d] " exwm-workspace-current-index)))
+                    mode-line-front-space
+                    evil-mode-line-tag
+                    mode-line-mule-info
+                    mode-line-client
+                    mode-line-modified
+                    mode-line-remote
+                    mode-line-frame-identification
+                    mode-line-buffer-identification
+                    sml/pos-id-separator
+                    (vc-mode vc-mode)
+                    " "
+                                          ;mode-line-position
+                    sml/pre-modes-separator
+                    mode-line-modes
+                    " "
+                    mode-line-misc-info))
 
-  (setq rm-excluded-modes
-    (mapconcat
-      'identity
-      ; These names must start with a space!
-      '(" GitGutter" " MRev" " company"
-      " Helm" " Undo-Tree" " Projectile.*" " Z" " Ind"
-      " Org-Agenda.*" " ElDoc" " SP/s" " cider.*")
-      "\\|")))
+    (setq rm-excluded-modes
+          (mapconcat
+           'identity
+                                          ; These names must start with a space!
+           '(" GitGutter" " MRev" " company"
+             " Helm" " Undo-Tree" " Projectile.*" " Z" " Ind"
+             " Org-Agenda.*" " ElDoc" " SP/s" " cider.*")
+           "\\|")))
 #+end_src
 
 *** Doom Modeline
@@ -493,24 +497,27 @@ Prettify the modeline with [[https://github.com/Malabarba/smart-mode-line/][smar
 *NOTE:* The first time you load your configuration on a new machine, you'll need to run =M-x all-the-icons-install-fonts= so that mode line icons display correctly.
 
 #+begin_src emacs-lisp
-;; You must run (all-the-icons-install-fonts) one time after
-;; installing the package!
+  ;; You must run (all-the-icons-install-fonts) one time after
+  ;; installing the package!
 
-(use-package all-the-icons)
+  (use-package all-the-icons
+    :straight t)
 
-(use-package doom-modeline
-  :init (doom-modeline-mode 1)
-  :custom (doom-modeline-height 14))
+  (use-package doom-modeline
+    :straight t
+    :init (doom-modeline-mode 1)
+    :custom (doom-modeline-height 14))
 #+end_src
 
 ** Auto-Saving Changed Files
 #+begin_src emacs-lisp
-(use-package super-save
-  :defer 1
-  :diminish super-save-mode
-  :config
-  (super-save-mode +1)
-  (setq super-save-auto-save-when-idle t))
+  (use-package super-save
+    :straight t
+    :defer 1
+    :diminish super-save-mode
+    :config
+    (super-save-mode +1)
+    (setq super-save-auto-save-when-idle t))
 #+end_src
 ** Auto-Reverting Changed Files
 #+begin_src emacs-lisp
@@ -518,10 +525,11 @@ Prettify the modeline with [[https://github.com/Malabarba/smart-mode-line/][smar
 #+end_src
 ** Highlight Matching Braces
 #+begin_src emacs-lisp
-(use-package paren
-  :config
-  (set-face-attribute 'show-paren-match-expression nil :background "#363e4a")
-  (show-paren-mode 1))
+  (use-package paren
+    :straight t
+    :config
+    (set-face-attribute 'show-paren-match-expression nil :background "#363e4a")
+    (show-paren-mode 1))
 #+end_src
 * Editing Configuration
 ** Tab Widths
@@ -555,14 +563,16 @@ Default to an indentation size of 2 spaces since it's the norm for pretty much e
 Emacs' built in commenting functionality =comment-dwim= (usually bound to =M-;=) doesn't always comment things in the way you might expect so we use [[https://github.com/redguardtoo/evil-nerd-commenter][evil-nerd-commenter]] to provide a more familiar behavior.  I've bound it to =M-/= since other editors sometimes use this binding but you could also replace Emacs' =M-;= binding with this command.
 
 #+begin_src emacs-lisp
-(use-package evil-nerd-commenter
-  :bind ("M-/" . evilnc-comment-or-uncomment-lines))
+  (use-package evil-nerd-commenter
+    :straight t
+    :bind ("M-/" . evilnc-comment-or-uncomment-lines))
 #+end_src
 ** Automatically clean whitespace
 #+begin_src emacs-lisp
   (use-package ws-butler
-  :hook ((text-mode . ws-butler-mode)
-         (prog-mode . ws-butler-mode)))
+    :straight t
+    :hook ((text-mode . ws-butler-mode)
+           (prog-mode . ws-butler-mode)))
 #+end_src
 
 * Configuration Files
@@ -596,15 +606,16 @@ Emacs' built in commenting functionality =comment-dwim= (usually bound to =M-;=)
 [[https://github.com/Wilfred/helpful][Helpful]] adds a lot of very helpful (get it?) information to Emacs' =describe-= command buffers.  For example, if you use =describe-function=, you will not only get the documentation about the function, you will also see the source code of the function and where it gets used in other places in the Emacs configuration.  It is very useful for figuring out how things work in Emacs.
 
 #+begin_src emacs-lisp
-(use-package helpful
-  :custom
-  (counsel-describe-function-function #'helpful-callable)
-  (counsel-describe-variable-function #'helpful-variable)
-  :bind
-  ([remap describe-function] . counsel-describe-function)
-  ([remap describe-command] . helpful-command)
-  ([remap describe-variable] . counsel-describe-variable)
-  ([remap describe-key] . helpful-key))
+  (use-package helpful
+    :straight t
+    :custom
+    (counsel-describe-function-function #'helpful-callable)
+    (counsel-describe-variable-function #'helpful-variable)
+    :bind
+    ([remap describe-function] . counsel-describe-function)
+    ([remap describe-command] . helpful-command)
+    ([remap describe-variable] . counsel-describe-variable)
+    ([remap describe-key] . helpful-key))
 #+end_src
 ** Text Scaling
 
@@ -613,6 +624,7 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 
 #+begin_src emacs-lisp
   (use-package hydra
+    :straight t
     :defer 1)
 
   (defhydra hydra-text-scale (:timeout 4)
@@ -633,6 +645,7 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 
 #+begin_src emacs-lisp
   (use-package ivy
+    :straight t
     :diminish
     :bind (("C-s" . swiper)
            :map ivy-minibuffer-map
@@ -666,6 +679,7 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
     (setf (alist-get 'counsel-switch-buffer ivy-height-alist) 7))
 
   (use-package ivy-rich
+    :straight t
     :init
     (ivy-rich-mode 1)
     :after counsel
@@ -682,6 +696,7 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
                         (ivy-rich-switch-buffer-path (:width (lambda (x) (ivy-rich-switch-buffer-shorten-path x (ivy-rich-minibuffer-width 0.3))))))))))  ; return file path relative to project root or `default-directory' if project is nil
 
   (use-package counsel
+    :straight t
     :bind (("M-x" . counsel-M-x)
            ("C-M-j" . counsel-switch-buffer)
            ("C-x b" . counsel-ibuffer)
@@ -695,14 +710,17 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 
   ;; Improves sorting for fuzzy-matched results
   (use-package flx
+    :straight t
     :after ivy
     :defer t
     :init
     (setq ivy-flx-limit 10000))
 
-  (use-package wgrep)
+  (use-package wgrep
+    :straight t)
 
   (use-package ivy-posframe
+    :straight t
     :disabled
     :custom
     (ivy-posframe-width 115)
@@ -733,6 +751,7 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 * Jumping with Avy
 #+begin_src emacs-lisp
   (use-package avy
+    :straight t
     :commands (avy-goto-char avy-goto-word-0 avy-goto-line))
 
   (personal/leader-keys
@@ -746,6 +765,7 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 The keybindings for this are =C+M+-= and =C+M+==
 #+begin_src emacs-lisp
   (use-package default-text-scale
+    :straight t
     :defer 1
     :config
     (default-text-scale-mode))
@@ -754,6 +774,7 @@ The keybindings for this are =C+M+-= and =C+M+==
 =ace-window= helps with easily switching between windows based on a predefined set of keys used to identify each.
 #+begin_src emacs-lisp
   (use-package ace-window
+    :straight t
     :bind (("M-o" . ace-window))
     :custom
     (aw-scope 'frame)
@@ -775,13 +796,15 @@ The keybindings for this are =C+M+-= and =C+M+==
     (visual-fill-column-mode 1))
 
   (use-package visual-fill-column
+    :straight t
     :defer t
     :hook (org-mode . personal/org-mode-visual-fill))
 #+end_src
 * File Browsing
 ** Dired
 #+begin_src emacs-lisp
-  (use-package all-the-icons-dired)
+  (use-package all-the-icons-dired
+    :straight t)
 
   (use-package dired
     :ensure nil
@@ -811,6 +834,7 @@ The keybindings for this are =C+M+-= and =C+M+==
                 (hl-line-mode 1)))
 
     (use-package dired-rainbow
+      :straight t
       :defer 2
       :config
       (dired-rainbow-define-chmod directory "#6cb2eb" "d.*")
@@ -835,9 +859,11 @@ The keybindings for this are =C+M+-= and =C+M+==
       (dired-rainbow-define-chmod executable-unix "#38c172" "-.*x.*"))
 
     (use-package dired-single
+      :straight t
       :defer t)
 
     (use-package dired-collapse
+      :straight t
       :defer t))
 
 #+end_src
@@ -1031,7 +1057,8 @@ This section contains the basic configuration for =org-mode= plus the configurat
 
 #+begin_src emacs-lisp
 
-(use-package org-bullets
+  (use-package org-bullets
+    :straight t
     :after org
     :hook (org-mode . org-bullets-mode)
     :custom
@@ -1044,14 +1071,15 @@ We use [[https://github.com/joostkremers/visual-fill-column][visual-fill-column]
 
 #+begin_src emacs-lisp
 
-(defun personal/org-mode-visual-fill ()
-  (setq visual-fill-column-width 100
-        visual-fill-column-center-text t)
-  (visual-fill-column-mode))
+  (defun personal/org-mode-visual-fill ()
+    (setq visual-fill-column-width 100
+          visual-fill-column-center-text t)
+    (visual-fill-column-mode))
 
-(use-package visual-fill-column
-  :defer t
-  :hook (org-mode . personal/org-mode-visual-fill))
+  (use-package visual-fill-column
+    :straight t
+    :defer t
+    :hook (org-mode . personal/org-mode-visual-fill))
 
 #+end_src
 
@@ -1108,6 +1136,7 @@ Handy tip from [[https://leanpub.com/lit-config/read#leanpub-auto-configuring-em
 ** Bindings
 #+begin_src emacs-lisp
   (use-package evil-org
+    :straight t
     :after org
     :hook ((org-mode . evil-org-mode)
            (org-agenda-mode . evil-org-mode)
@@ -1134,51 +1163,55 @@ Handy tip from [[https://leanpub.com/lit-config/read#leanpub-auto-configuring-em
 [[https://magit.vc/][Magit]] is the best Git interface I've ever used.  Common Git operations are easy to execute quickly using Magit's command panel system.
 
 #+begin_src emacs-lisp
-(use-package magit
-  :bind ("C-M-;" . magit-status)
-  :commands (magit-status)
-  :custom
-  (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
+  (use-package magit
+    :straight t
+    :bind ("C-M-;" . magit-status)
+    :commands (magit-status)
+    :custom
+    (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
-(personal/leader-keys
-  "g" '(:ignore t :which-key "git")
-  "gs" 'magit-status
-  "gd" 'magit-diff-unstaged
-  "gc" 'magit-branch-or-checkout
-  "gl" '(:ignore t :which-key "log")
-  "glc" 'magit-log-current
-  "glf" 'magit-log-buffer-file
-  "gb" 'magit-branch
-  "gP" 'magit-push-current
-  "gp" 'magit-pull-branch
-  "gf" 'magit-fetch
-  "gF" 'magit-fetch-all
-  "gr" 'magit-rebase)
+  (personal/leader-keys
+    "g" '(:ignore t :which-key "git")
+    "gs" 'magit-status
+    "gd" 'magit-diff-unstaged
+    "gc" 'magit-branch-or-checkout
+    "gl" '(:ignore t :which-key "log")
+    "glc" 'magit-log-current
+    "glf" 'magit-log-buffer-file
+    "gb" 'magit-branch
+    "gP" 'magit-push-current
+    "gp" 'magit-pull-branch
+    "gf" 'magit-fetch
+    "gF" 'magit-fetch-all
+    "gr" 'magit-rebase)
 
-;; NOTE: Make sure to configure a GitHub token before using this package!
-;; - https://magit.vc/manual/forge/Token-Creation.html#Token-Creation
-;; - https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started
+  ;; NOTE: Make sure to configure a GitHub token before using this package!
+  ;; - https://magit.vc/manual/forge/Token-Creation.html#Token-Creation
+  ;; - https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started
 #+end_src
 
 *** Forge
 #+begin_src emacs-lisp
-(use-package forge)
+  (use-package forge
+    :straight t)
 #+end_src
 
 *** magit-todos
 This is an interesting extension to Magit that shows a TODOs section in your git status buffer containing all lines with TODO (or other similar words) in files contained within the repo. More information at the [[https://github.com/alphapapa/magit-todos][GitHub repo]].
 #+begin_src emacs-lisp
-(use-package magit-todos
-  :defer t)
+  (use-package magit-todos
+    :straight t
+    :defer t)
 #+end_src
 *** git-link
 #+begin_src emacs-lisp
-(use-package git-link
-  :commands git-link
-  :config
-  (setq git-link-open-in-browser t)
-  (personal/leader-keys
-    "gL" 'git-link))
+  (use-package git-link
+    :straight t
+    :commands git-link
+    :config
+    (setq git-link-open-in-browser t)
+    (personal/leader-keys
+      "gL" 'git-link))
 #+end_src
 *** Git Gutter
 #+begin_src emacs-lisp
@@ -1338,6 +1371,7 @@ This is an interesting extension to Magit that shows a TODOs section in your git
 #+end_src
 
 *** Python
+
 #+begin_src emacs-lisp
   (use-package python-mode
     :straight nil
@@ -1360,37 +1394,38 @@ Set up nvm so that we can manage Node versions
 
 
 #+begin_src emacs-lisp
-    (use-package typescript-mode
-      :mode (("\\.tsx?\\'" . typescript-mode)
-             ("\\.tsx\\'" . rjsx-mode))
-      :hook (typescript-mode . lsp)
-      :config
-      (setq typescript-indent-level 2))
+  (use-package typescript-mode
+    :mode (("\\.tsx?\\'" . typescript-mode)
+           ("\\.tsx\\'" . rjsx-mode))
+    :hook (typescript-mode . lsp)
+    :config
+    (setq typescript-indent-level 2))
 
-    (defun personal/set-js-indentation ()
-      ;; electric-layout-mode doesn't play nice with smartparens
-      (setq-local electrict-layout-rules '((?\{ . around) (?\} . around)))
-      (setq js-indent-level 2)
-      (setq evil-shift-width js-indent-level)
-      (setq-default tab-width 2))
+  (defun personal/set-js-indentation ()
+    ;; electric-layout-mode doesn't play nice with smartparens
+    (setq-local electrict-layout-rules '((?\{ . around) (?\} . around)))
+    (setq js-indent-level 2)
+    (setq evil-shift-width js-indent-level)
+    (setq-default tab-width 2))
 
-    (use-package js2-mode
-      :hook (js2-mode . lsp)
-      :mode "\\.jsx?\\'"
-      :config
-      ;; Use js2-mode for Node scripts
-      (add-to-list 'magic-mode-alist '("#!/usr/bin/env node" . js2-mode))
+  (use-package js2-mode
+    :straight t
+    :hook (js2-mode . lsp)
+    :mode "\\.jsx?\\'"
+    :config
+    ;; Use js2-mode for Node scripts
+    (add-to-list 'magic-mode-alist '("#!/usr/bin/env node" . js2-mode))
 
-      ;; Don't use built-in syntax checking
-      (setq js2-mode-show-strict-warnings nil)
+    ;; Don't use built-in syntax checking
+    (setq js2-mode-show-strict-warnings nil)
 
-      ;; Set up proper indentation in JavascScript and JSON files
-      (add-hook 'js2-mode-hook #'personal/set-js-indentation))
+    ;; Set up proper indentation in JavascScript and JSON files
+    (add-hook 'js2-mode-hook #'personal/set-js-indentation))
 
-    (use-package json-mode
-      :straight nil
-      :config
-      (add-hook 'json-mode-hook #'personal/set-js-indentation))
+  (use-package json-mode
+    :straight nil
+    :config
+    (add-hook 'json-mode-hook #'personal/set-js-indentation))
 #+end_src
 
 **** Indium
@@ -1451,24 +1486,25 @@ Set up nvm so that we can manage Node versions
 #+end_src
 **** Emmet mode
 #+begin_src emacs-lisp
-(use-package emmet-mode
-  :diminish (emmet-mode . "ε")
-  :bind* (("C-)" . emmet-next-edit-point)
-          ("C-(" . emmet-prev-edit-point))
-  :commands (emmet-mode
-            emmet-next-edit-point
-            emmet-prev-edit-point)
-  :custom
-  (emmet-indentation 2)
-  (emmet-move-cursor-between-quotes t)
-  :mode
-  (("\\.html$\\'" . emmet-mode)
-   ("\\.xml\\'" . emmet-mode)
-   ("\\.erb\\'" . emmet-mode))
-  :init
-  ;; Auto-start on any markup modes
-  (add-hook 'sgml-mode-hook 'emmet-mode)
-  (add-hook 'web-mode-hook 'emmet-mode))
+  (use-package emmet-mode
+    :straight
+    :diminish (emmet-mode . "ε")
+    :bind* (("C-)" . emmet-next-edit-point)
+            ("C-(" . emmet-prev-edit-point))
+    :commands (emmet-mode
+               emmet-next-edit-point
+               emmet-prev-edit-point)
+    :custom
+    (emmet-indentation 2)
+    (emmet-move-cursor-between-quotes t)
+    :mode
+    (("\\.html$\\'" . emmet-mode)
+     ("\\.xml\\'" . emmet-mode)
+     ("\\.erb\\'" . emmet-mode))
+    :init
+    ;; Auto-start on any markup modes
+    (add-hook 'sgml-mode-hook 'emmet-mode)
+    (add-hook 'web-mode-hook 'emmet-mode))
 #+end_src
 
 *** YAML
@@ -1498,12 +1534,14 @@ Set up nvm so that we can manage Node versions
     (add-hook 'before-save-hook 'gofmt-before-save nil t))
 
   (use-package go-mode
+    :straight t
     :defer t
     :hook (go-mode . lsp)
     :config
     (add-hook 'go-mode-hook #'personal/go-mode-defaults))
 
   (use-package go-eldoc
+    :straight t
     :defer t)
 #+end_src
 *** Rust
@@ -1617,38 +1655,43 @@ Set up nvm so that we can manage Node versions
 
 #+begin_src emacs-lisp
   (use-package flycheck
+    :straight t
     :defer t
     :hook (lsp-mode . flycheck-mode))
 #+end_src
 *** Snippets
 #+begin_src emacs-lisp
-(use-package yasnippet
-  :hook (prog-mode . yas-minor-mode)
-  :config
-  (yas-reload-all))
+  (use-package yasnippet
+    :straight t
+    :hook (prog-mode . yas-minor-mode)
+    :config
+    (yas-reload-all))
 #+end_src
 *** Smart Parens
 #+begin_src emacs-lisp
-(use-package smartparens
-  :hook (prog-mode . smartparens-mode))
+  (use-package smartparens
+    :straight t
+    :hook (prog-mode . smartparens-mode))
 #+end_src
 *** Rainbow Mode
 Sets the background of HTML tags color strings in buffers to be the color mentioned.
 #+begin_src emacs-lisp
-(use-package rainbow-mode
-  :defer t
-  :hook (org-mode
-         emacs-lisp-mode
-         web-mode
-         typescript-mode
-         js2-mode))
+  (use-package rainbow-mode
+    :straight t
+    :defer t
+    :hook (org-mode
+           emacs-lisp-mode
+           web-mode
+           typescript-mode
+           js2-mode))
 #+end_src
 ** Tools
 *** Reference
 **** HTTP
 #+begin_src emacs-lisp
-(use-package know-your-http-well
-  :defer t)
+  (use-package know-your-http-well
+    :straight t
+    :defer t)
 #+end_src
 ** Company Mode
 
@@ -1657,15 +1700,17 @@ Sets the background of HTML tags color strings in buffers to be the color mentio
 We also use [[https://github.com/sebastiencs/company-box][company-box]] to further enhance the look of the completions with icons and better overall presentation.
 
 #+begin_src emacs-lisp
-(use-package company
-  :after lsp-mode
-  :hook (lsp-mode . company-mode)
-  :custom
-  (company-minimum-prefix-length 1)
-  (company-idle-delay 0.0))
+  (use-package company
+    :straight t
+    :after lsp-mode
+    :hook (lsp-mode . company-mode)
+    :custom
+    (company-minimum-prefix-length 1)
+    (company-idle-delay 0.0))
 
-(use-package company-box
-  :hook (company-mode . company-box-mode))
+  (use-package company-box
+    :straight t
+    :hook (company-mode . company-box-mode))
 #+end_src
 
 ** Projectile
@@ -1696,63 +1741,69 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 [[https://github.com/Fanael/rainbow-delimiters][rainbow-delimiters]] is useful in programming modes because it colorizes nested parentheses and brackets according to their nesting depth.  This makes it a lot easier to visually match parentheses in Emacs Lisp code without having to count them yourself.
 
  #+begin_src emacs-lisp
-(use-package rainbow-delimiters
-  :hook (prog-mode . rainbow-delimiters-mode))
+   (use-package rainbow-delimiters
+     :straight t
+     :hook (prog-mode . rainbow-delimiters-mode))
 #+end_src
 
 ** RESTClient Mode
 #+begin_src emacs-lisp
-(use-package restclient
-  :mode ("\\.http\\'" . restclient-mode))
+  (use-package restclient
+    :straight t
+    :mode ("\\.http\\'" . restclient-mode))
 #+end_src
 * Terminals
 ** term-mode
 #+begin_src emacs-lisp
-(use-package term
-  :config
-  (setq explicit-shell-file-name "zsh"))
+  (use-package term
+    :straight t
+    :config
+    (setq explicit-shell-file-name "zsh"))
 #+end_src
 *** For better color support
 Make sure the =tic= program is available on your machine (could be part of =ncurses= package).
 #+begin_src emacs-lisp
-(use-package eterm-256color
-  :hook (term-mode . eterm-256color-mode))
+  (use-package eterm-256color
+    :straight t
+    :hook (term-mode . eterm-256color-mode))
 #+end_src
 ** vterm
 =vterm= enables the use of fully-fledged terminal applications within Emacs so that I don’t need an external terminal emulator.
 
 #+begin_src emacs-lisp
-(use-package vterm
-  :commands vterm
-  :config
-  (setq vterm-max-scrollback 10000))
+  (use-package vterm
+    :straight t
+    :commands vterm
+    :config
+    (setq vterm-max-scrollback 10000))
 #+end_src
 ** shell-mode
 ** Eshell
 #+begin_src emacs-lisp
-(defun personal/configure-eshell() 
-  ;; Save command history when commands are entered
-  (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
+  (defun personal/configure-eshell()
+    ;; Save command history when commands are entered
+    (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
 
-  ;; Truncate buffer for performace
-  (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+    ;; Truncate buffer for performace
+    (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
 
-  ;; Bind some useful keys for evil-mode
-  (evil-define-key '(normal insert visual) eshell-mode-map (kbd "C-r") 'counsel-esh-history)
-  (evil-define-key '(normal insert visual) eshell-mode-map (kbd "<home>") 'eshell-bol)
-  (evil-normalize-keymaps)
+    ;; Bind some useful keys for evil-mode
+    (evil-define-key '(normal insert visual) eshell-mode-map (kbd "C-r") 'counsel-esh-history)
+    (evil-define-key '(normal insert visual) eshell-mode-map (kbd "<home>") 'eshell-bol)
+    (evil-normalize-keymaps)
 
-  (setq eshell-history-size         10000
-        eshell-buffer-maximum-lines 10000
-        eshell-hist-ignoredups t
-        eshell-scroll-to-bottom-on-input t))
+    (setq eshell-history-size         10000
+          eshell-buffer-maximum-lines 10000
+          eshell-hist-ignoredups t
+          eshell-scroll-to-bottom-on-input t))
 
-(use-package eshell-git-prompt)
+  (use-package eshell-git-prompt
+    :straight t)
 
-(use-package eshell
-  :hook (eshell-first-time-mode . personal/configure-eshell)
-  :config
-  (eshell-git-prompt-use-theme 'powerline))
+  (use-package eshell
+    :hook (eshell-first-time-mode . personal/configure-eshell)
+    :config
+    (eshell-git-prompt-use-theme 'powerline))
 #+end_src
 
 Tip: If you want to write the output of a command into a buffer you can do something like:
@@ -1763,6 +1814,7 @@ echo "Hello!" > #<buffer test-buffer>
 ~eshell-toggle~ allows me to toggle an Eshell window below the current buffer for the path (or project path) of the buffer.
 #+begin_src emacs-lisp
   (use-package eshell-toggle
+    :straight t
     :bind ("C-x C-t" . eshell-toggle)
     :custom
     (eshell-toggle-size-fraction 3)
@@ -1774,16 +1826,19 @@ echo "Hello!" > #<buffer test-buffer>
 ** Docker
 #+begin_src emacs-lisp
   (use-package docker
+    :straight t
     :commands docker)
 
   (use-package dockerfile-mode
+    :straight t
     :config
     (require 'dockerfile-mode)
     (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode)))
 #+end_src
 ** Ripgrep
 #+begin_src emacs-lisp
-(use-package ripgrep)
+  (use-package ripgrep
+    :straight t)
 #+end_src
 * Tools
 ** Crux
