@@ -196,6 +196,7 @@
   (evil-ex-define-cmd "ie[dit]" 'evil-multiedit-ex-match))
 
 (use-package evil-surround
+  :straight t
   :config
   (global-evil-surround-mode 1))
 
