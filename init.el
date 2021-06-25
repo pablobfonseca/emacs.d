@@ -34,6 +34,7 @@
 (require 'straight-x)
 
 (use-package exec-path-from-shell
+:straight t
   :init
   (setq exec-path-from-shell-check-startup-files nil)
   :config
@@ -45,7 +46,8 @@
       url-history-file (expand-file-name "url/history" user-emacs-directory))
 
 ;; Use no-littering to automatically set common paths to the new user-emacs-directory
-(use-package no-littering)
+(use-package no-littering
+  :straight t)
 
 ;; Keep customization settings in a temporary file
 (setq custom-file
@@ -97,6 +99,7 @@
   (message "Arrow keys are bad, you know?"))
 
 (use-package undo-tree
+  :straight t
   :init
   (global-undo-tree-mode 1))
 
@@ -105,7 +108,6 @@
   (setq evil-want-integration t)
   (setq evil-want-keybinding nil)
   (setq evil-want-C-u-scroll t)
-  (setq evil-want-C-i-jump nil)
   (setq evil-respect-visual-line-mode t)
   (setq evil-undo-system 'undo-tree)
   :hook (evil-mode . personal/evil-hook)
@@ -122,15 +124,20 @@
   (evil-set-initial-state 'messages-buffer-mode 'normal)
   (evil-set-initial-state 'dashboard-mode 'normal)
 
+  ;; Define new key bindings for projectile
+  (define-key evil-normal-state-map (kbd "C-p") 'projectile-switch-project)
+  (define-key evil-normal-state-map (kbd "C-f") 'projectile-find-file)
+
   ;; Disable arrow keys in normal and visual modes
   (define-key evil-normal-state-map (kbd "<left>") 'personal/dont-arrow-me-bro)
   (define-key evil-normal-state-map (kbd "<right>") 'personal/dont-arrow-me-bro)
   (define-key evil-normal-state-map (kbd "<down>") 'personal/dont-arrow-me-bro)
   (define-key evil-normal-state-map (kbd "<up>") 'personal/dont-arrow-me-bro)
-  (evil-global-set-key 'motion (kbd "<left>") 'persona/dont-arrow-me-bro)
-  (evil-global-set-key 'motion (kbd "<right>") 'persona/dont-arrow-me-bro)
-  (evil-global-set-key 'motion (kbd "<down>") 'persona/dont-arrow-me-bro)
-  (evil-global-set-key 'motion (kbd "<up>") 'persona/dont-arrow-me-bro)
+
+  (evil-global-set-key 'motion (kbd "<left>") 'personal/dont-arrow-me-bro)
+  (evil-global-set-key 'motion (kbd "<right>") 'personal/dont-arrow-me-bro)
+  (evil-global-set-key 'motion (kbd "<down>") 'personal/dont-arrow-me-bro)
+  (evil-global-set-key 'motion (kbd "<up>") 'personal/dont-arrow-me-bro)
 
   (evil-set-initial-state 'messages-buffer-mode 'normal)
   (evil-set-initial-state 'dashboard-mode 'normal))
@@ -141,6 +148,7 @@
   (global-evil-matchit-mode 1))
 
 (use-package evil-collection
+  :straight t
   :after evil
   :config
   (evil-collection-init)
@@ -150,6 +158,7 @@
   (evil-collection-init))
 
 (use-package evil-multiedit
+  :straight t
   :config
   ;; Highlights all matches of the selection in the buffer.
   (define-key evil-visual-state-map "R" 'evil-multiedit-match-all)
@@ -191,12 +200,14 @@
   (global-evil-surround-mode 1))
 
 (use-package which-key
+  :straight t
   :init (which-key-mode)
   :diminish which-key-mode
   :config
   (setq which-key-idle-delay 0.3))
 
 (use-package general
+  :straight t
   :config
   (general-create-definer personal/leader-keys
     :keymaps '(normal insert visual emacs)
@@ -204,9 +215,9 @@
     :global-prefix "C-SPC")
 
   (personal/leader-keys
-   "t" '(:ignore t :which-key "toggles")
-   "tw" 'whitespace-mode
-   "tt" '(counsel-load-theme :which-key "choose theme")))
+    "t" '(:ignore t :which-key "toggles")
+    "tw" 'whitespace-mode
+    "tt" '(counsel-load-theme :which-key "choose theme")))
 
 ;; Open emacs maximized
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
@@ -249,16 +260,17 @@
 (setq vc-follow-symlinks t)
 
 (use-package doom-themes
+  :straight t
   :defer t
   :init (load-theme 'doom-dracula t))
 
-(set-face-attribute 'default nil :font "FuraCode Nerd Font" :family "Retina" :height 155)
+(set-face-attribute 'default nil :font "FuraCode Nerd Font" :family "Retina" :height 190)
 
 ;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil :font "FuraCode Nerd Font" :family "Retina" :height 155)
+(set-face-attribute 'fixed-pitch nil :font "FuraCode Nerd Font" :family "Retina" :height 190)
 
 ;; Set the variable pitch face
-(set-face-attribute 'variable-pitch nil :font "Cantarell" :height 160 :weight 'regular)
+(set-face-attribute 'variable-pitch nil :font "Cantarell" :height 190 :weight 'normal)
 
 (defun personal/replace-unicode-font-mapping (block-name old-font new-font)
   (let* ((block-idx (cl-position-if
@@ -1013,7 +1025,8 @@
   :straight t)
 
 (use-package typescript-mode
-  :mode "\\.tsx?\\'"
+  :mode (("\\.tsx?\\'" . typescript-mode)
+         ("\\.tsx\\'" . rjsx-mode))
   :hook (typescript-mode . lsp)
   :config
   (setq typescript-indent-level 2))
@@ -1042,6 +1055,9 @@
   :straight nil
   :config
   (add-hook 'json-mode-hook #'personal/set-js-indentation))
+
+(use-package indium
+  :straight t)
 
 (use-package markdown-mode
   :straight t
@@ -1261,7 +1277,9 @@
   :hook (company-mode . company-box-mode))
 
 (use-package projectile
+  :straight t
   :diminish projectile-mode
+  :bind
   :config (projectile-mode)
   :custom ((projectile-completion-system 'ivy))
   :bind-keymap

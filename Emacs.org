@@ -76,6 +76,7 @@ Set up ELPA, MELPA and Org package repositories and load =use-package= to manage
 ** Load exec-path
 #+begin_src emacs-lisp
   (use-package exec-path-from-shell
+  :straight t
     :init
     (setq exec-path-from-shell-check-startup-files nil)
     :config
@@ -85,19 +86,20 @@ Set up ELPA, MELPA and Org package repositories and load =use-package= to manage
 * Keep .emacs.d Clean
 I don't want a bunch of transient files showing up as untracked in the Git repo so I move them all to another location.
 #+begin_src emacs-lisp
-;; Change the user-emacs-directory to keep unwanted things out of ~/.emacs.d
-(setq user-emacs-directory (expand-file-name "~/.cache/emacs/")
-      url-history-file (expand-file-name "url/history" user-emacs-directory))
+  ;; Change the user-emacs-directory to keep unwanted things out of ~/.emacs.d
+  (setq user-emacs-directory (expand-file-name "~/.cache/emacs/")
+        url-history-file (expand-file-name "url/history" user-emacs-directory))
 
-;; Use no-littering to automatically set common paths to the new user-emacs-directory
-(use-package no-littering)
+  ;; Use no-littering to automatically set common paths to the new user-emacs-directory
+  (use-package no-littering
+    :straight t)
 
-;; Keep customization settings in a temporary file
-(setq custom-file
-      (if (boundp 'server-socket-dir)
-          (expand-file-name "custom.el" server-socket-dir)
-        (expand-file-name (format "emacs-custom-%s.el" (user-uid)) temporary-file-directory)))
-(load custom-file t)
+  ;; Keep customization settings in a temporary file
+  (setq custom-file
+        (if (boundp 'server-socket-dir)
+            (expand-file-name "custom.el" server-socket-dir)
+          (expand-file-name (format "emacs-custom-%s.el" (user-uid)) temporary-file-directory)))
+  (load custom-file t)
 #+end_src
 ** Backup files
 #+begin_src emacs-lisp
@@ -167,6 +169,7 @@ Some tips can be found here:
     (message "Arrow keys are bad, you know?"))
 
   (use-package undo-tree
+    :straight t
     :init
     (global-undo-tree-mode 1))
 
@@ -175,7 +178,6 @@ Some tips can be found here:
     (setq evil-want-integration t)
     (setq evil-want-keybinding nil)
     (setq evil-want-C-u-scroll t)
-    (setq evil-want-C-i-jump nil)
     (setq evil-respect-visual-line-mode t)
     (setq evil-undo-system 'undo-tree)
     :hook (evil-mode . personal/evil-hook)
@@ -192,15 +194,20 @@ Some tips can be found here:
     (evil-set-initial-state 'messages-buffer-mode 'normal)
     (evil-set-initial-state 'dashboard-mode 'normal)
 
+    ;; Define new key bindings for projectile
+    (define-key evil-normal-state-map (kbd "C-p") 'projectile-switch-project)
+    (define-key evil-normal-state-map (kbd "C-f") 'projectile-find-file)
+
     ;; Disable arrow keys in normal and visual modes
     (define-key evil-normal-state-map (kbd "<left>") 'personal/dont-arrow-me-bro)
     (define-key evil-normal-state-map (kbd "<right>") 'personal/dont-arrow-me-bro)
     (define-key evil-normal-state-map (kbd "<down>") 'personal/dont-arrow-me-bro)
     (define-key evil-normal-state-map (kbd "<up>") 'personal/dont-arrow-me-bro)
-    (evil-global-set-key 'motion (kbd "<left>") 'persona/dont-arrow-me-bro)
-    (evil-global-set-key 'motion (kbd "<right>") 'persona/dont-arrow-me-bro)
-    (evil-global-set-key 'motion (kbd "<down>") 'persona/dont-arrow-me-bro)
-    (evil-global-set-key 'motion (kbd "<up>") 'persona/dont-arrow-me-bro)
+
+    (evil-global-set-key 'motion (kbd "<left>") 'personal/dont-arrow-me-bro)
+    (evil-global-set-key 'motion (kbd "<right>") 'personal/dont-arrow-me-bro)
+    (evil-global-set-key 'motion (kbd "<down>") 'personal/dont-arrow-me-bro)
+    (evil-global-set-key 'motion (kbd "<up>") 'personal/dont-arrow-me-bro)
 
     (evil-set-initial-state 'messages-buffer-mode 'normal)
     (evil-set-initial-state 'dashboard-mode 'normal))
@@ -211,6 +218,7 @@ Some tips can be found here:
     (global-evil-matchit-mode 1))
 
   (use-package evil-collection
+    :straight t
     :after evil
     :config
     (evil-collection-init)
@@ -222,42 +230,43 @@ Some tips can be found here:
 
 *** evil-multiedit
 #+begin_src emacs-lisp
-(use-package evil-multiedit
-  :config
-  ;; Highlights all matches of the selection in the buffer.
-  (define-key evil-visual-state-map "R" 'evil-multiedit-match-all)
+  (use-package evil-multiedit
+    :straight t
+    :config
+    ;; Highlights all matches of the selection in the buffer.
+    (define-key evil-visual-state-map "R" 'evil-multiedit-match-all)
 
-  ;; Match the word under cursor (i.e. make it an edit region). Consecutive
-  ;; presses will incrementally add the next unmatched match.
-  (define-key evil-normal-state-map (kbd "M-d") 'evil-multiedit-match-and-next)
-  ;; Match selected region.
-  (define-key evil-visual-state-map (kbd "M-d") 'evil-multiedit-match-and-next)
+    ;; Match the word under cursor (i.e. make it an edit region). Consecutive
+    ;; presses will incrementally add the next unmatched match.
+    (define-key evil-normal-state-map (kbd "M-d") 'evil-multiedit-match-and-next)
+    ;; Match selected region.
+    (define-key evil-visual-state-map (kbd "M-d") 'evil-multiedit-match-and-next)
 
-  ;; Same as M-d but in reverse.
-  (define-key evil-normal-state-map (kbd "M-D") 'evil-multiedit-match-and-prev)
-  (define-key evil-visual-state-map (kbd "M-D") 'evil-multiedit-match-and-prev)
+    ;; Same as M-d but in reverse.
+    (define-key evil-normal-state-map (kbd "M-D") 'evil-multiedit-match-and-prev)
+    (define-key evil-visual-state-map (kbd "M-D") 'evil-multiedit-match-and-prev)
 
-  ;; OPTIONAL: If you prefer to grab symbols rather than words, use
-  ;; `evil-multiedit-match-symbol-and-next` (or prev).
+    ;; OPTIONAL: If you prefer to grab symbols rather than words, use
+    ;; `evil-multiedit-match-symbol-and-next` (or prev).
 
-  ;; Restore the last group of multiedit regions.
-  (define-key evil-visual-state-map (kbd "C-M-D") 'evil-multiedit-restore)
+    ;; Restore the last group of multiedit regions.
+    (define-key evil-visual-state-map (kbd "C-M-D") 'evil-multiedit-restore)
 
-  ;; RET will toggle the region under the cursor
-  (define-key evil-multiedit-state-map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
+    ;; RET will toggle the region under the cursor
+    (define-key evil-multiedit-state-map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
 
-  ;; ...and in visual mode, RET will disable all fields outside the selected
-  ;; region
-  (define-key evil-motion-state-map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
+    ;; ...and in visual mode, RET will disable all fields outside the selected
+    ;; region
+    (define-key evil-motion-state-map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
 
-  ;; For moving between edit regions
-  (define-key evil-multiedit-state-map (kbd "C-n") 'evil-multiedit-next)
-  (define-key evil-multiedit-state-map (kbd "C-p") 'evil-multiedit-prev)
-  (define-key evil-multiedit-insert-state-map (kbd "C-n") 'evil-multiedit-next)
-  (define-key evil-multiedit-insert-state-map (kbd "C-p") 'evil-multiedit-prev)
+    ;; For moving between edit regions
+    (define-key evil-multiedit-state-map (kbd "C-n") 'evil-multiedit-next)
+    (define-key evil-multiedit-state-map (kbd "C-p") 'evil-multiedit-prev)
+    (define-key evil-multiedit-insert-state-map (kbd "C-n") 'evil-multiedit-next)
+    (define-key evil-multiedit-insert-state-map (kbd "C-p") 'evil-multiedit-prev)
 
-  ;; Allows you to invoke evil-multiedit with a regular expression
-  (evil-ex-define-cmd "ie[dit]" 'evil-multiedit-ex-match))
+    ;; Allows you to invoke evil-multiedit with a regular expression
+    (evil-ex-define-cmd "ie[dit]" 'evil-multiedit-ex-match))
 #+end_src
 
 *** evil-surround
@@ -272,11 +281,12 @@ Some tips can be found here:
 [[https://github.com/justbur/emacs-which-key][which-key]] is a useful UI panel that appears when you start pressing any key binding in Emacs to offer you all possible completions for the prefix.  For example, if you press =C-c= (hold control and press the letter =c=), a panel will appear at the bottom of the frame displaying all of the bindings under that prefix and which command they run.  This is very useful for learning the possible key bindings in the mode of your current buffer.
 
 #+begin_src emacs-lisp
-(use-package which-key
-  :init (which-key-mode)
-  :diminish which-key-mode
-  :config
-  (setq which-key-idle-delay 0.3))
+  (use-package which-key
+    :straight t
+    :init (which-key-mode)
+    :diminish which-key-mode
+    :config
+    (setq which-key-idle-delay 0.3))
 #+end_src
 
 ** Simplify Leader Bindings (general.el)
@@ -284,6 +294,7 @@ Some tips can be found here:
 #+begin_src emacs-lisp
 
   (use-package general
+    :straight t
     :config
     (general-create-definer personal/leader-keys
       :keymaps '(normal insert visual emacs)
@@ -291,9 +302,9 @@ Some tips can be found here:
       :global-prefix "C-SPC")
 
     (personal/leader-keys
-     "t" '(:ignore t :which-key "toggles")
-     "tw" 'whitespace-mode
-     "tt" '(counsel-load-theme :which-key "choose theme")))
+      "t" '(:ignore t :which-key "toggles")
+      "tw" 'whitespace-mode
+      "tt" '(counsel-load-theme :which-key "choose theme")))
 
 #+end_src
 
@@ -359,6 +370,7 @@ Don't warn for following symlinked files
 #+begin_src emacs-lisp
 
   (use-package doom-themes
+    :straight t
     :defer t
     :init (load-theme 'doom-dracula t))
 
@@ -370,13 +382,13 @@ Don't warn for following symlinked files
 I am using the [[https://github.com/tonsky/FiraCode][Fira Code]] and [[https://fonts.google.com/specimen/Cantarell][Cantarell]] fonts for this configuration which will more than likely need to be installed on your machine.  Both can usually be found in the various Linux distro package managers or downloaded from the links above.
 
 #+begin_src emacs-lisp
-(set-face-attribute 'default nil :font "FuraCode Nerd Font" :family "Retina" :height 155)
+(set-face-attribute 'default nil :font "FuraCode Nerd Font" :family "Retina" :height 190)
 
 ;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil :font "FuraCode Nerd Font" :family "Retina" :height 155)
+(set-face-attribute 'fixed-pitch nil :font "FuraCode Nerd Font" :family "Retina" :height 190)
 
 ;; Set the variable pitch face
-(set-face-attribute 'variable-pitch nil :font "Cantarell" :height 160 :weight 'regular)
+(set-face-attribute 'variable-pitch nil :font "Cantarell" :height 190 :weight 'normal)
 #+end_src
 
 *** Enable proper Unicode glyph support
@@ -1347,36 +1359,43 @@ Set up nvm so that we can manage Node versions
 
 
 #+begin_src emacs-lisp
-  (use-package typescript-mode
-    :mode "\\.tsx?\\'"
-    :hook (typescript-mode . lsp)
-    :config
-    (setq typescript-indent-level 2))
+    (use-package typescript-mode
+      :mode (("\\.tsx?\\'" . typescript-mode)
+             ("\\.tsx\\'" . rjsx-mode))
+      :hook (typescript-mode . lsp)
+      :config
+      (setq typescript-indent-level 2))
 
-  (defun personal/set-js-indentation ()
-    ;; electric-layout-mode doesn't play nice with smartparens
-    (setq-local electrict-layout-rules '((?\{ . around) (?\} . around)))
-    (setq js-indent-level 2)
-    (setq evil-shift-width js-indent-level)
-    (setq-default tab-width 2))
+    (defun personal/set-js-indentation ()
+      ;; electric-layout-mode doesn't play nice with smartparens
+      (setq-local electrict-layout-rules '((?\{ . around) (?\} . around)))
+      (setq js-indent-level 2)
+      (setq evil-shift-width js-indent-level)
+      (setq-default tab-width 2))
 
-  (use-package js2-mode
-    :hook (js2-mode . lsp)
-    :mode "\\.jsx?\\'"
-    :config
-    ;; Use js2-mode for Node scripts
-    (add-to-list 'magic-mode-alist '("#!/usr/bin/env node" . js2-mode))
+    (use-package js2-mode
+      :hook (js2-mode . lsp)
+      :mode "\\.jsx?\\'"
+      :config
+      ;; Use js2-mode for Node scripts
+      (add-to-list 'magic-mode-alist '("#!/usr/bin/env node" . js2-mode))
 
-    ;; Don't use built-in syntax checking
-    (setq js2-mode-show-strict-warnings nil)
+      ;; Don't use built-in syntax checking
+      (setq js2-mode-show-strict-warnings nil)
 
-    ;; Set up proper indentation in JavascScript and JSON files
-    (add-hook 'js2-mode-hook #'personal/set-js-indentation))
+      ;; Set up proper indentation in JavascScript and JSON files
+      (add-hook 'js2-mode-hook #'personal/set-js-indentation))
 
-  (use-package json-mode
-    :straight nil
-    :config
-    (add-hook 'json-mode-hook #'personal/set-js-indentation))
+    (use-package json-mode
+      :straight nil
+      :config
+      (add-hook 'json-mode-hook #'personal/set-js-indentation))
+#+end_src
+
+**** Indium
+#+begin_src emacs-lisp
+  (use-package indium
+    :straight t)
 #+end_src
 
 *** Markdown
@@ -1654,17 +1673,20 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
 
 #+begin_src emacs-lisp
 
-(use-package projectile
-  :diminish projectile-mode
-  :config (projectile-mode)
-  :custom ((projectile-completion-system 'ivy))
-  :bind-keymap
-  ("C-c p" . projectile-command-map)
-  :init
-  ;; NOTE: Set this to the folder you keep your git repos
-  (when (file-directory-p "~/code")
-    (setq projectile-project-search-path '("~/code")))
-  (setq projectile-switch-project-action #'projectile-dired))
+
+  (use-package projectile
+    :straight t
+    :diminish projectile-mode
+    :bind
+    :config (projectile-mode)
+    :custom ((projectile-completion-system 'ivy))
+    :bind-keymap
+    ("C-c p" . projectile-command-map)
+    :init
+    ;; NOTE: Set this to the folder you keep your git repos
+    (when (file-directory-p "~/code")
+      (setq projectile-project-search-path '("~/code")))
+    (setq projectile-switch-project-action #'projectile-dired))
 
 #+end_src
 
