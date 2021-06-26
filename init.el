@@ -1332,8 +1332,8 @@
   :init
   ;; NOTE: Set this to the folder you keep your git repos
   (when (file-directory-p "~/code")
-    (setq projectile-project-search-path '("~/code")))
-  (setq projectile-switch-project-action #'projectile-dired))
+    (setq projectile-project-search-path '("~/code"))))
+  ;; (setq projectile-switch-project-action #'projectile-dired))
 
 (use-package rainbow-delimiters
   :straight t
