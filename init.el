@@ -262,8 +262,11 @@
 
 (use-package doom-themes
   :straight t
-  :defer t
-  :init (load-theme 'doom-dracula t))
+  :defer t)
+
+(use-package nimbus-theme
+  :straight t
+  :init (load-theme 'nimbus t))
 
 (set-face-attribute 'default nil :font "FuraCode Nerd Font" :family "Retina" :height 190)
 

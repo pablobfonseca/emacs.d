@@ -372,9 +372,15 @@ Don't warn for following symlinked files
 
   (use-package doom-themes
     :straight t
-    :defer t
-    :init (load-theme 'doom-dracula t))
+    :defer t)
 
+#+end_src
+
+*** nimbus
+#+begin_src emacs-lisp
+  (use-package nimbus-theme
+    :straight t
+    :init (load-theme 'nimbus t))
 #+end_src
 
 ** Font
