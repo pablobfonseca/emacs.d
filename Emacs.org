@@ -1,6 +1,18 @@
 #+TITLE: @pablobfonseca's Emacs Configuration
 #+PROPERTY: header-args:emacs-lisp :tangle ./init.el :mkdirp yes
 
+* Table of Contents
+:PROPERTIES:
+:TOC: :include all :ignore this
+:END:
+:CONTENTS:
+- [[#startup-performance][Startup Performance]]
+- [[#tips-for-use][Tips for Use]]
+- [[#package-management][Package Management]]
+  - [[#straighel][straight.el]]
+  - [[#load-exec-path][Load exec-path]]
+:END:
+
 * Welcome to my Personal Emacs Config
 This file generates [[file:init.el][init.el]] which can be loaded by Emacs at startup.
 
