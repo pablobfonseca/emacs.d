@@ -1852,18 +1852,3 @@ echo "Hello!" > #<buffer test-buffer>
   (use-package crux
     :straight t)
 #+end_src
-* Applications
-** Some App
-
-This is an example of configuring another non-Emacs application using org-mode.  Not only do we write out the configuration at =.config/some-app/config=, we also compute the value that gets stored in this configuration from the Emacs Lisp block above it.
-
-#+NAME: the-value
- #+begin_src emacs-lisp :tangle no
-(+ 1 1)
- #+end_src
-
- #+begin_src conf-unix :tangle ~/Dropbox/Study/Emacs/OrgFiles/foo.conf :noweb yes
-
-   bar=<<the-value()>>
-
- #+end_src
