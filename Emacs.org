@@ -9,7 +9,7 @@
 - [[#startup-performance][Startup Performance]]
 - [[#tips-for-use][Tips for Use]]
 - [[#package-management][Package Management]]
-  - [[#straighel][straight.el]]
+  - [[#straightel][straight.el]]
   - [[#load-exec-path][Load exec-path]]
 :END:
 
@@ -593,6 +593,15 @@ Emacs' built in commenting functionality =comment-dwim= (usually bound to =M-;=)
            (prog-mode . ws-butler-mode)))
 #+end_src
 
+** Editor Config
+#+begin_src emacs-lisp
+  (use-package editorconfig
+    :straight t
+    :ensure t
+    :config
+    (editorconfig-mode 1))
+#+end_src
+
 * Configuration Files
 ** Configuration file management with dotcrafter.el
 #+begin_src emacs-lisp
@@ -603,6 +612,27 @@ Emacs' built in commenting functionality =comment-dwim= (usually bound to =M-;=)
     :custom
     (dotcrafter-dotfiles-folder "~/.emacs.d")
     (dotcrafter-org-files '("Emacs.org")))
+#+end_src
+** Helpers
+#+begin_src emacs-lisp
+  (defun personal/org-file-jump-to-heading (org-file heading-title)
+    (interactive)
+    (find-file (expand-file-name org-file))
+    (goto-char (point-min))
+    (search-forward (concat "* " heading-title))
+    (org-overview)
+    (org-reveal)
+    (org-show-subtree)
+    (forward-line))
+
+  (defun personal/org-file-show-headings (org-file)
+    (interactive)
+    (find-file (expand-file-name org-file))
+    (counsel-org-goto)
+    (org-overview)
+    (org-reveal)
+    (org-show-subtree)
+    (forward-line))
 #+end_src
 ** Bindings
 #+begin_src emacs-lisp
@@ -1326,7 +1356,7 @@ This is an interesting extension to Magit that shows a TODOs section in your git
     "ls" 'counsel-imenu
     "le" 'lsp-ui-flycheck-list
     "lS" 'lsp-ui-sideline-mode
-    "lX" 'lsp-execute-code-action)
+    "lx" 'lsp-execute-code-action)
 
 #+end_src
 **** lsp-ui
@@ -1451,7 +1481,6 @@ Set up nvm so that we can manage Node versions
   (use-package indium
     :straight t)
 #+end_src
-
 *** Markdown
 
 #+begin_src emacs-lisp

@@ -408,6 +408,12 @@
   :hook ((text-mode . ws-butler-mode)
          (prog-mode . ws-butler-mode)))
 
+(use-package editorconfig
+  :straight t
+  :ensure t
+  :config
+  (editorconfig-mode 1))
+
 (use-package dotcrafter
   :straight '(dotcrafter :host github
                          :repo "daviwil/dotcrafter.el"
@@ -415,6 +421,25 @@
   :custom
   (dotcrafter-dotfiles-folder "~/.emacs.d")
   (dotcrafter-org-files '("Emacs.org")))
+
+(defun personal/org-file-jump-to-heading (org-file heading-title)
+  (interactive)
+  (find-file (expand-file-name org-file))
+  (goto-char (point-min))
+  (search-forward (concat "* " heading-title))
+  (org-overview)
+  (org-reveal)
+  (org-show-subtree)
+  (forward-line))
+
+(defun personal/org-file-show-headings (org-file)
+  (interactive)
+  (find-file (expand-file-name org-file))
+  (counsel-org-goto)
+  (org-overview)
+  (org-reveal)
+  (org-show-subtree)
+  (forward-line))
 
 (personal/leader-keys
   "f"  '(:ignore t :which-key "dotfiles")
@@ -1000,7 +1025,7 @@
   "ls" 'counsel-imenu
   "le" 'lsp-ui-flycheck-list
   "lS" 'lsp-ui-sideline-mode
-  "lX" 'lsp-execute-code-action)
+  "lx" 'lsp-execute-code-action)
 
 (use-package lsp-ui
   :straight t
