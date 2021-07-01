@@ -32,6 +32,10 @@
 ;; Load the helper package for commands like `straight-x-clean-unused-repos'
 (require 'straight-x)
 
+(straight-use-package 'use-package)
+
+(setq use-package-always-ensure t)
+
 (use-package exec-path-from-shell
 :straight t
   :init
@@ -1071,12 +1075,11 @@
     (setq rspec-use-spring-when-possible nil)
     (setq rspec-use-rake-flag nil))
   :config
-  (rspec-install-snippets)
   (setq rspec-use-rvm t)
   (add-hook 'after-init-hook 'inf-ruby-switch-setup))
 
 (use-package python-mode
-  :straight nil
+  :straight t
   :hook (python-mode . lsp))
 
 (use-package pyvenv
@@ -1115,7 +1118,7 @@
   (add-hook 'js2-mode-hook #'personal/set-js-indentation))
 
 (use-package json-mode
-  :straight nil
+  :straight t
   :config
   (add-hook 'json-mode-hook #'personal/set-js-indentation))
 
@@ -1162,7 +1165,7 @@
   :straight t)
 
 (use-package emmet-mode
-  :straight
+  :straight t
   :diminish (emmet-mode . "ε")
   :bind* (("C-)" . emmet-next-edit-point)
           ("C-(" . emmet-prev-edit-point))

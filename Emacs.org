@@ -50,16 +50,12 @@ Set up ELPA, MELPA and Org package repositories and load =use-package= to manage
 (package-initialize)
 (unless package-archive-contents
   (package-refresh-contents))
-
-;; Initialize use-package
-(unless (package-installed-p 'use-package)
-  (package-install 'use-package))
-
-(require 'use-package)
-(setq use-package-always-ensure t)
-
 #+end_src
 ** straight.el
+#+begin_src emacs-lisp :tangle ./early-init.el
+  (setq package-enable-at-startup nil)
+#+end_src
+
 #+begin_src emacs-lisp
 ;; Bootstrap straight.el
 (defvar bootstrap-version)
@@ -84,6 +80,12 @@ Set up ELPA, MELPA and Org package repositories and load =use-package= to manage
 (require 'straight-x)
 #+end_src
 
+** use-package
+#+begin_src emacs-lisp
+  (straight-use-package 'use-package)
+
+  (setq use-package-always-ensure t)
+#+end_src
 ** Load exec-path
 #+begin_src emacs-lisp
   (use-package exec-path-from-shell
@@ -1413,7 +1415,6 @@ This is an interesting extension to Magit that shows a TODOs section in your git
       (setq rspec-use-spring-when-possible nil)
       (setq rspec-use-rake-flag nil))
     :config
-    (rspec-install-snippets)
     (setq rspec-use-rvm t)
     (add-hook 'after-init-hook 'inf-ruby-switch-setup))
 #+end_src
@@ -1422,7 +1423,7 @@ This is an interesting extension to Magit that shows a TODOs section in your git
 
 #+begin_src emacs-lisp
   (use-package python-mode
-    :straight nil
+    :straight t
     :hook (python-mode . lsp))
 #+end_src
 **** pyvenv
@@ -1471,7 +1472,7 @@ Set up nvm so that we can manage Node versions
     (add-hook 'js2-mode-hook #'personal/set-js-indentation))
 
   (use-package json-mode
-    :straight nil
+    :straight t
     :config
     (add-hook 'json-mode-hook #'personal/set-js-indentation))
 #+end_src
@@ -1534,7 +1535,7 @@ Set up nvm so that we can manage Node versions
 **** Emmet mode
 #+begin_src emacs-lisp
   (use-package emmet-mode
-    :straight
+    :straight t
     :diminish (emmet-mode . "ε")
     :bind* (("C-)" . emmet-next-edit-point)
             ("C-(" . emmet-prev-edit-point))
