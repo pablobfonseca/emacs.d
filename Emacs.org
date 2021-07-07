@@ -1210,6 +1210,57 @@ Handy tip from [[https://leanpub.com/lit-config/read#leanpub-auto-configuring-em
 
 #+end_src
 * Development
+** Compile mode
+#+begin_src emacs-lisp
+  (defvar *compile-command-map* '(("py" . "python")
+                                  ("go" . "go run")
+                                  ("rb" . "ruby")
+                                  ("js" . "node")))
+
+  (defun ~run-current-file (f command-map)
+    "Run command map with function f
+    f can be: compile, ~acme$, ~acme&, ~acme!"
+    (interactive)
+    (save-buffer)
+
+    (let* ((fname (s-chop-suffix (car (s-match "<.*>" (buffer-name))) (buffer-name)))
+           (suffix (file-name-extension fname))
+           (prog (cdr (assoc suffix command-map))))
+      (if (null prog)
+          (error "Extension is not yet registered")
+        (funcall f (format "%s %s" prog (shell-quote-argument fname))))))
+
+  (defun ~compile-current-file ()
+    "(re)compile the current file. A replacement for compile with automatic filetype recognition.
+                                e.g. If the current buffer is hello.py, then it'll call python hello.py"
+    (interactive)
+    (save-buffer)
+    (~run-current-file 'compile *compile-command-map*))
+
+  ;; default compile command to empty string
+  (setq compile-command "")
+
+  (defun ~recompile ()
+    "custom recompile "
+    (interactive)
+    (save-buffer)
+    (recompile))
+
+  (defvar *test-command-map* '(("py" . "pytest -s -v")
+                               ("go" . "go test")))
+
+  (defun ~test-current-file ()
+    "Test current file using 'compile'. Automatic filetype recogntion.
+      e.g. If the current buffer is hello.py, then it'll call pytest hello.py
+      "
+    (interactive)
+    (~run-current-file 'compile *test-command-map*))
+
+  (personal/leader-keys
+    "c" '(:ignore t :which-key "compile")
+    "cc" '(~compile-current-file :which-key "compile current file")
+    "ct" '(~test-current-file :which-key "test current file"))
+#+end_src
 ** Git
 *** Magit
 
