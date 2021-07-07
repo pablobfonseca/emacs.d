@@ -157,7 +157,7 @@
   :config
   (evil-collection-init)
   :custom
-  (evil-collection-ouutline-bind-tab-p nil)
+  (evil-collection-outline-bind-tab-p nil)
   :config
   (evil-collection-init))
 
