@@ -248,6 +248,9 @@
 ;; enable y/n answers
 (fset 'yes-or-no-p 'y-or-n-p)
 
+;; Highlight current line
+(global-hl-line-mode 1)
+
 (column-number-mode)
 
 ;; Enable line numbers for some modes

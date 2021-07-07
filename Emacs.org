@@ -350,6 +350,9 @@ Make Emacs more minimal
 
   ;; enable y/n answers
   (fset 'yes-or-no-p 'y-or-n-p)
+
+  ;; Highlight current line
+  (global-hl-line-mode 1)
 #+end_src
 
 Enable line numbers and customize their format.
