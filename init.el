@@ -434,6 +434,9 @@
   :config
   (editorconfig-mode 1))
 
+(use-package origami
+  :straight t)
+
 (use-package dotcrafter
   :straight '(dotcrafter :host github
                          :repo "daviwil/dotcrafter.el"

@@ -623,6 +623,12 @@ Emacs' built in commenting functionality =comment-dwim= (usually bound to =M-;=)
     (editorconfig-mode 1))
 #+end_src
 
+** Origami.el for Folding
+#+begin_src emacs-lisp
+  (use-package origami
+    :straight t)
+#+end_src
+
 * Configuration Files
 ** Configuration file management with dotcrafter.el
 #+begin_src emacs-lisp
