@@ -269,11 +269,11 @@
 
 (use-package doom-themes
   :straight t
-  :defer t)
+  :defer t
+  :init (load-theme 'doom-dracula t))
 
 (use-package nimbus-theme
-  :straight t
-  :init (load-theme 'nimbus t))
+  :straight t)
 
 (set-face-attribute 'default nil :font "FuraCode Nerd Font" :family "Retina" :height 190)
 
@@ -392,7 +392,8 @@
   :diminish super-save-mode
   :config
   (super-save-mode +1)
-  (setq super-save-auto-save-when-idle t))
+  (setq super-save-auto-save-when-idle t)
+  (setq super-save-exclude '(".go" ".js")))
 
 (global-auto-revert-mode 1)
 
@@ -1403,10 +1404,6 @@
          web-mode
          typescript-mode
          js2-mode))
-
-(use-package know-your-http-well
-  :straight t
-  :defer t)
 
 (use-package company
   :straight t
