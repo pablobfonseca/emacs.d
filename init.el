@@ -432,7 +432,7 @@
 (use-package dotcrafter
   :straight '(dotcrafter :host github
                          :repo "daviwil/dotcrafter.el"
-                         :branch "future")
+                         :branch "main")
   :custom
   (dotcrafter-dotfiles-folder "~/.emacs.d")
   (dotcrafter-org-files '("Emacs.org")))
