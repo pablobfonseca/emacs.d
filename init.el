@@ -386,15 +386,6 @@
   (unless (equal persp-mode t)
     (persp-mode)))
 
-(use-package super-save
-  :straight t
-  :defer 1
-  :diminish super-save-mode
-  :config
-  (super-save-mode +1)
-  (setq super-save-auto-save-when-idle t)
-  (setq super-save-exclude '(".go" ".js")))
-
 (global-auto-revert-mode 1)
 
 (use-package paren

@@ -548,17 +548,6 @@ Prettify the modeline with [[https://github.com/Malabarba/smart-mode-line/][smar
       (persp-mode)))
 #+end_src
 
-** Auto-Saving Changed Files
-#+begin_src emacs-lisp
-  (use-package super-save
-    :straight t
-    :defer 1
-    :diminish super-save-mode
-    :config
-    (super-save-mode +1)
-    (setq super-save-auto-save-when-idle t)
-    (setq super-save-exclude '(".go" ".js")))
-#+end_src
 ** Auto-Reverting Changed Files
 #+begin_src emacs-lisp
   (global-auto-revert-mode 1)
