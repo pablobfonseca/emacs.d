@@ -83,6 +83,10 @@ nvmlist() {
     njs=$((nvm ls --no-colors --no-alias | cut -c 8-) | awk '{print $1}' | fzf) && nvm use $njs
 }
 
+function branch_clean() {
+  git branch --merged | egrep -v "(^\*|master)" | xargs git branch -d
+}
+
 alias path="echo $PATH | tr -s ':' '\n'"
 alias reload!="source ~/.zshrc"
 alias brew_update="brew update && brew upgrade && brew cleanup"
