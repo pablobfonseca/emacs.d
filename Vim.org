@@ -58,7 +58,7 @@ call plug#end()
 Vimrc is split accross multiple files, so loop over and source each
 
 #+begin_src vimrc
-call s:SourceConfigFilesIn('rcfiles')"
+call s:SourceConfigFilesIn('rcfiles')
 #+end_src
 
 ** background-command

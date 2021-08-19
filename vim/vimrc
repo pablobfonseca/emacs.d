@@ -34,4 +34,4 @@ call s:SourceConfigFilesIn('rcplugins')
 
 call plug#end()
 
-call s:SourceConfigFilesIn('rcfiles')"
+call s:SourceConfigFilesIn('rcfiles')
