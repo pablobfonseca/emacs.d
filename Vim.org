@@ -28,7 +28,7 @@ This file generates [[file:vimrc][vimrc]] file which can be loaded by VIM at sta
   autocmd!
   set nocompatible
 #+end_src
-** SourceConfigFilesIn directory
+** Source Config Files
 
 
 The ~SourceConfigFilesIn~ function takes a directory and eval the files inside that directory
