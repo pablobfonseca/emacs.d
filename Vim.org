@@ -1,0 +1,62 @@
+#+TITLE: @pablobfonseca's VIM Configuration
+#+PROPERTY: header-args:vimrc :tangle ./vim/vimrc :mkdirp yes
+
+* Welcome to my Vim config
+This file generates [[file:vimrc][vimrc]] file which can be loaded by VIM at startup.
+#+begin_src vimrc
+"
+"        _
+" __   _(_)_ __ ___
+" \ \ / / | '_ ` _ \
+"  \ V /| | | | | | |
+"   \_/ |_|_| |_| |_|
+"
+" File: vimrc
+" Author: Pablo Fonseca <pablofonseca777@gmail.com>
+" Description: VIM Rocks!
+" Source: http://github.com/pablobfonseca/dotfiles
+#+end_src
+
+* General Config
+#+begin_src vimrc
+  let mapleader=","
+  let maplocalleader="-"
+
+  filetype off
+  filetype plugin indent on
+
+  autocmd!
+  set nocompatible
+#+end_src
+** SourceConfigFilesIn directory
+
+
+The ~SourceConfigFilesIn~ function takes a directory and eval the files inside that directory
+#+begin_src vimrc
+function! s:SourceConfigFilesIn(directory)
+  let directory_splat = '~/.vim/' . a:directory . '/*'
+  for config_file in split(glob(directory_splat), '\n')
+    if filereadable(config_file)
+      execute 'source' config_file
+    endif
+  endfor
+endfunction
+#+end_src
+** Plugin Setup
+
+Setup Plug to manage my plugins
+
+Plugins are each listed in their own file. Loop and source them using the ~SourceConfigFilesIn~
+#+begin_src vimrc
+call plug#begin('~/.vim/plugged')
+
+call s:SourceConfigFilesIn('rcplugins')
+
+call plug#end()
+#+end_src
+** rcfiles
+Vimrc is split accross multiple files, so loop over and source each
+
+#+begin_src vimrc
+call s:SourceConfigFilesIn('rcfiles')"
+#+end_src
