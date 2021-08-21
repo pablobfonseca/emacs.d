@@ -1,0 +1,6 @@
+Plug 'dense-analysis/ale'
+
+let g:ale_linters = { 'javascript': ['xo'] }
+let g:ale_fixers = { 'javascript': ['xo'] }
+
+" vim:ft=vim

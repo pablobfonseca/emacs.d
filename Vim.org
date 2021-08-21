@@ -1313,4 +1313,775 @@ command! ReformatCurlRequest silent %s/\s\(-.\{-}\)\s/
 
 " vim:ft=vim
 #+end_src
+* rcplugins
+** addon-mw-utils
+#+begin_src vimrc :tangle ./vim/rcplugins/addon-mw-utils
 
+Plug 'marcweber/vim-addon-mw-utils'
+
+" vim:ft=vim
+#+end_src
+** ale.vim
+Ale.vim - Check syntax in Vim asynchronously and fix files, with Language Server Protocol (LSP) support
+
+#+begin_src vimrc :tangle ./vim/rcplugins/ale
+
+Plug 'dense-analysis/ale'
+
+let g:ale_linters = { 'javascript': ['xo'] }
+let g:ale_fixers = { 'javascript': ['xo'] }
+
+" vim:ft=vim
+#+end_src
+** animate.vim
+A Vim Windown Animation Library
+
+#+begin_src vimrc :tangle ./vim/rcplugins/animate
+
+Plug 'camspiers/animate.vim'
+
+let g:animate#easing_func = 'animate#ease_out_quad'
+" vim: ft=vim
+#+end_src
+** bundler
+Lightweight support for Ruby's Bundler
+
+#+begin_src vimrc :tangle ./vim/rcplugins/bundler
+
+" Plug 'tpope/vim-bundler', { 'for': 'ruby' }
+
+" vim: ft=vim
+#+end_src
+** coc
+Intellisense engine for vim8
+
+#+begin_src vimrc :tangle ./vim/rcplugins/coc
+
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+let g:coc_global_extensions = [
+      \ 'coc-snippets',
+      \ 'coc-pairs',
+      \ 'coc-emmet',
+      \ 'coc-tsserver',
+      \ 'coc-json',
+      \ 'coc-solargraph',
+      \ 'coc-css',
+      \ 'coc-python'
+      \ ]
+
+" Remap keys for gotos
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" Use <c-space> to trigger completion
+" inoremap <silent><expr> <c-space> coc#refresh()
+inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<cr>"
+
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Rename current word
+nmap <F2> <Plug>(coc-rename)
+
+" vim: ft=vim
+#+end_src
+** coc-neco
+viml completion source for coc.nvim
+
+#+begin_src vimrc :tangle ./vim/rcplugins/coc-neco
+
+Plug 'neoclide/coc-neco'
+" vim: ft=vim
+#+end_src
+** commentary
+Motion aware commenting
+
+#+begin_src vimrc :tangle ./vim/rcplugins/commentary
+
+Plug 'tpope/vim-commentary'
+
+vmap cm <Plug>Commentary
+nmap cm <Plug>Commentary
+nmap cml <Plug>CommentaryLine
+" vim:ft=vim
+#+end_src
+
+** easy-align
+A Vim alignment plugin
+
+#+begin_src vimrc :tangle ./vim/rcplugins/easy-align
+
+Plug 'junegunn/vim-easy-align'
+
+vmap <leader>ea <Plug>(EasyAlign)
+xmap ga <Plug>(EasyAlign)
+nmap ga <Plug>(EasyAlign)
+
+" vim:ft=vim
+#+end_src
+** easymotion
+Vim motions on speed
+
+#+begin_src vimrc :tangle ./vim/rcplugins/easymotion
+
+Plug 'easymotion/vim-easymotion'
+
+let g:EasyMotion_leader_key = '<leader><leader>'
+
+" vim:ft=vim
+#+end_src
+** emmet
+Text expansion for html markup
+
+#+begin_src vimrc :tangle ./vim/rcplugins/emmet
+
+Plug 'mattn/emmet-vim',
+
+let g:user_emmet_leader_key='<C-Z>'
+let g:user_emmet_settings = {
+      \ 'javascript.jsx' : {
+      \   'extends': 'jsx',
+      \},
+    \}
+let g:user_emmet_mode='a'
+
+" vim:ft=vim
+#+end_src
+** endwise
+Intelligently insert ends, endifs, etc
+
+#+begin_src vimrc :tangle ./vim/rcplugins/endwise
+
+Plug 'tpope/vim-endwise'
+
+" vim:ft=vim
+#+end_src
+** fugitive
+Interact with git via Vim
+
+#+begin_src vimrc :tangle ./vim/rcplugins/fugitive
+
+Plug 'tpope/vim-fugitive'
+
+nmap <leader>st :call <sid>SaveSessionAndShowGitStatus()<cr>
+nmap <leader>ST :call <sid>RestoreSession()<cr>
+nmap <leader>gd :Gdiff<cr>
+nmap <leader>gb :Gblame<CR>
+
+function! s:SaveSessionAndShowGitStatus()
+  let session_name = split(getcwd(), "/")[-1]
+  execute "silent! mksession! ~/.vim/sessions/" . session_name
+  silent tabonly | silent only | Gstatus
+endfunction
+
+function! s:RestoreSession()
+  let session_name = split(getcwd(), "/")[-1]
+  execute "source ~/.vim/sessions/" . session_name
+endfunction
+
+set diffopt+=vertical
+
+augroup git_stuff
+  " Clear old autocmds in group
+  autocmd!
+  autocmd FileType gitcommit setl spell
+  autocmd FileType gitcommit setl diffopt+=vertical
+  autocmd FileType gitcommit nmap <buffer> <S-Tab> <C-p>
+  autocmd FileType gitcommit nmap <buffer> <Tab> <C-n>
+  autocmd BufRead,BufNewFile */.git/COMMIT_EDITMSG wincmd _
+  autocmd BufEnter PULLREQ_EDITMSG setlocal filetype=gitcommit
+augroup END
+
+command! GitDiff call s:GitDiff()
+
+" vim:ft=vim
+#+end_src
+** fzf.vim
+#+begin_src vimrc :tangle ./vim/rcplugins/fzf
+
+"Plug '/usr/local/opt/fzf'
+"Plug 'junegunn/fzf.vim'
+
+"let g:fzf_command_prefix = 'Fzf'
+
+"" Configure FZF to use a floating window configuration
+"let $FZF_DEFAULT_OPTS = '--layout=reverse'
+
+"if has('nvim')
+"  let $FZF_DEFAULT_OPTS .= ' --inline-info'
+"endif
+
+"let g:fzf_colors =
+"\ { 'fg':      ['fg', 'Normal'],
+"  \ 'bg':      ['bg', 'Normal'],
+"  \ 'hl':      ['fg', 'Comment'],
+"  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+"  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+"  \ 'hl+':     ['fg', 'Statement'],
+"  \ 'info':    ['fg', 'PreProc'],
+"  \ 'border':  ['fg', 'Ignore'],
+"  \ 'prompt':  ['fg', 'Conditional'],
+"  \ 'pointer': ['fg', 'Exception'],
+"  \ 'marker':  ['fg', 'Keyword'],
+"  \ 'spinner': ['fg', 'Label'],
+"  \ 'header':  ['fg', 'Comment'] }
+
+"autocmd! FileType fzf
+"autocmd FileType fzf set noshowmode noruler nonu
+
+"nnoremap <leader>f :Find<cr>
+"nnoremap <C-p> :AF<cr>
+"nnoremap <C-f> :FzfGitFiles<cr>
+"nnoremap <leader>gc :FzfFiles app/controllers<cr>
+"nnoremap <leader>gj :FzfFiles app/assets/javascripts<cr>
+"nnoremap <leader>gl :FzfFiles config/locales<cr>
+"nnoremap <leader>gm :FzfFiles app/models<cr>
+"nnoremap <leader>gs :FzfFiles spec<cr>
+"nnoremap <leader>gv :FzfFiles app/views<cr>
+"nnoremap <leader>gw :FzfFiles app/workers<cr>
+"nnoremap <leader>gh :FzfFiles app/helpers<cr>
+"nnoremap <leader>gsv :FzfFiles app/services<cr>
+"nnoremap <leader>gpr :FzfFiles app/presenters<cr>
+"nnoremap <leader>gy :FzfFiles app/assets/stylesheets<cr>
+"nnoremap <leader>gf :FzfFiles spec/factories<cr>
+
+"nnoremap <leader>rf :FzfFiles ~/.vim/rcfiles<cr>
+"nnoremap <leader>rp :FzfFiles ~/.vim/rcplugins<cr>
+"nnoremap <leader>df :FzfFiles ~/.dotfiles<cr>
+"nnoremap <leader>fb :FzfBuffers<cr>
+"nnoremap <leader>ft :FzfTags<cr>
+"nnoremap <leader>fm :FzfMaps<cr>
+"nnoremap <leader>fc :FzfCommits<cr>
+"nnoremap gs :FzfGFiles?<cr>
+"nnoremap <leader>bl :FzfBLines<cr>
+"nnoremap <leader>fh :FzfHelpTags<cr>
+"nnoremap <leader>fa :FzfAg<cr>
+
+"imap <c-x><c-f> <plug>(fzf-complete-path)
+"imap <c-x><c-k> <plug>(fzf-complete-word)
+"imap <c-x><c-j> <plug>(fzf-complete-file-ag)
+"imap <c-x><c-l> <plug>(fzf-complete-line)
+
+"" Configures ripgrep with fzf
+"" command! -bang -nargs=* FzfRg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
+"" command! -bang -nargs=* Rgg call fzf#vim#grep("rg --no-ignore --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
+
+"" Augmenting Ag command using fzf#vim#with_preview function
+""   * fzf#vim#with_preview([[options], preview window, [toggle keys...]])
+""   * Preview script requires Ruby
+""   * Install Highlight or CodeRay to enable syntax highlighting
+""
+""   :FzfAg  - Start fzf with hidden preview window that can be enabled with "?" key
+""   :FzfAg! - Start fzf in fullscreen and display the preview window above
+"command! -bang -nargs=* FzfAg
+"      \ call fzf#vim#ag(<q-args>,
+"      \                 <bang>0 ? fzf#vim#with_preview('up:60%')
+"      \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
+"      \                 <bang>0)
+
+"" --column: Show column number
+"" --line-number: Show line number
+"" --no-heading: Do not show file headings in results
+"" --fixed-strings: Search term as a literal string
+"" --ignore-case: Case insensitive search
+"" --no-ignore: Do not respect .gitignore, etc...
+"" --hidden: Search hidden files and folders
+"" --follow: Follow symlinks
+"" --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
+"" --color: Search color options
+"command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>), 1, <bang>0)
+
+"command! -bang -nargs=? -complete=dir FzfFiles
+"      \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
+
+"" All files
+"command! -nargs=? -complete=dir AF
+"      \ call fzf#run(fzf#wrap(fzf#vim#with_preview({
+"      \ 'source': 'fd --type f --hidden --follow --exclude .git --no-ignore . '.expand(<q-args>)
+"      \ })))
+"nnoremap <leader>af :AF<cr>
+
+"command! -bang -nargs=* GGrep
+"      \ call fzf#vim#grep(
+"      \   'git grep --line-number '.shellescape(<q-args>), 0,
+"      \   fzf#vim#with_preview({'dir': systemlist('git rev-parse --show-toplevel')[0]}), <bang>0)
+
+" vim: ft=vim
+#+end_src
+** git-gutter
+Shows a git diff in the gutter (sign column) " and stages/undoes hunks.
+
+#+begin_src vimrc :tangle ./vim/rcplugins/git-gutter
+
+Plug 'airblade/vim-gitgutter'
+
+" Use fontawesome icons as signs
+let g:gitgutter_sign_added = '+'
+let g:gitgutter_sign_modified = '~'
+let g:gitgutter_sign_removed = '-'
+let g:gitgutter_sign_removed_first_line = '^'
+let g:gitgutter_sign_modified_removed = '<'
+
+nnoremap <leader>hv <Plug>GitGutterPreviewHunk
+
+" vim:ft=vim
+#+end_src
+** go
+Go development plugin for Vim
+
+#+begin_src vimrc :tangle ./vim/rcplugins/go
+
+Plug 'fatih/vim-go', { 'for': 'go' }
+" vim:ft=vim
+#+end_src
+** html5
+Filetype settings for html5
+
+#+begin_src vimrc :tangle ./vim/rcplugins/html5
+
+Plug 'othree/html5.vim', { 'for': 'html' }
+
+" vim:ft=vim
+#+end_src
+** json
+Syntax highlighting for JSON
+
+#+begin_src vimrc :tangle ./vim/rcplugins/json
+
+" Fancy tricks with hiding quotes around attributes, includes ftdetect
+Plug 'elzr/vim-json', {'for': 'json'}
+
+let g:vim_json_syntax_conceal = 0
+
+" vim:ft=vim
+#+end_src
+** lexima
+Auto close parens, quotes, brackets, etc
+
+#+begin_src vimrc :tangle ./vim/rcplugins/lexima
+
+Plug 'cohama/lexima.vim'
+
+" vim:ft=vim
+#+end_src
+** lsp
+#+begin_src vimrc :tangle ./vim/rcplugins/lsp
+
+Plug 'neovim/nvim-lspconfig'
+Plug 'hrsh7th/nvim-compe'
+
+" nnoremap <silent> gd <cmd>lua vim.lsp.buf.definition()<CR>
+" nnoremap <silent> gD <cmd>lua vim.lsp.buf.declaration()<CR>
+" nnoremap <silent> gr <cmd>lua vim.lsp.buf.references()<CR>
+" nnoremap <silent> gi <cmd>lua vim.lsp.buf.implementation()<CR>
+" nnoremap <silent> K <cmd>lua vim.lsp.buf.hover()<CR>
+" nnoremap <silent> <C-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
+" nnoremap <silent> <C-n> <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
+" nnoremap <silent> <C-p> <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
+
+" autocmd BufWritePre *.js lua vim.lsp.buf.formatting_sync(nil, 100)
+" autocmd BufWritePre *.jsx lua vim.lsp.buf.formatting_sync(nil, 100)
+" autocmd BufWritePre *.py lua vim.lsp.buf.formatting_sync(nil, 100)
+" autocmd BufWritePre *.rb lua vim.lsp.buf.formatting_sync(nil, 100)
+" vim: ft=vim
+#+end_src
+** markdown
+Syntax file for Markdowm files
+
+#+begin_src vimrc :tangle ./vim/rcplugins/markdown
+
+Plug 'tpope/vim-markdown', {'for': 'markdown'}
+
+let g:markdown_fenced_languages = ['python', 'javascript', 'ruby', 'sh', 'yaml', 'javascript', 'go', 'html', 'vim', 'json', 'diff']
+
+" vim:ft=vim
+#+end_src
+** matchit
+Extended % open close pair matching
+
+#+begin_src vimrc :tangle ./vim/rcplugins/matchit
+
+Plug 'vim-scripts/matchit.zip'
+
+" vim:ft=vim
+#+end_src
+** moonscript-vim
+MoonScript support for vim
+
+#+begin_src vimrc :tangle ./vim/rcplugins/moonscript-vim
+
+Plug 'leafo/moonscript-vim', { 'for': 'moonscript' }
+" vim: ft=vim
+#+end_src
+** neco-vim
+The vim source for neocomplete/deoplete
+
+#+begin_src vimrc :tangle ./vim/rcplugins/neco-vim
+
+Plug 'Shougo/neco-vim'
+" vim: ft=vim
+#+end_src
+** neoterm
+Wrapper of some vim/neovim's :terminal functions
+
+#+begin_src vimrc :tangle ./vim/rcplugins/neoterm
+
+Plug 'kassio/neoterm'
+
+nnoremap <leader>ro :Topen<cr>
+" vim: ft=vim
+#+end_src
+** perl
+Edit Perl scripts in Vim/gVim. Insert code snippets, run, check, and profile the code and look up help.
+
+#+begin_src vimrc :tangle ./vim/rcplugins/perl
+
+Plug 'wolfgangmehner/perl-support', { 'for': 'perl' }
+" vim: ft=vim
+#+end_src
+** rails
+Help for working with Rails projects in vim
+
+#+begin_src vimrc :tangle ./vim/rcplugins/rails
+
+Plug 'tpope/vim-rails'
+
+nnoremap <leader>rs :Server<cr>
+nnoremap <leader>rc :Console<cr>
+
+let g:rails_projections = {
+      \ 'app/services/*.rb': {
+      \   'command': 'service',
+      \ },
+      \ 'app/mappers/*.rb': {'command': 'mapper'}}
+
+" vim:ft=vim
+#+end_src
+** rake
+it's like rails.vim without the rails
+
+#+begin_src vimrc :tangle ./vim/rcplugins/rake
+
+Plug 'tpope/vim-rake'
+
+" vim: ft=vim
+#+end_src
+** ruby
+#+begin_src vimrc :tangle ./vim/rcplugins/ruby
+
+Plug 'vim-ruby/vim-ruby', {'for': 'ruby'}
+
+" vim:ft=vim
+#+end_src
+** rust
+Vim configuration for Rust
+
+#+begin_src vimrc :tangle ./vim/rcplugins/rust
+
+Plug 'rust-lang/rust.vim', {'for': 'rust'}
+" vim: ft=vim
+#+end_src
+** slim
+Syntax highlighting for VIM
+
+#+begin_src vimrc :tangle ./vim/rcplugins/slim
+
+Plug 'slim-template/vim-slim', { 'for': 'slim' }
+" vim: ft=vim
+#+end_src
+** splitjoin
+Switch between single-line and multiline forms of code
+
+#+begin_src vimrc :tangle ./vim/rcplugins/splitjoin
+
+Plug 'AndrewRadev/splitjoin.vim', { 'branch': 'main' }
+" vim: ft=vim
+#+end_src
+** surround
+Add, update, remove enclosing marks, ie [], {}. (), "", ''
+
+#+begin_src vimrc :tangle ./vim/rcplugins/surround
+
+Plug 'tpope/vim-surround'
+
+let [s:single_quote, s:double_quote, s:no_match] = [1,2,0]
+function! SurroundRequote()
+    let matched_quote = s:no_match
+    let [column, line] = [virtcol('.'), getline('.')]
+    let offset = 1
+    while offset < 30
+        let matched_quote = s:QuoteStyle(line, column, offset)
+        if matched_quote
+            call s:SwapSurroundingQuotes(matched_quote)
+            break
+        endif
+        let offset += 1
+    endwhile
+endfunction
+
+function! s:SwapSurroundingQuotes(current_quote)
+    if a:current_quote != s:single_quote && a:current_quote != s:double_quote
+        return
+    endif
+    call s:CacheCursorLocation()
+    let quote_sequence = a:current_quote == s:single_quote ? "'\"" : "\"'"
+    execute "normal cs" . quote_sequence
+    call s:RestoreCursorLocation()
+endfunction
+
+function! s:QuoteStyle(line, column, offset)
+    let left_character = a:line[a:column - a:offset - 1]
+    let right_character = a:line[a:column + a:offset - 1]
+    if left_character == "'" || right_character == "'"
+        return s:single_quote
+    elseif left_character == '"' || right_character == '"'
+        return s:double_quote
+    endif
+    return s:no_match
+endfunction
+
+function! s:CacheCursorLocation()
+    execute "normal mm"
+endfunction
+
+function! s:RestoreCursorLocation()
+    execute "normal `m"
+endfunction
+
+nmap <leader>c' :call SurroundRequote()<cr>
+
+nmap <leader>qw ysiw"
+nmap <leader>QW ysiW"
+
+" vim:ft=vim
+#+end_src
+** telescope
+Find, Filter, Preview, Pick. All lua, all the time.
+
+#+begin_src vimrc :tangle ./vim/rcplugins/telescope
+
+Plug 'nvim-lua/popup.nvim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
+
+nnoremap <C-p> <cmd>Telescope find_files<cr>
+nnoremap <leader>f <cmd>Telescope live_grep<cr>
+nnoremap <C-x>b <cmd>Telescope buffers<cr>
+nnoremap gs <cmd>Telescope git_status<cr>
+
+" vim: ft=vim
+#+end_src
+** textobj-word-column
+Adds text-objects for word-based columns in Vim.
+
+#+begin_src vimrc :tangle ./vim/rcplugins/textobj-word-column
+
+Plug 'coderifous/textobj-word-column.vim'
+
+" vim:ft=vim
+#+end_src
+** typescript
+Typescript syntax files for Vim
+
+#+begin_src vimrc :tangle ./vim/rcplugins/typescript
+
+Plug 'leafgarland/typescript-vim', { 'for': 'typescript' }
+
+let g:typescript_compiler_binary='tsc'
+" vim: ft=vim
+#+end_src
+** unimpaired
+Pairs of handy bracket mappings
+
+#+begin_src vimrc :tangle ./vim/rcplugins/unimpaired
+
+Plug 'tpope/vim-unimpaired'
+
+" vim:ft=vim
+#+end_src
+** vim-dispatch
+Asynchronous build and test dispatcher
+
+#+begin_src vimrc :tangle ./vim/rcplugins/vim-dispatch
+
+Plug 'tpope/vim-dispatch'
+
+nnoremap d<cr> :Dispatch<space>
+nnoremap <leader>co :Copen<cr>
+nnoremap <leader>cop :Copen!<cr>
+" vim: ft=vim
+#+end_src
+** vim-elm
+Elm plugin for Vim
+
+#+begin_src vimrc :tangle ./vim/rcplugins/vim-elm
+
+Plug 'Zaptic/elm-vim', {'for': 'elm'}
+" vim: ft=vim
+#+end_src
+** vim-fish
+Vim support for editing fish scripts
+
+#+begin_src vimrc :tangle ./vim/rcplugins/vim-fish
+
+Plug 'dag/vim-fish'
+" vim: ft=vim
+#+end_src
+** vim-javascript
+Vastly improved Javascript indentation and syntax support in Vim.
+
+#+begin_src vimrc :tangle ./vim/rcplugins/vim-javascript
+
+Plug 'pangloss/vim-javascript', {'for': ['javascript', 'html']}
+
+let g:javascript_plugin_jsdoc = 1
+let g:javascript_plugin_flow = 1
+" vim: ft=vim
+#+end_src
+** vim-jsx
+React JSX syntax highlighting and indenting for vim.
+
+#+begin_src vimrc :tangle ./vim/rcplugins/vim-jsx
+
+Plug 'mxw/vim-jsx'
+" vim: ft=vim
+#+end_src
+** vim-jsx-typescript
+React JSX syntax highlighting for vim and Typescript
+
+#+begin_src vimrc :tangle ./vim/rcplugins/vim-jsx-typescript
+
+Plug 'peitalin/vim-jsx-typescript', {'for': 'tsx'}
+" vim: ft=vim
+#+end_src
+** vim-peekaboo
+Extends `"` and `@` so you can see the contents of registers
+
+#+begin_src vimrc :tangle ./vim/rcplugins/vim-peekaboo
+
+Plug 'junegunn/vim-peekaboo'
+" vim: ft=vim
+#+end_src
+** vim-polyglot
+A solid language pack for Vim
+
+#+begin_src vimrc :tangle ./vim/rcplugins/vim-polyglot
+
+Plug 'sheerun/vim-polyglot'
+" vim: ft=vim
+#+end_src
+** vim-projectionist
+Granular project configuration
+
+#+begin_src vimrc :tangle ./vim/rcplugins/vim-projectionist
+
+Plug 'tpope/vim-projectionist'
+" vim:ft=vim
+#+end_src
+** vim-reek
+Code smell detector for Ruby in Vim
+
+#+begin_src vimrc :tangle ./vim/rcplugins/vim-reek
+
+Plug 'rainerborene/vim-reek', { 'for': 'ruby' }
+let g:reek_on_loading = 0
+let g:reek_always_show = 0
+" vim: ft=vim
+#+end_src
+** vim-repeat
+Enable repeating supported plugin maps with "."
+
+#+begin_src vimrc :tangle ./vim/rcplugins/vim-repeat
+
+Plug 'tpope/vim-repeat'
+
+" vim: ft=vim
+#+end_src
+** vim-ripgrep
+Use RipGrep in Vim and display results in a quickfix list
+
+#+begin_src vimrc :tangle ./vim/rcplugins/vim-ripgrep
+
+Plug 'jremmen/vim-ripgrep'
+
+" Allow Ripgrep to work with quick list
+command! -nargs=* -complete=file Ripgrep :call s:Rg(<q-args>)>
+command! -nargs=* -complete=file Rg :call s:Rg(<q-args>)
+" vim: ft=vim
+#+end_src
+** vim-rsi
+Readline style insertion
+
+#+begin_src vimrc :tangle ./vim/rcplugins/vim-rsi
+
+Plug 'tpope/vim-rsi'
+
+" vim:ft=vim
+#+end_src
+** vim-test
+Run your tests at the speed of thought
+
+#+begin_src vimrc :tangle ./vim/rcplugins/vim-test
+
+Plug 'janko-m/vim-test'
+
+let test#strategy = 'neoterm'
+
+function! RunTest(cmd)
+  call meoterm#open() " Opens the neoterm window
+  call neoterm#normal('G') " Scroll to the end of the neoterm window
+  exec a:cmd
+endfunction
+" vim: ft=vim
+#+end_src
+** vim-visual-multi
+Multiple cursors plugin for vim/neovim
+#+begin_src vimrc :tangle ./vim/rcplugins/vim-visual-multi
+
+Plug 'mg979/vim-visual-multi'
+" vim: ft=vim
+#+end_src
+** vim-xo
+Vim plugin for XO
+
+#+begin_src vimrc :tangle ./vim/rcplugins/vim-xo
+
+Plug 'xojs/vim-xo', { 'branch': 'main' }
+" vim: ft=vim
+#+end_src
+** webapi
+#+begin_src vimrc :tangle ./vim/rcplugins/webapi
+
+Plug 'mattn/webapi-vim'
+
+" vim:ft=vim
+#+end_src
+** xml
+Handles xml files
+
+#+begin_src vimrc :tangle ./vim/rcplugins/xml
+
+augroup filetype_ruby
+  autocmd BufWritePre * filetype xml :PrettyXML()
+augroup END
+
+function! s:PrettyXML()
+  %!xmllint --format -
+  set filetype=xml
+endfunction
+command! PrettyXML :call <sid>PrettyXML()
+" vim: ft=vim
+#+end_src
