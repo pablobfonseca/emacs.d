@@ -81,7 +81,7 @@ function! DeleteUnlistedBuffers()
         let name = bufname(n)
         if name == '[Scratch]' ||
               \ matchend(name, ':bash') ||
-              \ matchend(name, ':fish')
+              \ matchend(name, ':zsh')
           call CleanupBuffer(n)
         endif
       endif
@@ -110,7 +110,7 @@ endfunction
 
 function! ToggleScratchTerm()
   if has('nvim')
-    call ToggleTerm('fish')
+    call ToggleTerm('zsh')
   endif
 endfunction
 command! ToggleScratchTerm call ToggleScratchTerm()

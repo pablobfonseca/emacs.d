@@ -268,7 +268,7 @@ function! DeleteUnlistedBuffers()
         let name = bufname(n)
         if name == '[Scratch]' ||
               \ matchend(name, ':bash') ||
-              \ matchend(name, ':fish')
+              \ matchend(name, ':zsh')
           call CleanupBuffer(n)
         endif
       endif
@@ -297,7 +297,7 @@ endfunction
 
 function! ToggleScratchTerm()
   if has('nvim')
-    call ToggleTerm('fish')
+    call ToggleTerm('zsh')
   endif
 endfunction
 command! ToggleScratchTerm call ToggleScratchTerm()
@@ -415,7 +415,7 @@ set nrformats+=alpha              " Force decimal-based arithmetic
 set shortmess+=c                  " don't give |ins-completion-menu| messages
 set updatetime=300                " You will have a bad experience for diagnostic messages when it's default 4000
 set signcolumn=yes                " always show signcolumns
-set shell=/usr/local/bin/fish     " Set fish as default shell
+set shell=/bin/zsh                " Set zsh as default shell
 set showmatch                     " jump to matches when entering regexp
 set isfname-=:
 set shortmess+=c                  " Don't pass messages to |ins-completion-menu|
@@ -1143,7 +1143,6 @@ augroup terminal
     tnoremap <c-l> <C-\><C-n><C-w>l
     function! OpenTerminal()
       split | terminal
-      " split term:///usr/local/bin/fish
       resize 10
     endfunction
   " Open Terminal on Ctrl+n
