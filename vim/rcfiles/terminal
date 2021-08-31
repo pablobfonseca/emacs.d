@@ -15,6 +15,7 @@ augroup terminal
     tnoremap <c-l> <C-\><C-n><C-w>l
     function! OpenTerminal()
       split | terminal
+      split term:///bin/zsh
       resize 10
     endfunction
   " Open Terminal on Ctrl+n

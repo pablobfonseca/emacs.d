@@ -385,93 +385,92 @@ endfunction
 ** general
 
 #+begin_src vimrc :tangle ./vim/rcfiles/general
+  set hidden                        " Allow buffer change w/o saving
+  set autoread                      " Load file from disk, ie for git reset
+  set nocompatible                  " Not concerned with vi compatibility
+  set lazyredraw                    " Don't update while executing macros
+  set backspace=indent,eol,start    " Sane backspace behavior
+  set history=1000                  " Remember last 1000 commands
+  set scrolloff=7                   " Start scrolling when we're 7 lines away from margins
+  set mouse-=a
+  set expandtab                     " Convert <tab> to spaces (2 or 4)
+  set tabstop=2                     " Two spaces per tab as default
+  set shiftwidth=2                  " Then override with per filteype
+  set softtabstop=2                 " Specific settings via autocmd
+  set secure                        " Limit what modelines and autocmds can do
+  set autowrite                     " Write for me when I take any action
+  set autoindent
+  set copyindent
+  set textwidth=79
+  set viminfo+=!
+  set rtp+=/usr/local/opt/fzf
+  set cmdheight=2
+  set formatoptions-=cro             " Stop vim to keep adding comments on carriage return
+  set relativenumber
+  set number
+  set re=1
+  scriptencoding utf-16             " Allow emoji in vimrc
+  set nrformats+=alpha              " Force decimal-based arithmetic
+  set shortmess+=c                  " don't give |ins-completion-menu| messages
+  set updatetime=300                " You will have a bad experience for diagnostic messages when it's default 4000
+  set signcolumn=yes                " always show signcolumns
+  set shell=/bin/zsh                " Set zsh as default shell
+  set showmatch                     " jump to matches when entering regexp
+  set isfname-=:
+  set shortmess+=c                  " Don't pass messages to |ins-completion-menu|
 
-set hidden                        " Allow buffer change w/o saving
-set autoread                      " Load file from disk, ie for git reset
-set nocompatible                  " Not concerned with vi compatibility
-set lazyredraw                    " Don't update while executing macros
-set backspace=indent,eol,start    " Sane backspace behavior
-set history=1000                  " Remember last 1000 commands
-set scrolloff=7                   " Start scrolling when we're 7 lines away from margins
-set mouse-=a
-set expandtab                     " Convert <tab> to spaces (2 or 4)
-set tabstop=2                     " Two spaces per tab as default
-set shiftwidth=2                  " Then override with per filteype
-set softtabstop=2                 " Specific settings via autocmd
-set secure                        " Limit what modelines and autocmds can do
-set autowrite                     " Write for me when I take any action
-set autoindent
-set copyindent
-set textwidth=79
-set viminfo+=!
-set rtp+=/usr/local/opt/fzf
-set cmdheight=2
-set formatoptions-=cro             " Stop vim to keep adding comments on carriage return
-set relativenumber
-set number
-set re=1
-scriptencoding utf-16             " Allow emoji in vimrc
-set nrformats+=alpha              " Force decimal-based arithmetic
-set shortmess+=c                  " don't give |ins-completion-menu| messages
-set updatetime=300                " You will have a bad experience for diagnostic messages when it's default 4000
-set signcolumn=yes                " always show signcolumns
-set shell=/bin/zsh                " Set zsh as default shell
-set showmatch                     " jump to matches when entering regexp
-set isfname-=:
-set shortmess+=c                  " Don't pass messages to |ins-completion-menu|
+  set termguicolors
 
-set termguicolors
+  if has('nvim')
+    set inccommand=nosplit " substitute with preview
+  endif
 
-if has('nvim')
-  set inccommand=nosplit " substitute with preview
-endif
+  " Fix netrw buffer issue
+  let g:netrw_fastbrowse = 0
 
-" Fix netrw buffer issue
-let g:netrw_fastbrowse = 0
+  " Disable sound/visual bell on errors
+  " May need additional config about audible bell
+  set t_vb=
 
-" Disable sound/visual bell on errors
-" May need additional config about audible bell
-set t_vb=
+  " Set modeline to 1 to allow rcfiles to be recognized as vim files
+  set modelines=1
 
-" Set modeline to 1 to allow rcfiles to be recognized as vim files
-set modelines=1
+  " I save constantly and hate swap files in my prject dirs
+  set nobackup
+  set nowritebackup
+  set noswapfile
 
-" I save constantly and hate swap files in my prject dirs
-set nobackup
-set nowritebackup
-set noswapfile
+  " Completions
+  set completeopt-=menu
+  set completeopt+=menuone   " Show the completions UI even with only 1 item
+  set completeopt-=longest   " Don't insert the longest common text
+  set completeopt-=preview   " Hide the documentation preview window
+  set completeopt+=noinsert  " Don't insert text automatically
+  set completeopt-=noselect  " Highlight the first completion automatically
 
-" Completions
-set completeopt-=menu
-set completeopt+=menuone   " Show the completions UI even with only 1 item
-set completeopt-=longest   " Don't insert the longest common text
-set completeopt-=preview   " Hide the documentation preview window
-set completeopt+=noinsert  " Don't insert text automatically
-set completeopt-=noselect  " Highlight the first completion automatically
+  " Setup nice command tab completion
+  set wildmenu
+  set wildmode=list:longest,full
+  set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc
 
-" Setup nice command tab completion
-set wildmenu
-set wildmode=list:longest,full
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc
+  " Persistent undo
+  let undodir = expand('~/.undo-vim')
+  if !isdirectory(undodir)
+    call mkdir(undodir)
+  endif
+  set undodir=~/.undo-vim
+  set undofile " Create FILE.un~ files for persistent undo
 
-" Persistent undo
-let undodir = expand('~/.undo-vim')
-if !isdirectory(undodir)
-  call mkdir(undodir)
-endif
-set undodir=~/.undo-vim
-set undofile " Create FILE.un~ files for persistent undo
+  set shiftround " When at 3 spaces and I hit >>, go to 4, not 5.
 
-set shiftround " When at 3 spaces and I hit >>, go to 4, not 5.
+  " (Hopefully) removes the delay when hitting esc in insert mode
+  " set noesckeys " do not work on neovim
+  set ttimeout
+  " Don't wait so long for the next keypress (particularly in ambigious Leader
+  " situations.
+  set timeoutlen=500
 
-" (Hopefully) removes the delay when hitting esc in insert mode
-" set noesckeys " do not work on neovim
-set ttimeout
-" Don't wait so long for the next keypress (particularly in ambigious Leader
-" situations.
-set timeoutlen=500
-
-" vim:ft=vim
+  " vim:ft=vim
 
 #+end_src
 
@@ -603,7 +602,7 @@ augroup END
 #+begin_src vimrc :tangle ./vim/rcfiles/python
 
 let g:python_host_prog='/usr/bin/python'
-let g:python3_host_prog='/usr/local/bin/python3'
+let g:python3_host_prog='/opt/homebrew/bin/python3'
 
 augroup filetype_python
   " Clear old autocmds in group
@@ -772,7 +771,7 @@ nnoremap <leader>rh :h local-additions<cr>
 nmap <C-x><C-s> :w<cr>
 nmap <C-x><C-c> :x<cr>
 nmap <C-s> /
-nmap <C-x>b :FzfBuffers<cr>
+" nmap <C-x>b :FzfBuffers<cr>
 nmap <C-c>pf :FzfFiles<cr>
 nmap <C-x>1 :only<cr>
 nmap <C-x>2 :split<cr>
@@ -1143,6 +1142,7 @@ augroup terminal
     tnoremap <c-l> <C-\><C-n><C-w>l
     function! OpenTerminal()
       split | terminal
+      split term:///bin/zsh
       resize 10
     endfunction
   " Open Terminal on Ctrl+n
@@ -1929,14 +1929,6 @@ Elm plugin for Vim
 #+begin_src vimrc :tangle ./vim/rcplugins/vim-elm
 
 Plug 'Zaptic/elm-vim', {'for': 'elm'}
-" vim: ft=vim
-#+end_src
-** vim-fish
-Vim support for editing fish scripts
-
-#+begin_src vimrc :tangle ./vim/rcplugins/vim-fish
-
-Plug 'dag/vim-fish'
 " vim: ft=vim
 #+end_src
 ** vim-javascript
