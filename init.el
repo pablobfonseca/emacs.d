@@ -129,8 +129,8 @@
   (evil-set-initial-state 'dashboard-mode 'normal)
 
   ;; Define new key bindings for projectile
-  (define-key evil-normal-state-map (kbd "C-p") 'projectile-switch-project)
-  (define-key evil-normal-state-map (kbd "C-f") 'projectile-find-file)
+  (define-key evil-normal-state-map (kbd "M-p") 'projectile-switch-project)
+  (define-key evil-normal-state-map (kbd "C-p") 'projectile-find-file)
 
   ;; Disable arrow keys in normal and visual modes
   (define-key evil-normal-state-map (kbd "<left>") 'personal/dont-arrow-me-bro)
