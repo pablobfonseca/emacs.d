@@ -1954,6 +1954,9 @@ echo "Hello!" > #<buffer test-buffer>
 #+begin_src emacs-lisp
   (use-package ripgrep
     :straight t)
+
+  (use-package deadgrep
+    :straight t)
 #+end_src
 * Tools
 ** Crux

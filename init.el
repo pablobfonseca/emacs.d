@@ -1497,5 +1497,8 @@
 (use-package ripgrep
   :straight t)
 
+(use-package deadgrep
+  :straight t)
+
 (use-package crux
   :straight t)
