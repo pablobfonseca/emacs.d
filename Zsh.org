@@ -5,6 +5,7 @@
 This file generates [[file:zshrc][zshrc]] file which can be loaded by ZSH at startup.
 * envvars
 #+begin_src shell :tangle ./zsh/zshenv
+  export UNAME_MACHINE=$(/usr/bin/uname -m)
   export PATH="/usr/local/sbin:$PATH"
   export PATH="/usr/local/mysql/bin:$PATH"
   export HISTSIZE=20000
@@ -17,7 +18,13 @@ This file generates [[file:zshrc][zshrc]] file which can be loaded by ZSH at sta
 ** Go
 #+begin_src shell :tangle ./zsh/zshenv
   export GOPATH=$HOME/code/go-workspace
-  export GOROOT=/usr/local/opt/go/libexec
+
+  if [ "$UNAME_MACHINE" = "arm64" ]; then
+     export GOROOT=/opt/homebrew/opt/go/libexec
+  else
+     export GOROOT=/usr/local/opt/go/libexec
+  fi
+
   export GOBIN=$GOPATH/bin
   export PATH=$PATH:$GOPATH/bin
   export PATH=$PATH:$GOROOT/bin
@@ -54,7 +61,11 @@ source "$HOME/.cargo/env"
 
 * zsh-syntax-highlighting
 #+begin_src shell
-  source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+  if [ "$UNAME_MACHINE" = "arm64" ]; then
+      source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+  else
+      source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+  fi
 #+end_src
 
 * Enable completion
