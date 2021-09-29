@@ -619,6 +619,13 @@ Emacs' built in commenting functionality =comment-dwim= (usually bound to =M-;=)
     :straight t)
 #+end_src
 
+** expand region
+#+begin_src emacs-lisp
+  (use-package expand-region
+    :straight t
+    :bind ("C-=" . er/expand-region))
+#+end_src
+
 * Configuration Files
 ** Configuration file management with dotcrafter.el
 #+begin_src emacs-lisp

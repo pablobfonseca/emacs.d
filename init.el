@@ -429,6 +429,10 @@
 (use-package origami
   :straight t)
 
+(use-package expand-region
+  :straight t
+  :bind ("C-=" . er/expand-region))
+
 (use-package dotcrafter
   :straight '(dotcrafter :host github
                          :repo "daviwil/dotcrafter.el"
