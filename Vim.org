@@ -1342,6 +1342,12 @@ Plug 'camspiers/animate.vim'
 let g:animate#easing_func = 'animate#ease_out_quad'
 " vim: ft=vim
 #+end_src
+** any-jump
+#+begin_src vimrc :tangle ./vim/rcplugins/any-jump
+Plug 'pechorin/any-jump.vim'
+" vim: ft=vim
+#+end_src
+
 ** bundler
 Lightweight support for Ruby's Bundler
 
