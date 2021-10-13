@@ -885,6 +885,7 @@
 (add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
 (add-to-list 'org-structure-template-alist '("json" . "src json"))
 (add-to-list 'org-structure-template-alist '("js" . "src javascript"))
+(add-to-list 'org-structure-template-alist '("lua" . "src lua"))
 (add-to-list 'org-structure-template-alist '("ruby" . "src ruby"))
 (add-to-list 'org-structure-template-alist '("vimrc" . "src vimrc"))
 
@@ -1376,6 +1377,9 @@
   )
 
 (use-package vimrc-mode
+  :straight t)
+
+(use-package lua-mode
   :straight t)
 
 (use-package flycheck
