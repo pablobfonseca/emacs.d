@@ -517,18 +517,16 @@ map('n', '<C-x>2', '<cmd>split<cr>')
 map('n', '<C-x>3', '<cmd>vsplit<cr>')
 map('n', '<C-x>0', '<cmd>q<cr>')
 
-map('n', '<silent> H', '<cmd>call ShowDocumentation()<cr>')
-map('n', '<silent> K', '<cmd>FzfRg <C-R><C-W><cr>')
+function _G.show_documentation()
+   if fn.index({'vim', 'help'}, vim.bo.filetype) >= 0 then
+      vim.api.nvim_command('execute "h ".expand("<cword>")')
+   else
+      vim.api.nvim_command('call CocActionAsync("doHover")')
+   end
+end
 
-vim.api.nvim_exec([[
-      function! ShowDocumentation()
-        if (index(['vim', 'help'], &filetype) >= 0)
-          execute 'h '.expand('<cword>')
-        else
-          call CocActionAsync('doHover')
-        endif
-      endfunction
-]],true)
+map('n', 'H', 'v:lua.show_documentation()', { noremap = true, silent = true})
+map('n', 'K', '<cmd>Rg <C-R><C-W><cr>', { noremap = true, silent = true})
 
 -- Opens help the word under the cursor
 map('n', '<leader>h', '<cmd>exe "help" expand("<cword>")<cr>')
@@ -592,9 +590,9 @@ map('v', '<silent> <leader>r', '<cmd>call VisualSelection("replace")<CR>')
 
 -- Disable arrows
 for _,prefix in pairs({ 'i', 'n', 'v' }) do
-  for _,key in pairs({ '<Up>', '<Down>', '<Left>', '<Right>' }) do
-    map(prefix, key, '<Nop>')
-  end
+   for _,key in pairs({ '<Up>', '<Down>', '<Left>', '<Right>' }) do
+      map(prefix, key, '<Nop>')
+   end
 end
 
 -- resize panes
