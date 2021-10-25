@@ -208,6 +208,9 @@ function search_route {
   alias st="git st"
   alias check3000="lsof -i :3000"
   alias ll="ls -alF"
+  alias lvim="nvim -u ~/.emacs.d/vim/init.lua"
+  alias lvimup="nvim +PaqUpdate"
+  alias nvim="nvim -u ~/.emacs.d/vim/init.vim"
   alias vimup="nvim +PlugUpdate"
   alias bs="git bselect"
 #+end_src
