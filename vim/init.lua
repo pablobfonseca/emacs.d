@@ -1171,7 +1171,7 @@ paq {'junegunn/vim-peekaboo'}
 
 paq {'tpope/vim-repeat'}
 
-paq {'jremmen/vim-ripgrep'}
+paq {'guohao117/vim-ripgrep'}
 
 -- Allow Ripgrep to work with quick list
 vim.api.nvim_command('command! -nargs=* -complete=file Ripgrep :call Rg(<q-args>)>')
