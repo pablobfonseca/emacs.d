@@ -17,20 +17,23 @@
 This file generates [[file:init.el][init.el]] which can be loaded by Emacs at startup.
 
 * Startup Performance
-Make startup faster by reducing the frequency of garbage collection and then use a hook to measure Emacs startup time
-#+begin_src emacs-lisp
-;; The default is 800 kilobytes. Measured in bytes
-(setq gc-const-threshold (* 50 1000 1000))
+  Make startup faster by reducing the frequency of garbage collection and then use a hook to measure Emacs startup time
 
-;; Profile emacs startup
-(add-hook 'emacs-startup-hook
-  (lambda ()
-(message "*** Emacs loaded in %s with %d garbage collections."
-       (format "%.2f seconds"
-               (float-time
-                (time-subtract after-init-time before-init-time)))
-       gcs-done)))
+  Turn on ~lexical-binding~ for the init file!
+#+begin_src emacs-lisp
+  ;; -*- lexical-binding: t; -*-
+
+  ;; The default is 800 kilobytes.  Measured in bytes.
+  (setq gc-cons-threshold (* 50 1000 1000))
+
+  ;; Profile emacs startup
+  (add-hook 'emacs-startup-hook
+            (lambda ()
+              (message "*** Emacs loaded in %s seconds with %d garbage collections."
+                       (emacs-init-time "%.2f")
+                       gcs-done)))
 #+end_src
+
 * Tips for Use
 If you're looking at this file in Emacs, you can put your cursor on a link and press =C-c C-o= to open the link in your web browser.
  
@@ -54,31 +57,34 @@ Set up ELPA, MELPA and Org package repositories and load =use-package= to manage
 ** straight.el
 #+begin_src emacs-lisp :tangle ./early-init.el
   (setq package-enable-at-startup nil)
+
 #+end_src
 
 #+begin_src emacs-lisp
-;; Bootstrap straight.el
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 5))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
+  ;; Bootstrap straight.el
+  (defvar bootstrap-version)
+  (let ((bootstrap-file
+         (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+        (bootstrap-version 5))
+    (unless (file-exists-p bootstrap-file)
+      (with-current-buffer
+          (url-retrieve-synchronously
+           "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+           'silent 'inhibit-cookies)
+        (goto-char (point-max))
+        (eval-print-last-sexp)))
+    (load bootstrap-file nil 'nomessage))
 
-(setq straight-use-package-by-default t)
+  (setq straight-use-package-by-default t)
 
-;; Use straight.el for use-package expressions
-(straight-use-package 'use-package)
+  ;; Use straight.el for use-package expressions
+  (straight-use-package 'use-package)
 
-;; Load the helper package for commands like `straight-x-clean-unused-repos'
-(require 'straight-x)
+  ;; Load the helper package for commands like `straight-x-clean-unused-repos'
+  (require 'straight-x)
 #+end_src
+
+Sometimes it's good to clean up the unused repositories if I've removed packages from my configuration. Use ~straight-remove-unused-repos~ for this purpose.
 
 ** use-package
 #+begin_src emacs-lisp
@@ -127,6 +133,12 @@ Avoid constant errors about the encoding system by setting the default to UTF-8
 #+begin_src emacs-lisp
 (set-default-coding-systems 'utf-8)
 #+end_src
+* Server mode
+  Start the Emacs server from this instance so that all ~emacsclient~ calls are routed here.
+#+begin_src emacs-lisp
+  (server-start)
+#+end_src
+
 * Keybindings Configuration
 ** Global keybindings
 #+begin_src emacs-lisp
@@ -965,6 +977,7 @@ This section contains the basic configuration for =org-mode= plus the configurat
     (setq org-src-tab-acts-natively t))
 
   (use-package org
+    :straight f
     :hook (org-mode . personal/org-mode-setup)
     :config
     (setq org-ellipsis " ▾")
@@ -1102,25 +1115,6 @@ This section contains the basic configuration for =org-mode= plus the configurat
     :custom
     (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 #+end_src
-
-*** Center Org Buffers
-
-We use [[https://github.com/joostkremers/visual-fill-column][visual-fill-column]] to center =org-mode= buffers for a more pleasing writing experience as it centers the contents of the buffer horizontally to seem more like you are editing a document.  This is really a matter of personal preference so you can remove the block below if you don't like the behavior.
-
-#+begin_src emacs-lisp
-
-  (defun personal/org-mode-visual-fill ()
-    (setq visual-fill-column-width 100
-          visual-fill-column-center-text t)
-    (visual-fill-column-mode))
-
-  (use-package visual-fill-column
-    :straight t
-    :defer t
-    :hook (org-mode . personal/org-mode-visual-fill))
-
-#+end_src
-
 ** Configure Babel Languages
 
 To execute or export code in =org-mode= code blocks, you'll need to set up =org-babel-load-languages= for each language you'd like to use.  [[https://orgmode.org/worg/org-contrib/babel/languages.html][This page]] documents all of the languages that you can use with =org-babel=.
@@ -1175,6 +1169,12 @@ Handy tip from [[https://leanpub.com/lit-config/read#leanpub-auto-configuring-em
 
 ** Bindings
 #+begin_src emacs-lisp
+  (fset 'evil-redirect-digit-argument 'ignore) ;; before evil-org loaded
+
+  (add-to-list 'evil-digit-bound-motions 'evil-org-beginning-of-line)
+  (evil-define-key 'motion 'evil-org-mode
+    (kbd "0") 'evil-org-beginning-of-line)
+
   (use-package evil-org
     :straight t
     :after org

@@ -1,14 +1,18 @@
 ;; The default is 800 kilobytes. Measured in bytes
 (setq gc-const-threshold (* 50 1000 1000))
 
+;; Change the user-emacs-directory to keep unwanted things out of ~/.emacs.d
+(setq user-emacs-directory (expand-file-name "~/.cache/emacs/")
+      url-history-file (expand-file-name "url/history" user-emacs-directory))
+
 ;; Profile emacs startup
 (add-hook 'emacs-startup-hook
-  (lambda ()
-(message "*** Emacs loaded in %s with %d garbage collections."
-       (format "%.2f seconds"
-               (float-time
-                (time-subtract after-init-time before-init-time)))
-       gcs-done)))
+          (lambda ()
+            (message "*** Emacs loaded in %s with %d garbage collections."
+                     (format "%.2f seconds"
+                             (float-time
+                              (time-subtract after-init-time before-init-time)))
+                     gcs-done)))
 
 ;; Bootstrap straight.el
 (defvar bootstrap-version)
@@ -34,19 +38,13 @@
 
 (straight-use-package 'use-package)
 
-(setq use-package-always-ensure t)
-
 (use-package exec-path-from-shell
-:straight t
+  :straight t
   :init
   (setq exec-path-from-shell-check-startup-files nil)
   :config
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize)))
-
-;; Change the user-emacs-directory to keep unwanted things out of ~/.emacs.d
-(setq user-emacs-directory (expand-file-name "~/.cache/emacs/")
-      url-history-file (expand-file-name "url/history" user-emacs-directory))
 
 ;; Use no-littering to automatically set common paths to the new user-emacs-directory
 (use-package no-littering
@@ -82,13 +80,17 @@
 ;; Start vterm or switch to it if it's active
 (global-set-key (kbd "C-x m") 'vterm)
 
-;; replace buffer-menu with ibuffer
+;; Replace buffer-menu with ibuffer
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
 (global-set-key (kbd "C-M-u") 'universal-argument)
+
+(defun personal/dont-arrow-me-bro ()
+  (interactive)
+  (message "Arrow keys are bad, you know?"))
 
 (defun personal/evil-hook ()
   (dolist (mode '(custom-mode
@@ -97,9 +99,6 @@
                   term-mode))
     (add-to-list 'evil-emacs-state-modes mode)))
 
-(defun personal/dont-arrow-me-bro ()
-  (interactive)
-  (message "Arrow keys are bad, you know?"))
 
 (use-package undo-tree
   :straight t
@@ -109,12 +108,12 @@
 (use-package evil
   :straight t
   :init
-  (setq evil-want-integration t)
-  (setq evil-want-keybinding nil)
-  (setq evil-want-C-u-scroll t)
-  (setq evil-respect-visual-line-mode t)
-  (setq evil-undo-system 'undo-tree)
-  :hook (evil-mode . personal/evil-hook)
+  (setq evil-want-integration t
+        evil-want-keybinding nil
+        evil-want-C-u-scroll t
+        evil-want-C-i-jump nil
+        evil-respect-visual-line-mode t
+        evil-undo-system 'undo-tree)
   :config
   (add-hook 'evil-mode-hook 'personal/evil-hook)
   (evil-mode 1)
@@ -136,15 +135,7 @@
   (define-key evil-normal-state-map (kbd "<left>") 'personal/dont-arrow-me-bro)
   (define-key evil-normal-state-map (kbd "<right>") 'personal/dont-arrow-me-bro)
   (define-key evil-normal-state-map (kbd "<down>") 'personal/dont-arrow-me-bro)
-  (define-key evil-normal-state-map (kbd "<up>") 'personal/dont-arrow-me-bro)
-
-  (evil-global-set-key 'motion (kbd "<left>") 'personal/dont-arrow-me-bro)
-  (evil-global-set-key 'motion (kbd "<right>") 'personal/dont-arrow-me-bro)
-  (evil-global-set-key 'motion (kbd "<down>") 'personal/dont-arrow-me-bro)
-  (evil-global-set-key 'motion (kbd "<up>") 'personal/dont-arrow-me-bro)
-
-  (evil-set-initial-state 'messages-buffer-mode 'normal)
-  (evil-set-initial-state 'dashboard-mode 'normal))
+  (define-key evil-normal-state-map (kbd "<up>") 'personal/dont-arrow-me-bro))
 
 (use-package evil-matchit
   :straight t
@@ -162,9 +153,7 @@
   (evil-collection-init))
 
 (use-package evil-multiedit
-  :straight '(evil-multiedit :host github
-                             :repo "hlissner/evil-multiedit"
-                             :branch "master")
+  :straight t
   :config
   (evil-multiedit-default-keybinds))
 
@@ -193,24 +182,24 @@
     "tw" 'whitespace-mode
     "tt" '(counsel-load-theme :which-key "choose theme")))
 
-;; Open emacs maximized
+;; Open Emacs maximized
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
 (setq inhibit-startup-message t)
 
-(scroll-bar-mode -1)              ; Disable visible scrollbar
-(tool-bar-mode -1)                ; Disable the toolbar
-(tooltip-mode -1)                 ; Disable the tooltips
-(set-fringe-mode 10)              ; Give some breathing room
-(menu-bar-mode -1)                ; Disable the menu bar
-(setq ring-bell-function 'ignore) ; Ignore bell
+(scroll-bar-mode -1)			; Disable visible scrollbar
+(tool-bar-mode -1)			; Disable the toolbar
+(tooltip-mode -1)			; Disable the tooltips
+(set-fringe-mode 10)			; Give some breathing room
+(menu-bar-mode -1)			; Disable the menu bar
+(setq ring-bell-function 'ignore)	; Ignore bell
 
-;; nice scrolling
+;; Nice scrolling
 (setq scroll-margin 0
       scroll-conservatively 100000
       scroll-preserve-screen-position 1)
 
-;; remap scroll-other-window
+;; Remap scroll-other-window
 (global-set-key (kbd "C-M-e") 'scroll-other-window)
 (global-set-key (kbd "C-M-y") 'scroll-other-window-down)
 
@@ -222,7 +211,7 @@
 
 (column-number-mode)
 
-;; Enable line numbers for some modes
+;; Enable line numnbers for some modes
 (dolist (mode '(text-mode-hook
                 prog-mode-hook
                 conf-mode-hook))
@@ -234,28 +223,25 @@
 
 (setq large-file-warning-threshold nil)
 
-(setq vc-follow-symlinks t)
+(set vc-follow-symlinks t)
 
 (use-package doom-themes
   :straight t
   :defer t
   :init (load-theme 'doom-dracula t))
 
-(use-package nimbus-theme
-  :straight t)
-
-(set-face-attribute 'default nil :font "FuraCode Nerd Font" :family "Retina" :height 190)
+(set-face-attribute 'default nil :font "FuraCode Nerd Font" :family "Retina" :height 180)
 
 ;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil :font "FuraCode Nerd Font" :family "Retina" :height 190)
+(set-face-attribute 'fixed-pitch nil :font "FuraCode Nerd Font" :family "Retina" :height 180)
 
 ;; Set the variable pitch face
-(set-face-attribute 'variable-pitch nil :font "Cantarell" :height 190 :weight 'normal)
+(set-face-attribute 'variable-pitch nil :font "Cantarell" :height 180 :weight 'normal)
 
 (defun personal/replace-unicode-font-mapping (block-name old-font new-font)
   (let* ((block-idx (cl-position-if
-                         (lambda (i) (string-equal (car i) block-name))
-                         unicode-fonts-block-font-mapping))
+                     (lambda (i) (string-equal (car i) block-name))
+                     unicode-fonts-block-font-mapping))
          (block-fonts (cadr (nth block-idx unicode-fonts-block-font-mapping)))
          (updated-block (cl-substitute new-font old-font block-fonts :test 'string-equal)))
     (setf (cdr (nth block-idx unicode-fonts-block-font-mapping))
@@ -268,12 +254,12 @@
   :config
   ;; Fix the font mappings to use the right emoji font
   (mapcar
-    (lambda (block-name)
-      (personal/replace-unicode-font-mapping block-name "Apple Color Emoji" "Noto Color Emoji"))
-    '("Dingbats"
-      "Emoticons"
-      "Miscellaneous Symbols and Pictographs"
-      "Transport and Map Symbols"))
+   (lambda (block-name)
+     (personal/replace-unicode-font-mapping block-name "Apple Color Emoji" "Noto Color Emoji"))
+   '("Dingbats"
+     "Emoticons"
+     "Miscellaneous Symbols and Pictographs"
+     "Transport and Map Symbols"))
   (unicode-fonts-setup))
 
 ;; Enable emoji, and stop the UI from freezing when trying to display them
@@ -297,7 +283,7 @@
   :config
   (setq sml/no-confirm-load-theme t)
   (sml/setup)
-  (sml/apply-theme 'respectful)  ; Respect the theme colors
+  (sml/apply-theme 'respectful) ; Respect the theme colors
   (setq sml/mode-width 'right
         sml/name-width 60)
 
@@ -431,7 +417,7 @@
 
 (personal/leader-keys
   "f"  '(:ignore t :which-key "dotfiles")
-  "fe" '((lambda () (interactive) (find-file "~/.emacs.d/Emacs.org")) :which-key "edit config")
+  "fe" '((lambda () (interactive) (find-file "~/.emacs.d/init.el")) :which-key "edit config")
   "fz" '((lambda () (interactive) (find-file "~/.emacs.d/Zsh.org")) :which-key "edit zsh config")
   "fv" '((lambda () (interactive) (find-file "~/.emacs.d/Vim.org")) :which-key "edit vim config"))
 
@@ -495,23 +481,6 @@
   ;; Set minibuffer heght for different commands
   (setf (alist-get 'swiper ivy-height-alist) 15)
   (setf (alist-get 'counsel-switch-buffer ivy-height-alist) 7))
-
-(use-package ivy-rich
-  :straight t
-  :init
-  (ivy-rich-mode 1)
-  :after counsel
-  :config
-  (setq ivy-format-function #'ivy-format-function-line)
-  (setq ivy-rich-display-transformers-list
-        (plist-put ivy-rich-display-transformers-list
-                   'ivy-switch-buffer
-                   '(:columns
-                     ((ivy-rich-candidate (:width 40))
-                      (ivy-rich-switch-buffer-indicators (:width 4 :face error :align right)); return the buffer indicators
-                      (ivy-rich-switch-buffer-major-mode (:width 12 :face warning))          ; return the major mode info
-                      (ivy-rich-switch-buffer-project (:width 15 :face success))             ; return project name using `projectile'
-                      (ivy-rich-switch-buffer-path (:width (lambda (x) (ivy-rich-switch-buffer-shorten-path x (ivy-rich-minibuffer-width 0.3))))))))))  ; return file path relative to project root or `default-directory' if project is nil
 
 (use-package counsel
   :straight t
@@ -594,16 +563,6 @@
 
 (use-package transpose-frame
   :straight t)
-
-(defun personal/org-mode-visual-fill ()
-  (setq visual-fill-column-width 110
-        visual-fill-column-center-text t)
-  (visual-fill-column-mode 1))
-
-(use-package visual-fill-column
-  :straight t
-  :defer t
-  :hook (org-mode . personal/org-mode-visual-fill))
 
 (use-package all-the-icons-dired
   :straight t)
@@ -694,179 +653,129 @@
 (defun personal/org-mode-setup ()
   (org-indent-mode)
   (flyspell-mode)
+  (auto-fill-mode 0)
   (visual-line-mode 1)
-  (setq org-src-tab-acts-natively t))
+  (setq evil-auto-indent nil
+        org-src-tab-acts-natively t)
+  (diminish org-indent-mode))
+
+(defun personal/org-mode-visual-fill ()
+  (setq visual-fill-column-width 110
+        visual-fill-column-center-text t)
+  (visual-fill-column-mode 1))
+
+(use-package visual-fill-column
+  :straight t
+  :defer t)
+
+(straight-use-package '(org :type built-in))
 
 (use-package org
-  :hook (org-mode . personal/org-mode-setup)
+  :defer t
+  :hook ((org-mode . personal/org-mode-setup)
+         (org-mode . personal/org-mode-visual-fill))
   :config
-  (setq org-ellipsis " ▾")
-
-  (setq org-agenda-start-with-log-mode t)
-  (setq org-log-done 'time)
-  (setq org-log-into-drawer t)
-
-  (setq org-hide-emphasis-markers t)
-  (setq org-agenda-files
-        '("~/Dropbox/Study/Emacs/OrgFiles/Tasks.org"
-          "~/Dropbox/Study/Emacs/OrgFiles/Habit.org"
-          "~/Dropbox/Study/Emacs/OrgFiles/Birthdays.org"))
-
-  (require 'org-habit)
-  (add-to-list 'org-modules 'org-habit)
-  (setq org-habit-graph-column 60)
+  (setq org-ellipsis " ▾"
+        org-hide-emphasis-markers t
+        org-src-fontify-natively t
+        org-fontify-quote-and-verse-blocks t
+        org-src-tab-acts-natively t
+        org-edit-src-content-indentation 2
+        org-hide-block-startup nil
+        org-src-preserve-indentation nil
+        org-startup-folded 'content
+        org-cycle-separator-lines 2
+        org-capture-bookmark nil)
 
   (setq org-todo-keywords
         '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
           (sequence "BACKLOG(b)" "PLAN(p)" "READY(r)" "ACTIVE(a)" "REVIEW(v)" "WAIT(@a/!)" "HOLD(h)" "|" "COMPLETED(c)" "CANC(k@)")))
 
-  (setq org-refile-targets
-        '(("Archive.org" :maxlevel . 1)
-          ("Tasks.org" :maxlevel . 1)))
+  (setq org-outline-path-complete-in-steps nil
+        org-refile-use-outline-path t)
+
+  (evil-define-key '(normal insert visual) org-mode-map (kbd "C-j") 'org-next-visible-heading)
+  (evil-define-key '(normal insert visual) org-mode-map (kbd "C-k") 'org-previous-visible-heading)
+
+
+  (evil-define-key '(normal insert visual) org-mode-map (kbd "M-j") 'org-metadown)
+  (evil-define-key '(normal insert visual) org-mode-map (kbd "M-k") 'org-metaup)
 
   ;; Save Org buffers after refiling!
   (advice-add 'org-refile :after 'org-save-all-org-buffers)
-
-  (setq org-tag-alist
-        '((:startgroup)
-                                        ; Put mutually exclusive tags here
-          (:endgroup)
-          ("@errand" . ?E)
-          ("@home" . ?H)
-          ("@work" . ?W)
-          ("agenda" . ?a)
-          ("planning" . ?p)
-          ("publish" . ?P)
-          ("batch" . ?b)
-          ("note" . ?n)
-          ("idea" . ?i)
-          ("thinking" . ?t)
-          ("recurring" . ?r)))
-
-  ;; Configure custom agenda views
-  (setq org-agenda-custom-commands
-        '(("d" "Dashboard"
-           ((agenda "" ((org-deadline-warning-days 7)))
-            (todo "NEXT"
-                  ((org-agenda-overriding-header "Next Tasks")))
-            (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))))
-
-          ("n" "Next Tasks"
-           ((todo "NEXT"
-                  ((org-agenda-overriding-header "Next Tasks")))))
-
-          ("W" "Work Tasks" tags-todo "+work-email")
-
-          ;; Low-effort next actions
-          ("e" tags-todo "+TODO=\"NEXT\"+Effort<15&+Effort>0"
-           ((org-agenda-overriding-header "Low Effort Tasks")
-            (org-agenda-max-todos 20)
-            (org-agenda-files org-agenda-files)))
-
-          ("w" "Workflow Status"
-           ((todo "WAIT"
-                  ((org-agenda-overriding-header "Waiting on External")
-                   (org-agenda-files org-agenda-files)))
-            (todo "REVIEW"
-                  ((org-agenda-overriding-header "In Review")
-                   (org-agenda-files org-agenda-files)))
-            (todo "PLAN"
-                  ((org-agenda-overriding-header "In Planning")
-                   (org-agenda-todo-list-sublevels nil)
-                   (org-agenda-files org-agenda-files)))
-            (todo "BACKLOG"
-                  ((org-agenda-overriding-header "Project Backlog")
-                   (org-agenda-todo-list-sublevels nil)
-                   (org-agenda-files org-agenda-files)))
-            (todo "READY"
-                  ((org-agenda-overriding-header "Ready for Work")
-                   (org-agenda-files org-agenda-files)))
-            (todo "ACTIVE"
-                  ((org-agenda-overriding-header "Active Projects")
-                   (org-agenda-files org-agenda-files)))
-            (todo "COMPLETED"
-                  ((org-agenda-overriding-header "Completed Projects")
-                   (org-agenda-files org-agenda-files)))
-            (todo "CANC"
-                  ((org-agenda-overriding-header "Cancelled Projects")
-                   (org-agenda-files org-agenda-files)))))))
-
-  (setq org-capture-templates
-        `(("t" "Tasks / Projects")
-          ("tt" "Task" entry (file+olp "~/Dropbox/Study/Emacs/OrgFiles/Tasks.org" "Inbox")
-           "* TODO %?\n  %U\n  %a\n  %i" :empty-lines 1)
-
-          ("j" "Journal Entries")
-          ("jj" "Journal" entry
-           (file+olp+datetree "~/Dropbox/Study/Emacs/OrgFiles/Journal.org")
-           "\n* %<%I:%M %p> - Journal :journal:\n\n%?\n\n"
-           :clock-in :clock-resume
-           :empty-lines 1)
-          ("jm" "Meeting" entry
-           (file+olp+datetree "~/Dropbox/Study/Emacs/OrgFiles/Journal.org")
-           "* %<%I:%M %p> - %a :meetings:\n\n%?\n\n"
-           :clock-in :clock-resume
-           :empty-lines 1)
-
-          ("w" "Workflows")
-          ("we" "Checking Email" entry (file+olp+datetree "~/Dropbox/Study/Emacs/OrgFiles/Journal.org")
-           "* Checking Email :email:\n\n%?" :clock-in :clock-resume :empty-lines 1)
-
-          ("m" "Metrics Capture")
-          ("mw" "Weight" table-line (file+headline "~/Dropbox/Study/Emacs/OrgFiles/Metrics.org" "Weight")
-           "| %U | %^{Weight} | %^{Notes} |" :kill-buffer t)))
 
   (define-key global-map (kbd "C-c c")
     (lambda () (interactive) (org-capture)))
 
   (personal/org-font-setup)
 
-(use-package org-bullets
-  :straight t
-  :after org
-  :hook (org-mode . org-bullets-mode)
-  :custom
-  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+  (use-package org-superstar
+    :after org
+    :hook (org-mode . org-superstar-mode)
+    :custom
+    (org-superstar-remove-leading-stars t)
+    (org-superstar-headline-bullets-list '("◉" "○" "●" "○" "●" "○" "●")))
 
-(defun personal/org-mode-visual-fill ()
-  (setq visual-fill-column-width 100
-        visual-fill-column-center-text t)
-  (visual-fill-column-mode))
+  ;; Increase the size of various headings
+  (dolist (face '((org-level-1 . 1.2)
+                  (org-level-2 . 1.1)
+                  (org-level-3 . 1.05)
+                  (org-level-4 . 1.0)
+                  (org-level-5 . 1.1)
+                  (org-level-6 . 1.1)
+                  (org-level-7 . 1.1)
+                  (org-level-8 . 1.1))))
 
-(use-package visual-fill-column
-  :straight t
-  :defer t
-  :hook (org-mode . personal/org-mode-visual-fill))
+  ;; Make sure org-indent face is available
+  (require 'org-indent)
 
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((emacs-lisp . t)
-   (shell . t)
-   (python . t)))
+  ;; Ensure that anything that should be fixed-pitch in Org files appears that way
+  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-table nil  :inherit 'fixed-pitch)
+  (set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
+  (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-indent nil :inherit '(org-hide fixed-pitch))
+  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
 
-(push '("conf-unix" . conf-unix) org-src-lang-modes)
+  ;; Get rid of the background on column views
+  (set-face-attribute 'org-column nil :background nil)
+  (set-face-attribute 'org-column-title nil :background nil)
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)))
 
-(require 'org-tempo)
+  (push '("config-unix" . conf-unix) org-src-lang-modes)
 
-(add-to-list 'org-structure-template-alist '("sh" . "src shell"))
-(add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
-(add-to-list 'org-structure-template-alist '("py" . "src python"))
-(add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
-(add-to-list 'org-structure-template-alist '("json" . "src json"))
-(add-to-list 'org-structure-template-alist '("js" . "src javascript"))
-(add-to-list 'org-structure-template-alist '("lua" . "src lua"))
-(add-to-list 'org-structure-template-alist '("ruby" . "src ruby"))
-(add-to-list 'org-structure-template-alist '("vimrc" . "src vimrc"))
+  (require 'org-tempo)
 
-;; Since we don't want to disable org-confirm-babel-evaluate all
-;; of the time, do it around the after-save-hook
-(defun personal/org-babel-tangle-dont-ask ()
-  ;; Dynamic scoping to the rescue
-  (let ((org-confirm-babel-evaluate nil))
-    (org-babel-tangle)))
+  (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-elisp"))
+  (add-to-list 'org-structure-template-alist '("py" . "src python"))
+  (add-to-list 'org-structure-template-alist '("yaml" . "src yaml"))
+  (add-to-list 'org-structure-template-alist '("json" . "src json"))
+  (add-to-list 'org-structure-template-alist '("js" . "src javascript"))
+  (add-to-list 'org-structure-template-alist '("lua" . "src lua"))
+  (add-to-list 'org-structure-template-alist '("ruby" . "src ruby"))
+  (add-to-list 'org-structure-template-alist '("vimrc" . "src vimrc"))
 
-(add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'personal/org-babel-tangle-dont-ask
-                                              'run-at-end 'only-in-org-mode)))
+  ;; Since we don't want to disable org-confirm-babel-evaluate all
+  ;; of the time, do it around the after-save-hook
+  (defun personal/org-babel-tangle-dont-ask ()
+    ;; Dynamic scoping to the rescue
+    (let ((org-confirm-babel-evaluate nil))
+      (org-babel-tangle)))
+
+  (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'personal/org-babel-tangle-dont-ask
+                                                'run-at-end 'only-in-org-mode))))
+
+(fset 'evil-redirect-digit-argument 'ignore) ;; before evil-org loaded
+
+(add-to-list 'evil-digit-bound-motions 'evil-org-beginning-of-line)
+(evil-define-key 'motion 'evil-org-mode
+  (kbd "0") 'evil-org-beginning-of-line)
 
 (use-package evil-org
   :straight t
@@ -886,7 +795,7 @@
   "oa" '(org-agenda :which-key "status")
   "ot" '(org-todo-list :which-key "todos")
   "oc" '(org-capture t :which-key "capture")
-  "ox" '(org-export-dispatch t :which-key "export")))
+  "ox" '(org-export-dispatch t :which-key "export"))
 
 (defvar *compile-command-map* '(("py" . "python")
                                 ("go" . "go run")
@@ -917,7 +826,7 @@
 (setq compile-command "")
 
 (defun ~recompile ()
-  "custom recompile "
+  "custom recompile"
   (interactive)
   (save-buffer)
   (recompile))
@@ -926,9 +835,8 @@
                              ("go" . "go test")))
 
 (defun ~test-current-file ()
-  "Test current file using 'compile'. Automatic filetype recogntion.
-    e.g. If the current buffer is hello.py, then it'll call pytest hello.py
-    "
+  "Test current file using 'compile'. Automatic filetype recognition.
+e.g. If the current buffer is hello.py, then it'll call pytest hello.py"
   (interactive)
   (~run-current-file 'compile *test-command-map*))
 
@@ -937,10 +845,11 @@
   "cc" '(~compile-current-file :which-key "compile current file")
   "ct" '(~test-current-file :which-key "test current file"))
 
+
 (use-package magit
-  :straight t
   :bind ("C-M-;" . magit-status)
-  :commands (magit-status)
+  :straight t
+  :commands (magit-status magit-get-current-branch)
   :custom
   (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
@@ -964,14 +873,19 @@
 ;; - https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started
 
 (use-package forge
-  :straight t)
+  :straight t
+  :after magit
+  :config
+  (setq forge-database-file (concat user-emacs-directory "forge-database.sqlite")))
 
 (use-package magit-todos
   :straight t
-  :defer t)
+  :after magit
+  :hook (magit-mode . magit-todos-mode))
 
 (use-package git-link
   :straight t
+  :after magit
   :commands git-link
   :config
   (setq git-link-open-in-browser t)
@@ -1043,7 +957,7 @@
   (set-face-foreground 'git-gutter:deleted "LightCoral"))
 
 (defun personal/lsp-mode-setup ()
-  (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
+  (setq ^lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
   (lsp-headerline-breadcrumb-mode))
 
 (use-package lsp-mode
@@ -1074,23 +988,24 @@
   (setq lsp-ui-doc-position 'bottom))
 
 (use-package ruby-mode
- :mode ("\\.rb\\'" "Rakefile\\'" "Gemfile\\'")
- :hook (ruby-mode . lsp)
- :interpreter "ruby"
- :config
- (setq ruby-insert-encoding-magic-comment nil)
- (add-hook 'ruby-mode-hook (lambda () (rvm-activate-corresponding-ruby)))
- :bind (:map ruby-mode-map
-       ("\C-c r r" . inf-ruby)))
+  :mode ("\\.rb\\'" "Rakefile\\'" "Gemfile\\'")
+  :hook (ruby-mode . lsp)
+  :interpreter "ruby"
+  :config
+  (setq ruby-insert-encoding-magic-comment nil)
+  (add-hook 'ruby-mode-hook (lambda () (rvm-activate-corresponding-ruby)))
+  :bind (:map ruby-mode-map
+              ("\C-c r r" . inf-ruby)))
 
 (use-package bundler
   :straight t)
+
 (use-package rvm
   :straight t)
 
 (use-package inf-ruby
   :straight t
- :hook (ruby-mode . inf-ruby-minor-mode))
+  :hook (ruby-mode . inf-ruby-minor-mode))
 
 (use-package robe
   :straight t
@@ -1158,9 +1073,6 @@
   :config
   (add-hook 'json-mode-hook #'personal/set-js-indentation))
 
-(use-package indium
-  :straight t)
-
 (use-package markdown-mode
   :straight t
   :mode "\\.md\\'"
@@ -1173,8 +1085,8 @@
                     (markdown-header-face-4 . 1.0)
                     (markdown-header-face-5 . 1.0)))
       (set-face-attribute (car face) nil :weight 'normal :height (cdr face))))
-      (defun personal/markdown-mode-hook ()
-        (personal/set-markdown-header-font-sizes))
+  (defun personal/markdown-mode-hook ()
+    (personal/set-markdown-header-font-sizes))
   (add-hook 'markdown-mode-hook 'personal/markdown-mode-hook))
 
 (use-package web-mode
@@ -1187,8 +1099,6 @@
   (setq web-mode-content-types-alist '(("jsx" . "\\.js[x]?\\'")))
   (setq-default web-mode-attr-indent-offset 2))
 
-;; 1. Start the server with `httpd-start`
-;; 2. Use `impatient-mode` on any buffer
 (use-package impatient-mode
   :straight t)
 
@@ -1285,22 +1195,6 @@
   :hook (tuareg-mode . lsp)
   :mode ("\\.ml[ily]?$" . tuareg-mode)
   :straight t)
-
-;; (use-package merlin
-;;   :straight t
-;;   :custom
-;;   (merlin-completion-with-doc t)
-;;   :bind (:map merlin-mode-map
-;;               ("M-." . merlin-locate)
-;;               ("M-," . merlin-pop-stack)
-;;               ("M-?" . merlin-occurrences)
-;;               ("C-c C-j" . merlin-jump)
-;;               ("C-c i" . merlin-locate-ident)
-;;               ("C-c C-e" . merlin-iedit-occurrences))
-;;   :hook
-;;   ;; Start merlin on ml files
-;;   ((reason-mode tuareg-mode caml-mode) . merlin-mode))
-
 (use-package utop
   :custom
   (utop-edit-command nil)
@@ -1399,7 +1293,7 @@
   ;; NOTE: Set this to the folder you keep your git repos
   (when (file-directory-p "~/code")
     (setq projectile-project-search-path '("~/code"))))
-  ;; (setq projectile-switch-project-action #'projectile-dired))
+;; (setq projectile-switch-project-action #'projectile-dired))
 
 (use-package rainbow-delimiters
   :straight t
