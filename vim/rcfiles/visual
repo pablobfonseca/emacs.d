@@ -1,5 +1,4 @@
-colorscheme vendetta
-
+colorscheme dracula
 set visualbell
 
 " Easy access to maximizing

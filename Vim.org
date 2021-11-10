@@ -2271,9 +2271,7 @@ map('v', '<silent> <Leader>al', '<cmd>Align<CR>')
 
 ** visual
 #+begin_src vimrc :tangle ./vim/rcfiles/visual
-
-colorscheme vendetta
-
+colorscheme dracula
 set visualbell
 
 " Easy access to maximizing
@@ -2657,6 +2655,17 @@ map('n', 'cm', '<Plug>Commentary')
 map('n', 'cml', '<Plug>CommentaryLine')
 map('n', '<M-/>', '<Plug>CommentaryLine')
 
+#+end_src
+
+** dracula
+#+begin_src vimrc :tangle ./vim/rcplugins/dracula
+Plug 'Mofiqul/dracula.nvim'
+
+" let g:termguicolors = true
+" let g:dracula_show_end_of_buffer = true
+" let g:dracula_transparent_bg = true
+
+" vim: ft=vim
 #+end_src
 
 ** easy-align
