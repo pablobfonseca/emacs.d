@@ -1412,7 +1412,7 @@ This is an interesting extension to Magit that shows a TODOs section in your git
 #+end_src
 *** Ruby
 #+begin_src emacs-lisp
-   (use-package ruby-mode
+  (use-package ruby-mode
     :mode ("\\.rb\\'" "Rakefile\\'" "Gemfile\\'")
     :hook (ruby-mode . lsp)
     :interpreter "ruby"
@@ -1420,16 +1420,19 @@ This is an interesting extension to Magit that shows a TODOs section in your git
     (setq ruby-insert-encoding-magic-comment nil)
     (add-hook 'ruby-mode-hook (lambda () (rvm-activate-corresponding-ruby)))
     :bind (:map ruby-mode-map
-          ("\C-c r r" . inf-ruby)))
+                ("\C-c r r" . inf-ruby)))
 
-   (use-package bundler
-     :straight t)
-   (use-package rvm
-     :straight t)
+  (use-package bundler
+    :straight t)
+  (use-package rvm
+    :straight t)
 
-   (use-package inf-ruby
-     :straight t
+  (use-package inf-ruby
+    :straight t
     :hook (ruby-mode . inf-ruby-minor-mode))
+
+  (use-package rbs-mode
+    :straight t)
 #+end_src
 **** Robe
 #+begin_src emacs-lisp
