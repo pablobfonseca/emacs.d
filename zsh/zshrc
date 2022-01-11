@@ -11,6 +11,10 @@ fi
 autoload -U compinit
 compinit
 
+autoload -z edit-command-line
+zle -N edit-command-line
+bindkey "^X^E" edit-command-line
+
 source ~/.zplug/init.zsh
 
 zplug "zsh-users/zsh-autosuggestions"
@@ -89,6 +93,24 @@ nvmlist() {
 
 function branch_clean() {
   git branch --merged | egrep -v "(^\*|master)" | xargs git branch -d
+}
+
+docker_rmi() {
+    local image
+    image=$(docker images | awk '(NR>1) { print $1 " " $3; }' | fzf) \
+    && docker rmi $(cut -d' ' -f2 <<< "$image") --force
+}
+
+docker_attach() {
+    local container
+    container=$(docker ps | awk 'NR>1 { print $1 " " $NF; }' | fzf) \
+    && docker attach $(cut -d' ' -f1 <<< "$container")
+}
+
+docker_stop() {
+    local container
+    container=$(docker ps | awk 'NR>1 { print $1 " " $NF; }' | fzf) \
+    && docker stop $(cut -d' ' -f1 <<< "$container")
 }
 
 alias path="echo $PATH | tr -s ':' '\n'"
