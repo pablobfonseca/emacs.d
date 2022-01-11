@@ -17,7 +17,7 @@ This file generates both [[file:vimrc][vimrc]] and [[file:vim/init.lua][init.lua
 " Source: http://github.com/pablobfonseca/dotfiles
 #+end_src
 
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 --[[
         _
  __   _(_)_ __ ___
@@ -44,14 +44,14 @@ This file generates both [[file:vimrc][vimrc]] and [[file:vim/init.lua][init.lua
   set nocompatible
 #+end_src
 ** Lua Aliases
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
   local cmd = vim.cmd -- to execute Vim commands e.g. cmd('pwd')
   local fn = vim.fn -- to call Vim functions e.g. fn.bufnr()
   local g = vim.g -- a table to access global variables
   local opt = vim.opt -- to set options
 #+end_src
 
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 g.mapleader = ","
 g.maplocalleader = "-"
 
@@ -65,7 +65,7 @@ opt.compatible = false
 ** Lua mapping helper function
 The ~vim.api.nvim_set_keymap()~ function allows you to define a new mapping. Specific behaviors such as ~noremap~ must be passed as a table to that function. Here is a helper to create mappings with the ~noremap~ option set to true by default:
 
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
   local function map(mode, lhs, rhs, opts)
      local options = {noremap = true}
      if opts then options = vim.tbl_extend('force', options, opts) end
@@ -118,7 +118,7 @@ git clone --depth=1 https://github.com/savq/paq-nvim.git \
     "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/pack/paqs/start/paq-nvim
 #+end_src
 *** plugins
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 cmd 'packadd paq-nvim' -- load the package manager
 local paq = require('paq-nvim').paq -- a convenient alias
 
@@ -234,7 +234,7 @@ cnoremap %% <C-R>=expand('%:h').'/'<cr>
 #+end_src
 
 
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 map('c', '<C-k>', '<up>')
 map('c', '<C-j>', '<down>')
 
@@ -271,7 +271,7 @@ nnoremap <leader>flc :execute 'set foldlevel=' . foldlevel('.')<cr>
 " vim:ft=vim
 #+end_src
 
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 -- Enable indent folding
 opt.foldenable = true
@@ -502,7 +502,7 @@ Taken from [[ http://learnvimscriptthehardway.stevelosh.com/chapters/39.html][he
 #+end_src
 
 ** functional (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
     -- Creates a floating window with a most recent buffer to be used
   vim.api.nvim_exec([[
@@ -734,7 +734,7 @@ Taken from [[ http://learnvimscriptthehardway.stevelosh.com/chapters/39.html][he
 
 #+end_src
 
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
   opt.hidden = true                              -- Allow buffer change w/o saving
   opt.autoread = true                            -- Load file from disk, ie for git reset
   opt.compatible = false                         -- Not concerned with vi compatibility
@@ -848,7 +848,7 @@ endfunction
 
 #+end_src
 **** go (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
   -- Golang config
 
   cmd 'augroup filetype_go'
@@ -895,7 +895,7 @@ augroup END
 " vim:ft=vim
 #+end_src
 **** haskell (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
   -- Haskell config
 
 cmd 'augroup filetype_haskell'
@@ -919,7 +919,7 @@ augroup END
 
 #+end_src
 **** html (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 -- HTML config
 
 cmd 'augroup filetype_html'
@@ -946,7 +946,7 @@ augroup END
 
 #+end_src
 **** javascript (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 -- Javascript config
 
 cmd 'augroup filetype_javascript'
@@ -978,7 +978,7 @@ command! PrettyJSON :call <sid>PrettyJSON()
 #+end_src
 **** json (lua config)
 
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 -- JSON config
   cmd 'augroup filetype_json'
     -- Clear old autocmds in group
@@ -1008,7 +1008,7 @@ augroup END
 " vim:ft=vim
 #+end_src
 **** lua (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 -- Lua config
 
 cmd 'augroup filetype_lua'
@@ -1036,7 +1036,7 @@ augroup END
 " vim: ft=vim
 #+end_src
 **** markdown (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 -- Markdown config
 
 cmd 'augroup filetype_markdown_and_txt'
@@ -1071,7 +1071,7 @@ augroup END
 
 #+end_src
 **** python (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 -- Python config
 
 g.python_host_prog = '/usr/bin/python'
@@ -1142,7 +1142,7 @@ vnoremap <leader>18 :s/\(\w\+\):\s/:\1 => /g<cr>
 " vim:ft=vim
 #+end_src
 **** ruby (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 -- Ruby config
 
 g.ruby_path = fn.system('rvm current')
@@ -1203,7 +1203,7 @@ augroup END
 " vim:ft=vim
 #+end_src
 **** rust (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 -- Rust config
 
@@ -1234,7 +1234,7 @@ endfunction
 #+end_src
 
 **** sql (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 -- SQL config
 
@@ -1319,7 +1319,7 @@ nnoremap <leader>rh :h local-additions<cr>
 #+end_src
 
 ** helpfiles (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 -- Helpfiles
 
@@ -1497,7 +1497,7 @@ nnoremap <space>sp mm[s1z=`m
 #+end_src
 
 ** mappings (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
   -- Mappings
 
   -- Emacs-like mappings
@@ -1684,7 +1684,7 @@ endfunction
 #+end_src
 
 ** remote yank (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 -- Remote yank
 
@@ -1766,7 +1766,7 @@ vnoremap Q :normal Q<cr>
 #+end_src
 
 ** search (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 -- Search
 
 opt.hlsearch = true                    -- highlight searches, map below to clear
@@ -1875,7 +1875,7 @@ endfunction
 #+end_src
 
 ** statusline (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
   -- Statusline
 
   -- Use this to prevent some settings from reloading
@@ -1981,7 +1981,7 @@ command! -nargs=0 RebuildTagsFile call s:RebuildTagsFile()
 #+end_src
 
 ** tags (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
   -- Tags
 
   opt.tags:prepend({"./.git/tags"})
@@ -2019,7 +2019,7 @@ augroup END
 #+end_src
 
 ** terminal (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 -- Terminal config
 
@@ -2158,7 +2158,7 @@ endfunction
 #+end_src
 
 ** vim (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
     -- Vim config
 
@@ -2304,7 +2304,7 @@ nnoremap <leader>= :wincmd =<cr>
 #+end_src
 
 ** visual (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 -- Visual config
 
@@ -2355,7 +2355,7 @@ command! ReformatCurlRequest silent %s/\s\(-.\{-}\)\s/
 " vim:ft=vim
 #+end_src
 ** zsh (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 -- Zsh config
 
@@ -2379,7 +2379,7 @@ git clone --depth=1 https://github.com/savq/paq-nvim.git \
 #+end_src
 
 **** plugins
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 cmd 'packadd paq-nvim' -- load the package manager
 local paq = require('paq-nvim').paq -- a convenient alias
 paq {'savq/paq-nvim', opt = true} -- paq-nvim manages itself
@@ -2397,7 +2397,7 @@ Plug 'marcweber/vim-addon-mw-utils'
 " vim:ft=vim
 #+end_src
 ** addon-mw-utils (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 paq {'marcweber/vim-addon-mw-utils'}
 #+end_src
 ** ale.vim
@@ -2413,7 +2413,7 @@ let g:ale_fixers = { 'javascript': ['xo'] }
 " vim:ft=vim
 #+end_src
 ** ale.vim (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 paq {'dense-analysis/ale'}
 
@@ -2431,7 +2431,7 @@ let g:animate#easing_func = 'animate#ease_out_quad'
 " vim: ft=vim
 #+end_src
 ** animate.vim (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 paq {'camspiers/animate.vim'}
 
 g['animate#easing_func'] = 'animate#ease_out_quad'
@@ -2443,7 +2443,7 @@ Plug 'pechorin/any-jump.vim'
 #+end_src
 
 ** any-jump (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 paq {'pechorin/any-jump.vim'}
 #+end_src
 
@@ -2572,7 +2572,7 @@ nmap <F2> <Plug>(coc-rename)
 
 #+end_src
 ** coc (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
   paq {'neoclide/coc.nvim', branch = 'release'}
 
@@ -2626,7 +2626,7 @@ Plug 'neoclide/coc-neco'
 " vim: ft=vim
 #+end_src
 ** coc-neco (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 paq {'neoclide/coc-neco'}
 #+end_src
@@ -2646,7 +2646,7 @@ Plug 'tpope/vim-commentary'
 #+end_src
 
 ** commentary (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 paq {'tpope/vim-commentary'}
 
 map('v', 'cm', '<Plug>Commentary')
@@ -2682,7 +2682,7 @@ nmap ga <Plug>(EasyAlign)
 " vim:ft=vim
 #+end_src
 ** easy-align (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 paq {'junegunn/vim-easy-align'}
 
@@ -2702,7 +2702,7 @@ let g:EasyMotion_leader_key = '<leader><leader>'
 " vim:ft=vim
 #+end_src
 ** easymotion (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 paq {'easymotion/vim-easymotion'}
 
@@ -2726,7 +2726,7 @@ let g:user_emmet_mode='a'
 " vim:ft=vim
 #+end_src
 ** emmet (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 paq {'mattn/emmet-vim'}
 
@@ -2744,7 +2744,7 @@ Plug 'tpope/vim-endwise'
 " vim:ft=vim
 #+end_src
 ** endwise (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 paq {'tpope/vim-endwise'}
 #+end_src
@@ -2789,7 +2789,7 @@ command! GitDiff call s:GitDiff()
 " vim:ft=vim
 #+end_src
 ** fugitive (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
   paq {'tpope/vim-fugitive'}
 
@@ -2957,7 +2957,7 @@ nnoremap <leader>hv <Plug>GitGutterPreviewHunk
 " vim:ft=vim
 #+end_src
 ** gitsigns (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 paq {'lewis6991/gitsigns.nvim'}
 
@@ -2973,7 +2973,7 @@ Plug 'fatih/vim-go', { 'for': 'go' }
 " vim:ft=vim
 #+end_src
 ** go (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 paq {'fatih/vim-go'}
 #+end_src
@@ -3006,7 +3006,7 @@ Plug 'cohama/lexima.vim'
 " vim:ft=vim
 #+end_src
 ** lexima (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 paq {'cohama/lexima.vim'}
 #+end_src
@@ -3032,7 +3032,7 @@ Plug 'hrsh7th/nvim-compe'
 " vim: ft=vim
 #+end_src
 ** lsp (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
   --paq {'neovim/nvim-lspconfig'}
   --paq {'ojroques/nvim-lspfuzzy'}
@@ -3076,7 +3076,7 @@ Plug 'vim-scripts/matchit.zip'
 " vim:ft=vim
 #+end_src
 ** matchit (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 paq {'vim-scripts/matchit.zip'}
 #+end_src
@@ -3089,7 +3089,7 @@ Plug 'leafo/moonscript-vim', { 'for': 'moonscript' }
 " vim: ft=vim
 #+end_src
 ** moonscript-vim (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 paq {'leafo/moonscript-vim'}
 #+end_src
@@ -3102,7 +3102,7 @@ Plug 'Shougo/neco-vim'
 " vim: ft=vim
 #+end_src
 ** neco-vim (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 paq {'Shougo/neco-vim'}
 #+end_src
@@ -3117,7 +3117,7 @@ nnoremap <leader>ro :Topen<cr>
 " vim: ft=vim
 #+end_src
 ** neoterm (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 paq {'kassio/neoterm'}
 
@@ -3148,7 +3148,7 @@ let g:rails_projections = {
 " vim:ft=vim
 #+end_src
 ** rails (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 paq {'tpope/vim-rails'}
 
@@ -3170,7 +3170,7 @@ Plug 'tpope/vim-rake'
 " vim: ft=vim
 #+end_src
 ** rake (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 paq {'tpope/vim-rake'}
 #+end_src
@@ -3198,7 +3198,7 @@ Plug 'AndrewRadev/splitjoin.vim', { 'branch': 'main' }
 " vim: ft=vim
 #+end_src
 ** splitjoin (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 paq {'AndrewRadev/splitjoin.vim', branch = 'main' }
 #+end_src
@@ -3261,7 +3261,7 @@ nmap <leader>QW ysiW"
 " vim:ft=vim
 #+end_src
 ** surround (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 paq {'tpope/vim-surround'}
 #+end_src
 ** telescope
@@ -3283,7 +3283,7 @@ nnoremap gs <cmd>Telescope git_status<cr>
 " vim: ft=vim
 #+end_src
 ** telescope (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 paq {'nvim-telescope/telescope.nvim'}
 
 map('n', '<C-p>', '<cmd>lua require("telescope.builtin").find_files()<cr>')
@@ -3301,12 +3301,12 @@ Plug 'coderifous/textobj-word-column.vim'
 " vim:ft=vim
 #+end_src
 ** textobj-word-column (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 paq {'coderifous/textobj-word-column.vim'}
 #+end_src
 ** tree-sitter (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
   paq {'nvim-treesitter/nvim-treesitter', run = fn[':TSUpdate']}
   local ts = require 'nvim-treesitter.configs'
   ts.setup {ensure_installed = 'maintained', highlight = {enable = true}}
@@ -3333,7 +3333,7 @@ Plug 'tpope/vim-unimpaired'
 " vim:ft=vim
 #+end_src
 ** unimpaired (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 paq {'tpope/vim-unimpaired'}
 #+end_src
@@ -3350,7 +3350,7 @@ nnoremap <leader>cop :Copen!<cr>
 " vim: ft=vim
 #+end_src
 ** vim-dispatch (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
   paq {'tpope/vim-dispatch'}
 
@@ -3402,7 +3402,7 @@ Plug 'junegunn/vim-peekaboo'
 " vim: ft=vim
 #+end_src
 ** vim-peekaboo (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 paq {'junegunn/vim-peekaboo'}
 #+end_src
@@ -3442,7 +3442,7 @@ Plug 'tpope/vim-repeat'
 " vim: ft=vim
 #+end_src
 ** vim-repeat (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 paq {'tpope/vim-repeat'}
 #+end_src
@@ -3459,7 +3459,7 @@ command! -nargs=* -complete=file Rg :call s:Rg(<q-args>)
 " vim: ft=vim
 #+end_src
 ** vim-ripgrep (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 paq {'guohao117/vim-ripgrep'}
 
@@ -3477,7 +3477,7 @@ Plug 'tpope/vim-rsi'
 " vim:ft=vim
 #+end_src
 ** vim-rsi (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 paq {'tpope/vim-rsi'}
 #+end_src
@@ -3505,7 +3505,7 @@ Plug 'mg979/vim-visual-multi'
 " vim: ft=vim
 #+end_src
 ** vim-visual-multi (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 paq {'mg979/vim-visual-multi'}
 #+end_src
@@ -3518,7 +3518,7 @@ Plug 'xojs/vim-xo', { 'branch': 'main' }
 " vim: ft=vim
 #+end_src
 ** vim-xo (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 paq {'xojs/vim-xo', branch = 'main' }
 #+end_src
@@ -3530,7 +3530,7 @@ Plug 'mattn/webapi-vim'
 " vim:ft=vim
 #+end_src
 ** webapi (lua config)
-#+begin_src lua :tangle ./vim/init.lua
+#+begin_src lua
 
 paq {'mattn/webapi-vim'}
 #+end_src
