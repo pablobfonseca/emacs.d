@@ -1125,10 +1125,10 @@ augroup filetype_ruby
 
   " Clean comments
   autocmd FileType ruby nnoremap <leader>cc :g/#/d<cr>
-  nnoremap <Leader>t :w<cr>:call RunTest('TestFile')<cr>
-  nnoremap <Leader>s :call RunTest('TestNearest')<cr>
-  nnoremap <Leader>a :call RunTest('TestSuite')<cr>
-  nnoremap <Leader>l :call RunTest('TestLast')<cr>
+  nnoremap <Leader>t :w<cr>:TestFile<cr>
+  nnoremap <Leader>s :TestNearest<cr>
+  nnoremap <Leader>a :TestSuite<cr>
+  nnoremap <Leader>l :TestLast<cr>
   nnoremap <leader>or :tabe config/routes.rb<cr>
   nnoremap <leader>ol :tabe config/locales<cr>
 augroup END
@@ -1357,7 +1357,7 @@ nmap <C-x>3 :vsplit<cr>
 nmap <C-x>0 :q<cr>
 
 nnoremap <silent> H :call <SID>show_documentation()<cr>
-nnoremap <silent> K :FzfRg <C-R><C-W><cr>
+nnoremap <silent> K :Git grep <C-R><C-W><cr>
 
 function! s:show_documentation()
   if (index(['vim', 'help'], &filetype) >= 0)
@@ -3488,13 +3488,8 @@ Run your tests at the speed of thought
 
 Plug 'janko-m/vim-test'
 
-let test#strategy = 'neoterm'
+let test#strategy = 'neovim'
 
-function! RunTest(cmd)
-  call meoterm#open() " Opens the neoterm window
-  call neoterm#normal('G') " Scroll to the end of the neoterm window
-  exec a:cmd
-endfunction
 " vim: ft=vim
 #+end_src
 ** vim-visual-multi
