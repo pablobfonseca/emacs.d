@@ -10,7 +10,8 @@ nmap <C-x>3 :vsplit<cr>
 nmap <C-x>0 :q<cr>
 
 nnoremap <silent> H :call <SID>show_documentation()<cr>
-nnoremap <silent> K :Git grep <C-R><C-W><cr>
+
+nnoremap <silent> K :lua require('spectre').open_visual({select_word=true})<CR>
 
 function! s:show_documentation()
   if (index(['vim', 'help'], &filetype) >= 0)

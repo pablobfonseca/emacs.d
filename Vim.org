@@ -1357,7 +1357,8 @@ nmap <C-x>3 :vsplit<cr>
 nmap <C-x>0 :q<cr>
 
 nnoremap <silent> H :call <SID>show_documentation()<cr>
-nnoremap <silent> K :Git grep <C-R><C-W><cr>
+
+nnoremap <silent> K :lua require('spectre').open_visual({select_word=true})<CR>
 
 function! s:show_documentation()
   if (index(['vim', 'help'], &filetype) >= 0)
@@ -2668,6 +2669,12 @@ Plug 'Mofiqul/dracula.nvim'
 " vim: ft=vim
 #+end_src
 
+** dirbuf.nvim
+#+begin_src vimrc :tangle ./vim/rcplugins/dirbuf
+Plug 'elihunter173/dirbuf.nvim'
+" vim: ft=vim
+#+end_src
+
 ** easy-align
 A Vim alignment plugin
 
@@ -3122,6 +3129,19 @@ nnoremap <leader>ro :Topen<cr>
 paq {'kassio/neoterm'}
 
 map('n', '<leader>ro', '<cmd>Topen<cr>', { noremap = true })
+#+end_src
+** nvim-spectre
+#+begin_src vimrc :tangle ./vim/rcplugins/nvim-spectre
+Plug 'windwp/nvim-spectre'
+
+nnoremap <leader>S :lua require('spectre').open()<CR>
+
+"search current word
+vnoremap <leader>s :lua require('spectre').open_visual()<CR>
+"  search in current file
+nnoremap <leader>sp viw:lua require('spectre').open_file_search()<cr>
+
+" vim: ft=vim
 #+end_src
 ** perl
 #+begin_src vimrc :tangle ./vim/rcplugins/perl
