@@ -191,4 +191,12 @@ function! OpenHTerm(cmd, percent) abort
   call animate#window_percent_height(a:percent)
 endfunction
 
+
+function! PluginLoaded(name)
+  return (
+    \ has_key(g:plugs, a:name) &&
+    \ isdirectory(g:plugs[a:name].dir) &&
+    \ stridx(&runtimepath, g:plugs[a:name].dir) >= 0)
+endfunction
+
 " vim:ft=vim
