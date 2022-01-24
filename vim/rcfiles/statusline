@@ -11,7 +11,9 @@ hi User3 ctermbg=lightgray ctermfg=red guifg=#ffff00 guibg=#444444 gui=bold
 set statusline= " Clear the statusline for vimrc reloads
 
 set stl=%*                        " Normal statusline highlight
-set stl^=%{coc#status()}%{get(b:,'coc_current_function','')} " coc status line
+if PlugLoaded('coc')
+  set stl^=%{coc#status()}%{get(b:,'coc_current_function','')} " coc status line
+endif
 set stl+=%{fugitive#statusline()} " Current branch
 set stl+=%{InsertSpace()}         " Put a leading space in
 
@@ -46,7 +48,7 @@ function! SlSpace()
   else
     return ""
   endif
-endfunc
+endfunction
 
 function! InsertSpace()
   " For adding trailing spaces onto statusline
