@@ -11,7 +11,7 @@ hi User3 ctermbg=lightgray ctermfg=red guifg=#ffff00 guibg=#444444 gui=bold
 set statusline= " Clear the statusline for vimrc reloads
 
 set stl=%*                        " Normal statusline highlight
-if PlugLoaded('coc')
+if PluginLoaded('coc')
   set stl^=%{coc#status()}%{get(b:,'coc_current_function','')} " coc status line
 endif
 set stl+=%{fugitive#statusline()} " Current branch
