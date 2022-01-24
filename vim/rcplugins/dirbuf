@@ -1,2 +1,5 @@
 Plug 'elihunter173/dirbuf.nvim'
-" vim: ft=vim
+
+nnoremap <leader>rp :Dirbuf ~/.vim/rcplugins<cr>
+nnoremap <leader>rf :Dirbuf ~/.vim/rcfiles<cr>
+  " vim: ft=vim

@@ -1056,18 +1056,24 @@ cmd 'augroup END'
 **** python
 #+begin_src vimrc :tangle ./vim/rcfiles/python
 
-let g:python_host_prog='/usr/bin/python'
-let g:python3_host_prog='/opt/homebrew/bin/python3'
+  let arch = getenv('UNAME_MACHINE')
+  let g:python_host_prog='/usr/bin/python'
 
-augroup filetype_python
+  if arch == 'arm64'
+    let g:python3_host_prog='/opt/homebrew/bin/python3'
+  elseif arch == 'x86_64'
+    let g:python3_host_prog='/usr/local/bin/python3'
+  endif
+
+  augroup filetype_python
   " Clear old autocmds in group
   autocmd!
   autocmd BufNewFile,BufRead *.py setlocal ai sw=4 ts=4 sts=4 et fileformat=unix
   autocmd FileType python nnoremap <leader>py :Dispatch python3 %<Tab><cr>
   autocmd FileType python nnoremap <leader>pt :TestFile<cr>
   autocmd BufWritePre *.py :%s/\s\+$//e
-augroup END
-" vim:ft=vim
+  augroup END
+  " vim:ft=vim
 
 #+end_src
 **** python (lua config)
@@ -2453,44 +2459,44 @@ Intellisense engine for vim8
 
 #+begin_src vimrc :tangle ./vim/rcplugins/coc
 
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-
-let g:coc_global_extensions = [
-      \ 'coc-snippets',
-      \ 'coc-pairs',
-      \ 'coc-emmet',
-      \ 'coc-tsserver',
-      \ 'coc-json',
-      \ 'coc-solargraph',
-      \ 'coc-css',
-      \ 'coc-python'
-      \ ]
-
-" Remap keys for gotos
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-nmap <silent> [g <Plug>(coc-diagnostic-prev)
-nmap <silent> ]g <Plug>(coc-diagnostic-next)
-
-" Use <c-space> to trigger completion
-" inoremap <silent><expr> <c-space> coc#refresh()
-inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<cr>"
-
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-
-" Rename current word
-nmap <F2> <Plug>(coc-rename)
+"Plug 'neoclide/coc.nvim', {'branch': 'release'}
+"
+"let g:coc_global_extensions = [
+"      \ 'coc-snippets',
+"      \ 'coc-pairs',
+"      \ 'coc-emmet',
+"      \ 'coc-tsserver',
+"      \ 'coc-json',
+"      \ 'coc-solargraph',
+"      \ 'coc-css',
+"      \ 'coc-python'
+"      \ ]
+"
+"" Remap keys for gotos
+"nmap <silent> gd <Plug>(coc-definition)
+"nmap <silent> gy <Plug>(coc-type-definition)
+"nmap <silent> gi <Plug>(coc-implementation)
+"nmap <silent> gr <Plug>(coc-references)
+"nmap <silent> [g <Plug>(coc-diagnostic-prev)
+"nmap <silent> ]g <Plug>(coc-diagnostic-next)
+"
+"" Use <c-space> to trigger completion
+"" inoremap <silent><expr> <c-space> coc#refresh()
+"inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<cr>"
+"
+"inoremap <silent><expr> <TAB>
+"      \ pumvisible() ? "\<C-n>" :
+"      \ <SID>check_back_space() ? "\<TAB>" :
+"      \ coc#refresh()
+"inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+"
+"function! s:check_back_space() abort
+"  let col = col('.') - 1
+"  return !col || getline('.')[col - 1]  =~# '\s'
+"endfunction
+"
+"" Rename current word
+"nmap <F2> <Plug>(coc-rename)
 
 " vim: ft=vim
 #+end_src
@@ -2623,13 +2629,23 @@ viml completion source for coc.nvim
 
 #+begin_src vimrc :tangle ./vim/rcplugins/coc-neco
 
-Plug 'neoclide/coc-neco'
+"Plug 'neoclide/coc-neco'
 " vim: ft=vim
 #+end_src
 ** coc-neco (lua config)
 #+begin_src lua
 
 paq {'neoclide/coc-neco'}
+#+end_src
+** coq_nvim
+#+begin_src vimrc :tangle ./vim/rcplugins/coq_nvim
+Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
+
+" 9000+ Snippets
+Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
+Plug 'ms-jpq/coq.thirdparty', {'branch': '3p'}
+
+" vim: ft=vim
 #+end_src
 ** commentary
 Motion aware commenting
@@ -2671,8 +2687,11 @@ Plug 'Mofiqul/dracula.nvim'
 
 ** dirbuf.nvim
 #+begin_src vimrc :tangle ./vim/rcplugins/dirbuf
-Plug 'elihunter173/dirbuf.nvim'
-" vim: ft=vim
+  Plug 'elihunter173/dirbuf.nvim'
+
+nnoremap <leader>rp :Dirbuf ~/.vim/rcplugins<cr>
+nnoremap <leader>rf :Dirbuf ~/.vim/rcfiles<cr>
+  " vim: ft=vim
 #+end_src
 
 ** easy-align
@@ -3143,6 +3162,14 @@ nnoremap <leader>sp viw:lua require('spectre').open_file_search()<cr>
 
 " vim: ft=vim
 #+end_src
+** nvim-window
+#+begin_src vimrc :tangle ./vim/rcplugins/nvim-window
+Plug 'https://gitlab.com/yorickpeterse/nvim-window.git'
+
+map <silent> <M-o> :lua require('nvim-window').pick()<CR>
+
+" vim: ft=vim
+#+end_src
 ** perl
 #+begin_src vimrc :tangle ./vim/rcplugins/perl
 
@@ -3536,6 +3563,12 @@ Plug 'xojs/vim-xo', { 'branch': 'main' }
 #+begin_src lua
 
 paq {'xojs/vim-xo', branch = 'main' }
+#+end_src
+** vlang
+#+begin_src vimrc :tangle ./vim/rcplugins/vlang
+Plug 'ollykel/v-vim'
+
+" vim: ft=vim
 #+end_src
 ** webapi
 #+begin_src vimrc :tangle ./vim/rcplugins/webapi
