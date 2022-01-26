@@ -2655,6 +2655,8 @@ Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
 Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
 Plug 'ms-jpq/coq.thirdparty', {'branch': '3p'}
 
+let g:coq_settings = { 'auto_start': 'shut-up' }
+
 " vim: ft=vim
 #+end_src
 ** commentary
@@ -3178,6 +3180,11 @@ Plug 'https://gitlab.com/yorickpeterse/nvim-window.git'
 
 map <silent> <M-o> :lua require('nvim-window').pick()<CR>
 
+" vim: ft=vim
+#+end_src
+** octo
+#+begin_src vimrc :tangle ./vim/rcplugins/octo
+Plug 'pwntester/octo.nvim'
 " vim: ft=vim
 #+end_src
 ** perl
