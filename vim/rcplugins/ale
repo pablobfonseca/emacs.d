@@ -1,6 +1,8 @@
 Plug 'dense-analysis/ale'
 
-let g:ale_linters = { 'javascript': ['xo'] }
-let g:ale_fixers = { 'javascript': ['xo'] }
+let g:ale_linters = { 'javascript': ['xo', 'eslint'] }
+let g:ale_fixers = { 'javascript': ['xo', 'prettier', 'eslint'] }
+
+let g:ale_fix_on_save = 1
 
 " vim:ft=vim
