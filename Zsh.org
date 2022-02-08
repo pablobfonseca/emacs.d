@@ -200,7 +200,7 @@ function search_route {
 ** branch_clean
 #+begin_src shell
   function branch_clean() {
-    git branch --merged | egrep -v "(^\*|master)" | xargs git branch -d
+    git checkout master && git branch --merged | grep -v master | xargs git branch -d
   }
 #+end_src
 ** docker functions
