@@ -1119,7 +1119,7 @@ augroup filetype_ruby
   " Run the current ruby file
   autocmd FileType ruby nnoremap <leader>r :Dispatch ruby %<cr>
   " Generage tags for ruby files
-  autocmd FileType ruby nnoremap <Leader>rt :!ctags -R --languages=ruby --exclude=.git --exclude=log .<cr>
+  autocmd FileType ruby nnoremap <Leader>rt :!ripper-tags -R --exclude=vendor<cr>
   " Remove trailing whitespace on save for ruby files.
   autocmd BufWritePre *.rb :%s/\s\+$//e
   autocmd BufRead,BufNewFile {Vagrantfile,Gemfile,Guardfile,Thorfile,Procfile,config.ru,*.rake,.pryrc} set filetype=ruby
@@ -1987,7 +1987,7 @@ function! s:BufferIsTagNavigable()
 endfunction
 
 " Generate ctags
-nnoremap <Leader>rt :!ctags --tag-relative --extras=+f -Rf .git/tags --languages=-javascript,sql<CR>
+nnoremap <Leader>rt :!ripper-tags -R --exclude=vendor<CR>
 
 function! s:RebuildTagsFile()
   !ctags -R --exclude=coverage --exclude=files --exclude=public --exclude=log --exclude=tmp --exclude=vendor *
@@ -2424,10 +2424,11 @@ Ale.vim - Check syntax in Vim asynchronously and fix files, with Language Server
 
 Plug 'dense-analysis/ale'
 
-let g:ale_linters = { 'javascript': ['xo', 'eslint'] }
-let g:ale_fixers = { 'javascript': ['xo', 'prettier', 'eslint'] }
+let g:ale_linters = { 'javascript': ['xo', 'eslint'], 'ruby': ['rubocop'] }
+let g:ale_fixers = { 'javascript': ['xo', 'prettier', 'eslint'], 'ruby': ['rubocop'] }
 
 let g:ale_fix_on_save = 1
+let g:ale_linters_explicit = 1
 
 " vim:ft=vim
 #+end_src
@@ -2484,6 +2485,27 @@ let g:coc_global_extensions = [
       \ 'coc-python'
       \ ]
 
+if isdirectory('./node_modules') && isdirectory('./node_modules/prettier')
+  let g:coc_global_extensions += ['coc-prettier']
+endif
+
+if isdirectory('./node_modules') && isdirectory('./node_modules/eslint')
+  let g:coc_global_extensions += ['coc-eslint']
+endif
+
+function! ShowDocIfNoDiagnostic(timer_id)
+  if (coc#float#has_float() == 0 && CocHasProvider('hover') == 1)
+    silent call CocActionAsync('doHover')
+  endif
+endfunction
+
+function! s:show_hover_doc()
+  call timer_start(500, 'ShowDocIfNoDiagnostic')
+endfunction
+
+autocmd CursorHoldI * :call <SID>show_hover_doc()
+autocmd CursorHold * :call <SID>show_hover_doc()
+
 " Remap keys for gotos
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
@@ -2491,6 +2513,9 @@ nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 nmap <silent> [g <Plug>(coc-diagnostic-prev)
 nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" coc action
+nmap <leader>do <Plug>(coc-codeaction)
 
 " Use <c-space> to trigger completion
 " inoremap <silent><expr> <c-space> coc#refresh()
@@ -2520,12 +2545,16 @@ nmap <F2> <Plug>(coc-rename)
     "suggest.maxCompleteItemCount": 20,
     "suggest.enablePreview": true,
     "tsserver.enableJavascript": true,
+    "tsserver.formatOnType": true,
     "coc.preferences.formatOnSaveFiletypes": ["rust", "elm"],
     "diagnostic.virtualText": true,
     "solargraph.hover": true,
     "solargraph.definitions": true,
     "solargraph.references": true,
+    "solargraph.useBundler": true,
     "codeLens.enable": true,
+    "eslint.autoFixOnSave": true,
+    "eslint.filetypes": ["javascript", "typescript", "jsx", "tsx"],
     "python.venvFolders": [ ".virtualenvs" ],
     "languageserver": {
       "cquery": {
@@ -3351,6 +3380,7 @@ nnoremap <C-p> <cmd>Telescope find_files<cr>
 nnoremap <leader>f <cmd>Telescope live_grep<cr>
 nnoremap <C-x>b <cmd>Telescope buffers<cr>
 nnoremap gs <cmd>Telescope git_status<cr>
+nnoremap <C-x>t <cmd>Telescope tags<cr>
 
 " vim: ft=vim
 #+end_src

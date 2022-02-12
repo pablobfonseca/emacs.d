@@ -3,12 +3,16 @@
   "suggest.maxCompleteItemCount": 20,
   "suggest.enablePreview": true,
   "tsserver.enableJavascript": true,
+  "tsserver.formatOnType": true,
   "coc.preferences.formatOnSaveFiletypes": ["rust", "elm"],
   "diagnostic.virtualText": true,
   "solargraph.hover": true,
   "solargraph.definitions": true,
   "solargraph.references": true,
+  "solargraph.useBundler": true,
   "codeLens.enable": true,
+  "eslint.autoFixOnSave": true,
+  "eslint.filetypes": ["javascript", "typescript", "jsx", "tsx"],
   "python.venvFolders": [ ".virtualenvs" ],
   "languageserver": {
     "cquery": {

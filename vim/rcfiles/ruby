@@ -14,7 +14,7 @@ augroup filetype_ruby
   " Run the current ruby file
   autocmd FileType ruby nnoremap <leader>r :Dispatch ruby %<cr>
   " Generage tags for ruby files
-  autocmd FileType ruby nnoremap <Leader>rt :!ctags -R --languages=ruby --exclude=.git --exclude=log .<cr>
+  autocmd FileType ruby nnoremap <Leader>rt :!ripper-tags -R --exclude=vendor<cr>
   " Remove trailing whitespace on save for ruby files.
   autocmd BufWritePre *.rb :%s/\s\+$//e
   autocmd BufRead,BufNewFile {Vagrantfile,Gemfile,Guardfile,Thorfile,Procfile,config.ru,*.rake,.pryrc} set filetype=ruby
