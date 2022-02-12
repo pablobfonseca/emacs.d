@@ -1,5 +1,4 @@
 #+TITLE: @pablobfonseca's VIM Configuration
-#+PROPERTY: header-args:vimrc :tangle ./vim/vimrc :mkdirp yes
 
 * Welcome to my Vim config
 This file generates both [[file:vimrc][vimrc]] and [[file:vim/init.lua][init.lua]] files which can be loaded by VIM at startup.
@@ -146,7 +145,7 @@ call s:SourceConfigFilesIn('rcfiles')
 #+end_src
 
 ** background-command
-#+begin_src vimrc :tangle ./vim/rcfiles/background-command
+#+begin_src vimrc :tangle no
 
 " This callback will be executed when the entire command is completed
 function! BackgroundCommandClose(channel)
@@ -185,7 +184,7 @@ nnoremap <leader>bc :RunBackgroundCommand
 #+end_src
 
 ** chrome
-#+begin_src vimrc :tangle ./vim/rcfiles/chrome
+#+begin_src vimrc :tangle no
 
 " Chrome Cli bindings
 function! s:HasFile()
@@ -222,7 +221,7 @@ nnoremap <leader>gr :!chrome-cli reload<cr><cr>
 " vim: ft=vim
 #+end_src
 ** command line
-#+begin_src vimrc :tangle ./vim/rcfiles/command-line
+#+begin_src vimrc :tangle no
 cnoremap <C-k> <up>
 cnoremap <C-j> <down>
 
@@ -242,7 +241,7 @@ map('c', '<C-x><C-e>', '<C-e><C-f>')
 map('c', '%%', '<C-R>=expand("%:h")."/"<cr>')
 #+end_src
 ** folding
-#+begin_src vimrc :tangle ./vim/rcfiles/folding
+#+begin_src vimrc :tangle no
 
 "Enable indent folding
 set foldenable
@@ -302,7 +301,7 @@ map('n', '<leader>flc', '<cmd>execute "set foldlevel=" . foldlevel(".")<cr>')
 Functional vimscript helpers
 Taken from [[ http://learnvimscriptthehardway.stevelosh.com/chapters/39.html][here]]
 
-#+begin_src vimrc :tangle ./vim/rcfiles/functional
+#+begin_src vimrc :tangle no
 
 function! Sorted(l)
     let new_list = deepcopy(a:l)
@@ -652,7 +651,7 @@ endfunction
 
 ** general
 
-#+begin_src vimrc :tangle ./vim/rcfiles/general
+#+begin_src vimrc :tangle no
   set hidden                        " Allow buffer change w/o saving
   set autoread                      " Load file from disk, ie for git reset
   set nocompatible                  " Not concerned with vi compatibility
@@ -813,7 +812,7 @@ endfunction
 #+end_src
 ** programming
 *** copilot
-#+begin_src vimrc :tangle ./vim/rcplugins/copilot
+#+begin_src vimrc :tangle no
 " copilot - Github copilot
 "Plug 'github/copilot.vim'
 
@@ -821,7 +820,7 @@ endfunction
 #+end_src
 *** languages
 **** go
-#+begin_src vimrc :tangle ./vim/rcfiles/go
+#+begin_src vimrc :tangle no
 
 augroup filetype_go
   " Clear old autocmds in group
@@ -892,7 +891,7 @@ endfunction
 
 #+end_src
 **** haskell
-#+begin_src vimrc :tangle ./vim/rcfiles/haskell
+#+begin_src vimrc :tangle no
 
 augroup filetype_haskell
   " Clear old autocmds in group
@@ -914,7 +913,7 @@ cmd 'augroup filetype_haskell'
 cmd 'augroup END'
 #+end_src
 **** html
-#+begin_src vimrc :tangle ./vim/rcfiles/html
+#+begin_src vimrc :tangle no
 
 augroup filetype_html
   " Clear old autocmds in group
@@ -938,7 +937,7 @@ cmd 'augroup filetype_html'
 cmd 'augroup END'
 #+end_src
 **** javascript
-#+begin_src vimrc :tangle ./vim/rcfiles/javascript
+#+begin_src vimrc :tangle no
 " au BufRead,BufNewFile *.json set filetype=json
 augroup filetype_javascript
   " Clear old autocmds in group
@@ -967,7 +966,7 @@ cmd 'augroup END'
 #+end_src
 **** json
 
-#+begin_src vimrc :tangle ./vim/rcfiles/json
+#+begin_src vimrc :tangle no
 augroup filetype_json
   " Clear old autocmds in group
   autocmd!
@@ -1006,7 +1005,7 @@ command! PrettyJSON :call <sid>PrettyJSON()
   vim.api.nvim_command('command! PrettyJSON :call PrettyJSON()')
 #+end_src
 **** lua
-#+begin_src vimrc :tangle ./vim/rcfiles/lua
+#+begin_src vimrc :tangle no
 
 augroup filetype_lua
   " Clear old autocmds in group
@@ -1026,7 +1025,7 @@ cmd 'augroup filetype_lua'
 cmd 'augroup END'
 #+end_src
 **** markdown
-#+begin_src vimrc :tangle ./vim/rcfiles/markdown
+#+begin_src vimrc :tangle no
 augroup filetype_markdown_and_txt
   " Clear old autocmds in group
   autocmd!
@@ -1062,7 +1061,7 @@ cmd 'augroup filetype_markdown_and_txt'
 cmd 'augroup END'
 #+end_src
 **** python
-#+begin_src vimrc :tangle ./vim/rcfiles/python
+#+begin_src vimrc :tangle no
 
   let arch = getenv('UNAME_MACHINE')
   let g:python_host_prog='/usr/bin/python'
@@ -1101,7 +1100,7 @@ cmd 'augroup filetype_python'
 cmd 'augroup END'
 #+end_src
 **** ruby
-#+begin_src vimrc :tangle ./vim/rcfiles/ruby
+#+begin_src vimrc :tangle no
 
 let g:ruby_path = system('rvm current')
 let ruby_operators = 1
@@ -1206,7 +1205,7 @@ cmd 'augroup filetype_ruby'
 cmd 'augroup END'
 #+end_src
 **** rust
-#+begin_src vimrc :tangle ./vim/rcfiles/rust
+#+begin_src vimrc :tangle no
 
 augroup filetype_rust
   " Clear old autocmds in group
@@ -1229,7 +1228,7 @@ cmd 'augroup filetype_rust'
 cmd 'augroup END'
 #+end_src
 **** sql
-#+begin_src vimrc :tangle ./vim/rcfiles/sql
+#+begin_src vimrc :tangle no
 
 augroup filetype_sql
   " Clear old autocmds in group
@@ -1269,7 +1268,7 @@ endfunction
 #+end_src
 
 *** refactoring
-#+begin_src vimrc :tangle ./vim/rcfiles/refactoring
+#+begin_src vimrc :tangle no
 " Borrowed from Gary Bernhardt's vimrc
 function! ExtractVariable()
   echohl String | let name = input("Variable name: ") | echohl None
@@ -1311,7 +1310,7 @@ nnoremap <leader>ve :call InlineVariable()<cr>
 " vim: ft=vim
 #+end_src
 ** helpfiles
-#+begin_src vimrc :tangle ./vim/rcfiles/helpfiles
+#+begin_src vimrc :tangle no
 
 au filetype help call HelpFileMode()
 
@@ -1357,7 +1356,7 @@ map('n', '<leader>rh', '<cmd>h local-additions<cr>')
 #+end_src
 
 ** mappings
-#+begin_src vimrc :tangle ./vim/rcfiles/mappings
+#+begin_src vimrc :tangle no
 
 " Emacs-like mappings
 nmap <C-x><C-s> :w<cr>
@@ -1664,7 +1663,7 @@ nnoremap <space>sp mm[s1z=`m
 #+end_src
 
 ** remote yank
-#+begin_src vimrc :tangle ./vim/rcfiles/remote-yank
+#+begin_src vimrc :tangle no
 
 nnoremap <leader>li :call RemoteYank('i')<cr>
 nnoremap <leader>la :call RemoteYank('a')<cr>
@@ -1736,7 +1735,7 @@ endfunction
 #+end_src
 
 ** search
-#+begin_src vimrc :tangle ./vim/rcfiles/search
+#+begin_src vimrc :tangle no
 
 " Searching stuff
 set hlsearch                    " highlight searches, map below to clear
@@ -1816,7 +1815,7 @@ map('v', 'Q', '<cmd>normal Q<cr>')
 For general info on statusline, start with the :h, then see [[http://got-ravings.blogspot.com/2008/08/vim-pr0n-making-statuslines-that-own.html][this link]]
 NOTE: NSFW, but very good overview of statusling configuration
 
-#+begin_src vimrc :tangle ./vim/rcfiles/statusline
+#+begin_src vimrc :tangle no
 
 "Use this to prevent some settings from reloading
 let g:vimrc_loaded = 1
@@ -1963,7 +1962,7 @@ endfunction
 #+end_src
 
 ** tags
-#+begin_src vimrc :tangle ./vim/rcfiles/tags
+#+begin_src vimrc :tangle no
 
 set tags^=./.git/tags
 
@@ -2005,7 +2004,7 @@ command! -nargs=0 RebuildTagsFile call s:RebuildTagsFile()
 #+end_src
 
 ** terminal
-#+begin_src vimrc :tangle ./vim/rcfiles/terminal
+#+begin_src vimrc :tangle no
 
 augroup terminal
   " Clear old autocmds in group
@@ -2068,7 +2067,7 @@ cmd 'augroup END'
 #+end_src
 
 ** vim
-#+begin_src vimrc :tangle ./vim/rcfiles/vim
+#+begin_src vimrc :tangle no
 
 augroup vim_stuff
   " Clear old autocmds in group
@@ -2287,7 +2286,7 @@ map('v', '<silent> <Leader>al', '<cmd>Align<CR>')
 #+end_src
 
 ** visual
-#+begin_src vimrc :tangle ./vim/rcfiles/visual
+#+begin_src vimrc :tangle no
 colorscheme dracula
 set visualbell
 
@@ -2356,7 +2355,7 @@ nnoremap <leader>= :wincmd =<cr>
 #+end_src
 
 ** zsh
-#+begin_src vimrc :tangle ./vim/rcfiles/zsh
+#+begin_src vimrc :tangle no
 
 augroup filetype_zsh
   " Clear old autocmds in group
@@ -2407,7 +2406,7 @@ paq {'kyazdani42/nvim-web-devicons'}
 #+end_src
 
 ** addon-mw-utils
-#+begin_src vimrc :tangle ./vim/rcplugins/addon-mw-utils
+#+begin_src vimrc :tangle no
 
 Plug 'marcweber/vim-addon-mw-utils'
 
@@ -2420,7 +2419,7 @@ paq {'marcweber/vim-addon-mw-utils'}
 ** ale.vim
 Ale.vim - Check syntax in Vim asynchronously and fix files, with Language Server Protocol (LSP) support
 
-#+begin_src vimrc :tangle ./vim/rcplugins/ale
+#+begin_src vimrc :tangle no
 
 Plug 'dense-analysis/ale'
 
@@ -2443,7 +2442,7 @@ g.ale_fixers = { javascript = {'xo'} }
 ** animate.vim
 A Vim Windown Animation Library
 
-#+begin_src vimrc :tangle ./vim/rcplugins/animate
+#+begin_src vimrc :tangle no
 
 Plug 'camspiers/animate.vim'
 
@@ -2457,7 +2456,7 @@ paq {'camspiers/animate.vim'}
 g['animate#easing_func'] = 'animate#ease_out_quad'
 #+end_src
 ** any-jump
-#+begin_src vimrc :tangle ./vim/rcplugins/any-jump
+#+begin_src vimrc :tangle no
 Plug 'pechorin/any-jump.vim'
 " vim: ft=vim
 #+end_src
@@ -2470,7 +2469,7 @@ paq {'pechorin/any-jump.vim'}
 ** coc
 Intellisense engine for vim8
 
-#+begin_src vimrc :tangle ./vim/rcplugins/coc
+#+begin_src vimrc :tangle no
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
@@ -2539,7 +2538,7 @@ nmap <F2> <Plug>(coc-rename)
 #+end_src
 
 *** Settings
-#+begin_src json :tangle ./vim/coc-settings.json
+#+begin_src json :tangle no
   {
     "suggest.echodocSupport": true,
     "suggest.maxCompleteItemCount": 20,
@@ -2668,7 +2667,7 @@ nmap <F2> <Plug>(coc-rename)
 ** coc-neco
 viml completion source for coc.nvim
 
-#+begin_src vimrc :tangle ./vim/rcplugins/coc-neco
+#+begin_src vimrc :tangle no
 
 Plug 'neoclide/coc-neco'
 " vim: ft=vim
@@ -2679,7 +2678,7 @@ Plug 'neoclide/coc-neco'
 paq {'neoclide/coc-neco'}
 #+end_src
 ** coq_nvim
-#+begin_src vimrc :tangle ./vim/rcplugins/coq_nvim
+#+begin_src vimrc :tangle no
 "Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
 
 " 9000+ Snippets
@@ -2693,7 +2692,7 @@ paq {'neoclide/coc-neco'}
 ** commentary
 Motion aware commenting
 
-#+begin_src vimrc :tangle ./vim/rcplugins/commentary
+#+begin_src vimrc :tangle no
 
 Plug 'tpope/vim-commentary'
 
@@ -2718,13 +2717,13 @@ map('n', '<M-/>', '<Plug>CommentaryLine')
 #+end_src
 
 ** css-colors
-#+begin_src vimrc :tangle ./vim/rcplugins/css-colors
+#+begin_src vimrc :tangle no
 Plug 'ap/vim-css-color'
   " vim: ft=vim
 #+end_src
 
 ** dracula
-#+begin_src vimrc :tangle ./vim/rcplugins/dracula
+#+begin_src vimrc :tangle no
 Plug 'Mofiqul/dracula.nvim'
 
 " let g:termguicolors = true
@@ -2735,7 +2734,7 @@ Plug 'Mofiqul/dracula.nvim'
 #+end_src
 
 ** dirbuf.nvim
-#+begin_src vimrc :tangle ./vim/rcplugins/dirbuf
+#+begin_src vimrc :tangle no
   Plug 'elihunter173/dirbuf.nvim'
 
 nnoremap <leader>rp :Dirbuf ~/.vim/rcplugins<cr>
@@ -2746,7 +2745,7 @@ nnoremap <leader>rf :Dirbuf ~/.vim/rcfiles<cr>
 ** easy-align
 A Vim alignment plugin
 
-#+begin_src vimrc :tangle ./vim/rcplugins/easy-align
+#+begin_src vimrc :tangle no
 
 Plug 'junegunn/vim-easy-align'
 
@@ -2768,7 +2767,7 @@ map('n', 'ga', '<Plug>(EasyAlign)')
 ** easymotion
 Vim motions on speed
 
-#+begin_src vimrc :tangle ./vim/rcplugins/easymotion
+#+begin_src vimrc :tangle no
 
 Plug 'easymotion/vim-easymotion'
 
@@ -2786,7 +2785,7 @@ g.EasyMotion_leader_key = '<leader><leader>'
 ** emmet
 Text expansion for html markup
 
-#+begin_src vimrc :tangle ./vim/rcplugins/emmet
+#+begin_src vimrc :tangle no
 
 Plug 'mattn/emmet-vim',
 
@@ -2812,7 +2811,7 @@ g.user_emmet_mode = 'a'
 ** endwise
 Intelligently insert ends, endifs, etc
 
-#+begin_src vimrc :tangle ./vim/rcplugins/endwise
+#+begin_src vimrc :tangle no
 
 Plug 'tpope/vim-endwise'
 
@@ -2826,7 +2825,7 @@ paq {'tpope/vim-endwise'}
 ** fugitive
 Interact with git via Vim
 
-#+begin_src vimrc :tangle ./vim/rcplugins/fugitive
+#+begin_src vimrc :tangle no
 
 Plug 'tpope/vim-fugitive'
 
@@ -2902,7 +2901,7 @@ command! GitDiff call s:GitDiff()
   vim.api.nvim_command('command! GitDiff call GitDiff()')
 #+end_src
 ** fzf.vim
-#+begin_src vimrc :tangle ./vim/rcplugins/fzf
+#+begin_src vimrc :tangle no
 
 "Plug '/usr/local/opt/fzf'
 "Plug 'junegunn/fzf.vim'
@@ -3016,7 +3015,7 @@ command! GitDiff call s:GitDiff()
 ** git-gutter
 Shows a git diff in the gutter (sign column) " and stages/undoes hunks.
 
-#+begin_src vimrc :tangle ./vim/rcplugins/git-gutter
+#+begin_src vimrc :tangle no
 
 Plug 'airblade/vim-gitgutter'
 
@@ -3042,7 +3041,7 @@ require('gitsigns').setup{}
 ** go
 Go development plugin for Vim
 
-#+begin_src vimrc :tangle ./vim/rcplugins/go
+#+begin_src vimrc :tangle no
 
 Plug 'fatih/vim-go', { 'for': 'go' }
 " vim:ft=vim
@@ -3055,7 +3054,7 @@ paq {'fatih/vim-go'}
 ** html5
 Filetype settings for html5
 
-#+begin_src vimrc :tangle ./vim/rcplugins/html5
+#+begin_src vimrc :tangle no
 
 Plug 'othree/html5.vim', { 'for': 'html' }
 
@@ -3064,7 +3063,7 @@ Plug 'othree/html5.vim', { 'for': 'html' }
 ** json
 Syntax highlighting for JSON
 
-#+begin_src vimrc :tangle ./vim/rcplugins/json
+#+begin_src vimrc :tangle no
 
 " Fancy tricks with hiding quotes around attributes, includes ftdetect
 Plug 'elzr/vim-json', {'for': 'json'}
@@ -3074,7 +3073,7 @@ let g:vim_json_syntax_conceal = 0
 " vim:ft=vim
 #+end_src
 ** lexima
-#+begin_src vimrc :tangle ./vim/rcplugins/lexima
+#+begin_src vimrc :tangle no
 
 Plug 'cohama/lexima.vim'
 
@@ -3086,7 +3085,7 @@ Plug 'cohama/lexima.vim'
 paq {'cohama/lexima.vim'}
 #+end_src
 ** lsp
-#+begin_src vimrc :tangle ./vim/rcplugins/lsp
+#+begin_src vimrc :tangle no
 
 Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/nvim-compe'
@@ -3133,7 +3132,7 @@ Plug 'hrsh7th/nvim-compe'
 ** markdown
 Syntax file for Markdowm files
 
-#+begin_src vimrc :tangle ./vim/rcplugins/markdown
+#+begin_src vimrc :tangle no
 
 Plug 'tpope/vim-markdown', {'for': 'markdown'}
 
@@ -3144,7 +3143,7 @@ let g:markdown_fenced_languages = ['python', 'javascript', 'ruby', 'sh', 'yaml',
 ** matchit
 Extended % open close pair matching
 
-#+begin_src vimrc :tangle ./vim/rcplugins/matchit
+#+begin_src vimrc :tangle no
 
 Plug 'vim-scripts/matchit.zip'
 
@@ -3158,7 +3157,7 @@ paq {'vim-scripts/matchit.zip'}
 ** moonscript-vim
 MoonScript support for vim
 
-#+begin_src vimrc :tangle ./vim/rcplugins/moonscript-vim
+#+begin_src vimrc :tangle no
 
 Plug 'leafo/moonscript-vim', { 'for': 'moonscript' }
 " vim: ft=vim
@@ -3171,7 +3170,7 @@ paq {'leafo/moonscript-vim'}
 ** neco-vim
 The vim source for neocomplete/deoplete
 
-#+begin_src vimrc :tangle ./vim/rcplugins/neco-vim
+#+begin_src vimrc :tangle no
 
 Plug 'Shougo/neco-vim'
 " vim: ft=vim
@@ -3184,7 +3183,7 @@ paq {'Shougo/neco-vim'}
 ** neoterm
 Wrapper of some vim/neovim's :terminal functions
 
-#+begin_src vimrc :tangle ./vim/rcplugins/neoterm
+#+begin_src vimrc :tangle no
 
 Plug 'kassio/neoterm'
 
@@ -3199,7 +3198,7 @@ paq {'kassio/neoterm'}
 map('n', '<leader>ro', '<cmd>Topen<cr>', { noremap = true })
 #+end_src
 ** nvim-spectre
-#+begin_src vimrc :tangle ./vim/rcplugins/nvim-spectre
+#+begin_src vimrc :tangle no
 Plug 'windwp/nvim-spectre'
 
 nnoremap <leader>S :lua require('spectre').open()<CR>
@@ -3212,7 +3211,7 @@ nnoremap <leader>sp viw:lua require('spectre').open_file_search()<cr>
 " vim: ft=vim
 #+end_src
 ** nvim-window
-#+begin_src vimrc :tangle ./vim/rcplugins/nvim-window
+#+begin_src vimrc :tangle no
 Plug 'https://gitlab.com/yorickpeterse/nvim-window.git'
 
 map <silent> <M-o> :lua require('nvim-window').pick()<CR>
@@ -3220,12 +3219,12 @@ map <silent> <M-o> :lua require('nvim-window').pick()<CR>
 " vim: ft=vim
 #+end_src
 ** octo
-#+begin_src vimrc :tangle ./vim/rcplugins/octo
+#+begin_src vimrc :tangle no
 Plug 'pwntester/octo.nvim'
 " vim: ft=vim
 #+end_src
 ** perl
-#+begin_src vimrc :tangle ./vim/rcplugins/perl
+#+begin_src vimrc :tangle no
 
 Plug 'wolfgangmehner/perl-support', { 'for': 'perl' }
 " vim: ft=vim
@@ -3233,7 +3232,7 @@ Plug 'wolfgangmehner/perl-support', { 'for': 'perl' }
 ** rails
 Help for working with Rails projects in vim
 
-#+begin_src vimrc :tangle ./vim/rcplugins/rails
+#+begin_src vimrc :tangle no
 
 Plug 'tpope/vim-rails'
 
@@ -3264,7 +3263,7 @@ g.rails_projections = {
 ** rake
 it's like rails.vim without the rails
 
-#+begin_src vimrc :tangle ./vim/rcplugins/rake
+#+begin_src vimrc :tangle no
 
 Plug 'tpope/vim-rake'
 
@@ -3276,7 +3275,7 @@ Plug 'tpope/vim-rake'
 paq {'tpope/vim-rake'}
 #+end_src
 ** ruby
-#+begin_src vimrc :tangle ./vim/rcplugins/ruby
+#+begin_src vimrc :tangle no
 
 Plug 'vim-ruby/vim-ruby', {'for': 'ruby'}
 
@@ -3285,7 +3284,7 @@ Plug 'vim-ruby/vim-ruby', {'for': 'ruby'}
 ** rust
 Vim configuration for Rust
 
-#+begin_src vimrc :tangle ./vim/rcplugins/rust
+#+begin_src vimrc :tangle no
 
 Plug 'rust-lang/rust.vim', {'for': 'rust'}
 " vim: ft=vim
@@ -3293,7 +3292,7 @@ Plug 'rust-lang/rust.vim', {'for': 'rust'}
 ** splitjoin
 Switch between single-line and multiline forms of code
 
-#+begin_src vimrc :tangle ./vim/rcplugins/splitjoin
+#+begin_src vimrc :tangle no
 
 Plug 'AndrewRadev/splitjoin.vim', { 'branch': 'main' }
 " vim: ft=vim
@@ -3306,7 +3305,7 @@ paq {'AndrewRadev/splitjoin.vim', branch = 'main' }
 ** surround
 Add, update, remove enclosing marks, ie [], {}. (), "", ''
 
-#+begin_src vimrc :tangle ./vim/rcplugins/surround
+#+begin_src vimrc :tangle no
 
 Plug 'tpope/vim-surround'
 
@@ -3368,7 +3367,7 @@ paq {'tpope/vim-surround'}
 ** telescope
 Find, Filter, Preview, Pick. All lua, all the time.
 
-#+begin_src vimrc :tangle ./vim/rcplugins/telescope
+#+begin_src vimrc :tangle no
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
@@ -3396,7 +3395,7 @@ map('n', 'gs', '<cmd>lua require("telescope.builtin").git_status()<cr>')
 ** textobj-word-column
 Adds text-objects for word-based columns in Vim.
 
-#+begin_src vimrc :tangle ./vim/rcplugins/textobj-word-column
+#+begin_src vimrc :tangle no
 
 Plug 'coderifous/textobj-word-column.vim'
 
@@ -3418,7 +3417,7 @@ paq {'coderifous/textobj-word-column.vim'}
 ** typescript
 Typescript syntax files for Vim
 
-#+begin_src vimrc :tangle ./vim/rcplugins/typescript
+#+begin_src vimrc :tangle no
 
 Plug 'leafgarland/typescript-vim', { 'for': 'typescript' }
 
@@ -3428,7 +3427,7 @@ let g:typescript_compiler_binary='tsc'
 ** unimpaired
 Pairs of handy bracket mappings
 
-#+begin_src vimrc :tangle ./vim/rcplugins/unimpaired
+#+begin_src vimrc :tangle no
 
 Plug 'tpope/vim-unimpaired'
 
@@ -3442,7 +3441,7 @@ paq {'tpope/vim-unimpaired'}
 ** vim-dispatch
 Asynchronous build and test dispatcher
 
-#+begin_src vimrc :tangle ./vim/rcplugins/vim-dispatch
+#+begin_src vimrc :tangle no
 
 Plug 'tpope/vim-dispatch'
 
@@ -3463,7 +3462,7 @@ nnoremap <leader>cop :Copen!<cr>
 ** vim-elm
 Elm plugin for Vim
 
-#+begin_src vimrc :tangle ./vim/rcplugins/vim-elm
+#+begin_src vimrc :tangle no
 
 Plug 'Zaptic/elm-vim', {'for': 'elm'}
 " vim: ft=vim
@@ -3471,7 +3470,7 @@ Plug 'Zaptic/elm-vim', {'for': 'elm'}
 ** vim-javascript
 Vastly improved Javascript indentation and syntax support in Vim.
 
-#+begin_src vimrc :tangle ./vim/rcplugins/vim-javascript
+#+begin_src vimrc :tangle no
 
 Plug 'pangloss/vim-javascript', {'for': ['javascript', 'html']}
 
@@ -3482,7 +3481,7 @@ let g:javascript_plugin_flow = 1
 ** vim-jsx
 React JSX syntax highlighting and indenting for vim.
 
-#+begin_src vimrc :tangle ./vim/rcplugins/vim-jsx
+#+begin_src vimrc :tangle no
 
 Plug 'mxw/vim-jsx'
 " vim: ft=vim
@@ -3490,7 +3489,7 @@ Plug 'mxw/vim-jsx'
 ** vim-jsx-typescript
 React JSX syntax highlighting for vim and Typescript
 
-#+begin_src vimrc :tangle ./vim/rcplugins/vim-jsx-typescript
+#+begin_src vimrc :tangle no
 
 Plug 'peitalin/vim-jsx-typescript', {'for': 'tsx'}
 " vim: ft=vim
@@ -3498,7 +3497,7 @@ Plug 'peitalin/vim-jsx-typescript', {'for': 'tsx'}
 ** vim-peekaboo
 Extends `"` and `@` so you can see the contents of registers
 
-#+begin_src vimrc :tangle ./vim/rcplugins/vim-peekaboo
+#+begin_src vimrc :tangle no
 
 Plug 'junegunn/vim-peekaboo'
 " vim: ft=vim
@@ -3511,7 +3510,7 @@ paq {'junegunn/vim-peekaboo'}
 ** vim-polyglot
 A solid language pack for Vim
 
-#+begin_src vimrc :tangle ./vim/rcplugins/vim-polyglot
+#+begin_src vimrc :tangle no
 
 Plug 'sheerun/vim-polyglot'
 " vim: ft=vim
@@ -3519,7 +3518,7 @@ Plug 'sheerun/vim-polyglot'
 ** vim-projectionist
 Granular project configuration
 
-#+begin_src vimrc :tangle ./vim/rcplugins/vim-projectionist
+#+begin_src vimrc :tangle no
 
 Plug 'tpope/vim-projectionist'
 " vim:ft=vim
@@ -3527,7 +3526,7 @@ Plug 'tpope/vim-projectionist'
 ** vim-reek
 Code smell detector for Ruby in Vim
 
-#+begin_src vimrc :tangle ./vim/rcplugins/vim-reek
+#+begin_src vimrc :tangle no
 
 Plug 'rainerborene/vim-reek', { 'for': 'ruby' }
 let g:reek_on_loading = 0
@@ -3537,7 +3536,7 @@ let g:reek_always_show = 0
 ** vim-repeat
 Enable repeating supported plugin maps with "."
 
-#+begin_src vimrc :tangle ./vim/rcplugins/vim-repeat
+#+begin_src vimrc :tangle no
 
 Plug 'tpope/vim-repeat'
 
@@ -3551,7 +3550,7 @@ paq {'tpope/vim-repeat'}
 ** vim-ripgrep
 Use RipGrep in Vim and display results in a quickfix list
 
-#+begin_src vimrc :tangle ./vim/rcplugins/vim-ripgrep
+#+begin_src vimrc :tangle no
 
 Plug 'guohao117/vim-ripgrep'
 
@@ -3572,7 +3571,7 @@ vim.api.nvim_command('command! -nargs=* -complete=file Rg :call Rg(<q-args>)')
 ** vim-rsi
 Readline style insertion
 
-#+begin_src vimrc :tangle ./vim/rcplugins/vim-rsi
+#+begin_src vimrc :tangle no
 
 Plug 'tpope/vim-rsi'
 
@@ -3586,7 +3585,7 @@ paq {'tpope/vim-rsi'}
 ** vim-test
 Run your tests at the speed of thought
 
-#+begin_src vimrc :tangle ./vim/rcplugins/vim-test
+#+begin_src vimrc :tangle no
 
 Plug 'janko-m/vim-test'
 
@@ -3596,7 +3595,7 @@ let test#strategy = 'neovim'
 #+end_src
 ** vim-visual-multi
 Multiple cursors plugin for vim/neovim
-#+begin_src vimrc :tangle ./vim/rcplugins/vim-visual-multi
+#+begin_src vimrc :tangle no
 
 Plug 'mg979/vim-visual-multi'
 " vim: ft=vim
@@ -3609,7 +3608,7 @@ paq {'mg979/vim-visual-multi'}
 ** vim-xo
 Vim plugin for XO
 
-#+begin_src vimrc :tangle ./vim/rcplugins/vim-xo
+#+begin_src vimrc :tangle no
 
 Plug 'xojs/vim-xo', { 'branch': 'main' }
 " vim: ft=vim
@@ -3620,13 +3619,13 @@ Plug 'xojs/vim-xo', { 'branch': 'main' }
 paq {'xojs/vim-xo', branch = 'main' }
 #+end_src
 ** vlang
-#+begin_src vimrc :tangle ./vim/rcplugins/vlang
+#+begin_src vimrc :tangle no
 Plug 'ollykel/v-vim'
 
 " vim: ft=vim
 #+end_src
 ** webapi
-#+begin_src vimrc :tangle ./vim/rcplugins/webapi
+#+begin_src vimrc :tangle no
 
 Plug 'mattn/webapi-vim'
 
@@ -3640,7 +3639,7 @@ paq {'mattn/webapi-vim'}
 ** xml
 Handles xml files
 
-#+begin_src vimrc :tangle ./vim/rcplugins/xml
+#+begin_src vimrc :tangle no
 
 augroup filetype_ruby
   autocmd BufWritePre * filetype xml :PrettyXML()
