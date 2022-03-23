@@ -223,6 +223,13 @@ docker_stop() {
     && docker stop $(cut -d' ' -f1 <<< "$container")
 }
 #+end_src
+** rspec
+#+begin_src shell
+  fspec() {
+      local file
+      file=$(find spec -type f | fzf) && rspec "$file"
+  }
+#+end_src
 
 * Aliases
 #+begin_src shell
