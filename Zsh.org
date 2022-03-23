@@ -8,12 +8,17 @@ This file generates [[file:zshrc][zshrc]] file which can be loaded by ZSH at sta
   export UNAME_MACHINE=$(/usr/bin/uname -m)
   export PATH="/usr/local/sbin:$PATH"
   export PATH="/usr/local/mysql/bin:$PATH"
+  if [ "$UNAME_MACHINE" = "arm64" ]; then
+    export PATH="/opt/homebrew/sbin:$PATH"
+    export PATH="/opt/homebrew/bin:$PATH"
+  fi
   export HISTSIZE=20000
   export SAVEHIST=20000
   export DOTFILES=$HOME/.dotfiles
   export LC_ALL=en_US.UTF-8
   export LANG=en_US.UTF-8
   export CLICOLOR=1
+  export HISTTIMEFORMAT="%d/%m/%y %T"
 #+end_src
 ** Go
 #+begin_src shell :tangle ./zsh/zshenv
