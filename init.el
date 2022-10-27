@@ -164,7 +164,10 @@
   (evil-collection-init))
 
 (use-package evil-multiedit
-  :straight t)
+  :straight t
+  :config
+  (define-key evil-normal-state-map (kbd "C-n") 'evil-multiedit-match-and-next)
+  (define-key evil-visual-state-map (kbd "C-n") 'evil-multiedit-match-and-next))
 
 (use-package evil-surround
   :straight t

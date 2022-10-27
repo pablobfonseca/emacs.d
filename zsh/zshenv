@@ -12,6 +12,8 @@ export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export CLICOLOR=1
 export HISTTIMEFORMAT="%d/%m/%y %T"
+export BUNDLER_EDITOR=nvim
+export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES # for rails
 
 export GOPATH=$HOME/code/go-workspace
 
