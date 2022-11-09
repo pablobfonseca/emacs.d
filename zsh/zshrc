@@ -131,6 +131,4 @@ alias ll="ls -alF"
 alias vimup="nvim +PlugUpdate"
 alias bs="git bselect"
 
-eval $(opam env)
-
 eval "$(starship init zsh)"

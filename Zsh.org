@@ -6,6 +6,7 @@ This file generates [[file:zshrc][zshrc]] file which can be loaded by ZSH at sta
 * envvars
 #+begin_src shell :tangle ./zsh/zshenv
   export UNAME_MACHINE=$(/usr/bin/uname -m)
+  export UNAME_SYSTEM=$(/usr/bin/uname)
   export PATH="/usr/local/sbin:$PATH"
   export PATH="/usr/local/mysql/bin:$PATH"
   if [ "$UNAME_MACHINE" = "arm64" ]; then
@@ -47,11 +48,6 @@ This file generates [[file:zshrc][zshrc]] file which can be loaded by ZSH at sta
 #+begin_src shell
   [ -f "$HOME/.ghcup/env" ] && source "$HOME/.ghcup/env" # ghcup-env
 #+end_src
-** Rust
-#+begin_src shell :tangle ./zsh/zshenv
-source "$HOME/.cargo/env"
-#+end_src
-
 * fzf
 ** envvars
 #+begin_src shell :tangle ./zsh/zshenv
@@ -255,11 +251,6 @@ docker_stop() {
 #+end_src
 
 * Languages
-** oCaml
-#+begin_src shell
-eval $(opam env)
-#+end_src
-
 * Starship theme
 #+begin_src shell
   eval "$(starship init zsh)"
