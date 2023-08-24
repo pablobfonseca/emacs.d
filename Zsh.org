@@ -20,7 +20,6 @@ This file generates [[file:zshrc][zshrc]] file which can be loaded by ZSH at sta
   export EDITOR=nvim
   export BUNDLER_EDITOR=$EDITOR
   export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES # for rails
-  export OPENAI_API_KEY=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
 #+end_src
 ** Go
 #+begin_src shell :tangle ./zsh/zshenv

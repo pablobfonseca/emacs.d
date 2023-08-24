@@ -106,7 +106,9 @@
 (use-package undo-tree
   :straight t
   :init
-  (global-undo-tree-mode 1))
+  (global-undo-tree-mode 1)
+  :config
+  (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo"))))
 
 (use-package evil
   :straight t
