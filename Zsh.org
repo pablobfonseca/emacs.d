@@ -8,11 +8,8 @@ This file generates [[file:zshrc][zshrc]] file which can be loaded by ZSH at sta
   export UNAME_MACHINE=$(/usr/bin/uname -m)
   export UNAME_SYSTEM=$(/usr/bin/uname)
   export PATH="/usr/local/sbin:$PATH"
-  export PATH="/usr/local/mysql/bin:$PATH"
-  if [ "$UNAME_MACHINE" = "arm64" ]; then
-    export PATH="/opt/homebrew/sbin:$PATH"
-    export PATH="/opt/homebrew/bin:$PATH"
-  fi
+  export PATH="/opt/homebrew/sbin:$PATH"
+  export PATH="/opt/homebrew/bin:$PATH"
   export HISTSIZE=20000
   export SAVEHIST=20000
   export DOTFILES=$HOME/.dotfiles
@@ -88,7 +85,8 @@ bindkey "^X^E" edit-command-line
 
 * zplug
 #+begin_src shell
-source ~/.zplug/init.zsh
+  export ZPLUG_HOME=$(brew --prefix zplug)
+  source $ZPLUG_HOME/init.zsh
 #+end_src
 ** Plugins
 #+begin_src shell
