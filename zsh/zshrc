@@ -69,6 +69,10 @@ function search_route {
   bin/rails routes | rg $1
 }
 
+function vimup {
+  nvim +NvChadUpdate
+}
+
 function bundle_search() {
     pattern="$1"; shift
     ag $pattern $(bundle show --paths "$@")
@@ -113,10 +117,34 @@ docker_stop() {
     && docker stop $(cut -d' ' -f1 <<< "$container")
 }
 
+dspec() {
+  local spec_file
+  file=$(find app/spec -type f | fzf)
+  docker compose exec -it app rspec "$file"
+}
+
+alias dconsole="docker compose exec -it app rails c"
+
 fspec() {
     local file
     file=$(find spec -type f | fzf) && rspec "$file"
 }
+
+alias heic_to_png="magick mogrify -monitor -format png *.HEIC"
+
+alias boot=". ./setup-machine.sh"
+
+find_file() {
+    local file
+    file =$(find . -type f | fzf)
+    if [ -n "$file" ]; then
+        LBUFFER+=$file
+        zle reset-prompt
+    fi
+}
+
+zle -N find_file
+bindkey "^P" find_file
 
 alias path="echo $PATH | tr -s ':' '\n'"
 alias reload!="source ~/.zshrc"
@@ -128,7 +156,8 @@ alias st="git st"
 alias check3000="lsof -i :3000"
 alias ls="lsd"
 alias ll="ls -alF"
-alias vimup="nvim +PlugUpdate"
 alias bs="git bselect"
+
+eval "$(op completion zsh)"; compdef _op op
 
 eval "$(starship init zsh)"

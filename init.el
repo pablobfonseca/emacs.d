@@ -245,10 +245,10 @@
 (use-package nimbus-theme
   :straight t)
 
-(set-face-attribute 'default nil :font "FuraCode Nerd Font" :family "Retina" :height 190)
+(set-face-attribute 'default nil :font "FiraCode Nerd Font" :family "Retina" :height 190)
 
 ;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil :font "FuraCode Nerd Font" :family "Retina" :height 190)
+(set-face-attribute 'fixed-pitch nil :font "FiraCode Nerd Font" :family "Retina" :height 190)
 
 ;; Set the variable pitch face
 (set-face-attribute 'variable-pitch nil :font "Cantarell" :height 190 :weight 'normal)
@@ -342,19 +342,6 @@
   :straight t
   :init (doom-modeline-mode 1)
   :custom (doom-modeline-height 14))
-
-(use-package perspective
-  :straight t
-  :demand t
-  :bind (("C-M-k" . persp-switch)
-         ("C-M-n" . persp-next)
-         ("C-x k" . persp-kill-buffer*))
-  :custom
-  (persp-initial-frame-name "Main")
-  :config
-  ;; Running `persp-mode' multiple times resets the perspective list...
-  (unless (equal persp-mode t)
-    (persp-mode)))
 
 (global-auto-revert-mode 1)
 
@@ -1118,6 +1105,12 @@
 (use-package python-mode
   :straight t
   :hook (python-mode . lsp))
+
+(use-package lsp-pyright
+  :ensure t
+  :hook (python-mode . (lambda ()
+                         (require 'lsp-pyright)
+                         (lsp))))  ; or lsp-deferred
 
 (use-package pyvenv
   :straight t

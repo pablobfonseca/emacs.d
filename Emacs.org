@@ -386,10 +386,10 @@ Don't warn for following symlinked files
 I am using the [[https://github.com/tonsky/FiraCode][Fira Code]] and [[https://fonts.google.com/specimen/Cantarell][Cantarell]] fonts for this configuration which will more than likely need to be installed on your machine.  Both can usually be found in the various Linux distro package managers or downloaded from the links above.
 
 #+begin_src emacs-lisp
-(set-face-attribute 'default nil :font "FuraCode Nerd Font" :family "Retina" :height 190)
+(set-face-attribute 'default nil :font "FiraCode Nerd Font" :family "Retina" :height 190)
 
 ;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil :font "FuraCode Nerd Font" :family "Retina" :height 190)
+(set-face-attribute 'fixed-pitch nil :font "FiraCode Nerd Font" :family "Retina" :height 190)
 
 ;; Set the variable pitch face
 (set-face-attribute 'variable-pitch nil :font "Cantarell" :height 190 :weight 'normal)
@@ -510,22 +510,6 @@ Prettify the modeline with [[https://github.com/Malabarba/smart-mode-line/][smar
     :straight t
     :init (doom-modeline-mode 1)
     :custom (doom-modeline-height 14))
-#+end_src
-
-*** Workspaces
-#+begin_src emacs-lisp
-  (use-package perspective
-    :straight t
-    :demand t
-    :bind (("C-M-k" . persp-switch)
-           ("C-M-n" . persp-next)
-           ("C-x k" . persp-kill-buffer*))
-    :custom
-    (persp-initial-frame-name "Main")
-    :config
-    ;; Running `persp-mode' multiple times resets the perspective list...
-    (unless (equal persp-mode t)
-      (persp-mode)))
 #+end_src
 
 ** Auto-Reverting Changed Files
@@ -1472,7 +1456,13 @@ This is an interesting extension to Magit that shows a TODOs section in your git
   (use-package python-mode
     :straight t
     :hook (python-mode . lsp))
-#+end_src
+
+  (use-package lsp-pyright
+    :ensure t
+    :hook (python-mode . (lambda ()
+                           (require 'lsp-pyright)
+                           (lsp))))  ; or lsp-deferred
+                          #+end_src
 **** pyvenv
 #+begin_src emacs-lisp
   (use-package pyvenv
