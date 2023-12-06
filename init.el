@@ -165,11 +165,17 @@
   :config
   (evil-collection-init))
 
-(use-package evil-multiedit
+;; (use-package evil-multiedit
+;;   :straight t
+;;   :config
+;;   (define-key evil-normal-state-map (kbd "C-n") 'evil-multiedit-match-and-next)
+;;   (define-key evil-visual-state-map (kbd "C-n") 'evil-multiedit-match-and-next))
+
+(use-package multiple-cursors
   :straight t
   :config
-  (define-key evil-normal-state-map (kbd "C-n") 'evil-multiedit-match-and-next)
-  (define-key evil-visual-state-map (kbd "C-n") 'evil-multiedit-match-and-next))
+  (define-key evil-normal-state-map (kbd "C-n") 'mc/mark-next-like-this)
+  (define-key evil-visual-state-map (kbd "C-n") 'mc/mark-next-like-this))
 
 (use-package evil-surround
   :straight t
@@ -207,6 +213,7 @@
 (set-fringe-mode 10)              ; Give some breathing room
 (menu-bar-mode -1)                ; Disable the menu bar
 (setq ring-bell-function 'ignore) ; Ignore bell
+(setq display-line-numbers-type 'relative) ; Relative line numbers
 
 ;; nice scrolling
 (setq scroll-margin 0
