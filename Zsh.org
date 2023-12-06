@@ -20,6 +20,7 @@ This file generates [[file:zshrc][zshrc]] file which can be loaded by ZSH at sta
   export EDITOR=nvim
   export BUNDLER_EDITOR=$EDITOR
   export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES # for rails
+  export DOCKER_MACHINE_NAME=pablo-machine
 #+end_src
 ** Go
 #+begin_src shell :tangle ./zsh/zshenv
@@ -216,25 +217,25 @@ function vimup {
   docker_rmi() {
       local image
       image=$(docker images | awk '(NR>1) { print $1 " " $3; }' | fzf) \
-      && docker rmi $(cut -d' ' -f2 <<< "$image") --force
+          && docker rmi $(cut -d' ' -f2 <<< "$image") --force
   }
 
   docker_attach() {
       local container
       container=$(docker ps | awk 'NR>1 { print $1 " " $NF; }' | fzf) \
-      && docker attach $(cut -d' ' -f1 <<< "$container")
+          && docker attach $(cut -d' ' -f1 <<< "$container")
   }
 
   docker_stop() {
       local container
       container=$(docker ps | awk 'NR>1 { print $1 " " $NF; }' | fzf) \
-      && docker stop $(cut -d' ' -f1 <<< "$container")
+          && docker stop $(cut -d' ' -f1 <<< "$container")
   }
 
   dspec() {
-    local spec_file
-    file=$(find app/spec -type f | fzf)
-    docker compose exec -it app rspec "$file"
+      local file
+      file=$(find app/spec -type f | fzf | sed 's/app\/spec/spec/') \
+          && docker compose exec -it app rspec "$file"
   }
 
   alias dconsole="docker compose exec -it app rails c"
@@ -261,18 +262,17 @@ alias boot=". ./setup-machine.sh"
 ** find_file
 #+begin_src shell
   find_file() {
-      local file
-      file =$(find . -type f | fzf)
-      if [ -n "$file" ]; then
-          LBUFFER+=$file
-          zle reset-prompt
-      fi
+    find . -type f | fzf | xargs nvim
   }
 
   zle -N find_file
   bindkey "^P" find_file
 #+end_src
 
+** history_search
+#+begin_src shell
+  bindkey "^R" history-incremental-search-backward
+#+end_src
 * Aliases
 #+begin_src shell
   alias path="echo $PATH | tr -s ':' '\n'"
@@ -286,6 +286,19 @@ alias boot=". ./setup-machine.sh"
   alias ls="lsd"
   alias ll="ls -alF"
   alias bs="git bselect"
+
+  # Upscope aliases
+  alias docker_app="docker compose exec -it app"
+  alias docker_logs="docker compose logs -f"
+  alias docker_frontend="docker compose exec -it app-frontend"
+  alias app_migrate="docker_app rails db:migrate"
+  alias app_console="docker_app rails c"
+  alias app_logs="docker_logs app"
+
+  # GH
+  alias copilot="gh copilot"
+  alias gcs="gh copilot suggest"
+  alias gce="gh copilot explain"
 #+end_src
 
 * Languages
