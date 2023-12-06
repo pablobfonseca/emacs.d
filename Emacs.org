@@ -1374,6 +1374,8 @@ This is an interesting extension to Magit that shows a TODOs section in your git
     :commands lsp
     :hook (lsp-mode . personal/lsp-mode-setup)
     :config
+    (define-key evil-normal-state-map (kbd ",ra") 'lsp-rename)
+
     (lsp-enable-which-key-integration t)
     :bind (:map lsp-mode-map
                 ("TAB" . completion-at-point))
@@ -1382,7 +1384,7 @@ This is an interesting extension to Magit that shows a TODOs section in your git
   (personal/leader-keys
     "l" '(:ignore t :which-key "lsp")
     "ld" 'lsp-find-definition
-    "lr" 'xhref-find-references
+    "lr" 'lsp-find-references
     "ln" 'lsp-ui-find-next-reference
     "lp" 'lsp-ui-find-prev-reference
     "ls" 'counsel-imenu
@@ -1397,7 +1399,8 @@ This is an interesting extension to Magit that shows a TODOs section in your git
     :straight t
     :hook (lsp-mode . lsp-ui-mode)
     :config
-    (setq lsp-ui-doc-position 'bottom))
+    (define-key evil-normal-state-map (kbd "H") 'lsp-ui-doc-glance)
+    (setq lsp-ui-doc-position 'at-point))
 #+end_src
 *** Ruby
 #+begin_src emacs-lisp
@@ -1662,7 +1665,7 @@ Set up nvm so that we can manage Node versions
     :config
     (setq elm-format-on-save t))
 #+end_src
-*** OCaml/ResonML
+*** OCaml/ReasonML
 
 #+begin_src emacs-lisp
   (use-package caml

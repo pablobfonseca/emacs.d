@@ -1038,6 +1038,8 @@
   :commands lsp
   :hook (lsp-mode . personal/lsp-mode-setup)
   :config
+  (define-key evil-normal-state-map (kbd ",ra") 'lsp-rename)
+
   (lsp-enable-which-key-integration t)
   :bind (:map lsp-mode-map
               ("TAB" . completion-at-point))
@@ -1046,7 +1048,7 @@
 (personal/leader-keys
   "l" '(:ignore t :which-key "lsp")
   "ld" 'lsp-find-definition
-  "lr" 'xhref-find-references
+  "lr" 'lsp-find-references
   "ln" 'lsp-ui-find-next-reference
   "lp" 'lsp-ui-find-prev-reference
   "ls" 'counsel-imenu
@@ -1058,7 +1060,8 @@
   :straight t
   :hook (lsp-mode . lsp-ui-mode)
   :config
-  (setq lsp-ui-doc-position 'bottom))
+  (define-key evil-normal-state-map (kbd "H") 'lsp-ui-doc-glance)
+  (setq lsp-ui-doc-position 'at-point))
 
 (use-package ruby-mode
   :mode ("\\.rb\\'" "Rakefile\\'" "Gemfile\\'")
