@@ -875,6 +875,21 @@
   "oc" '(org-capture t :which-key "capture")
   "ox" '(org-export-dispatch t :which-key "export")))
 
+(use-package tree-sitter
+  :straight t
+  :config
+  (global-tree-sitter-mode)
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+
+(use-package tree-sitter-langs
+  :straight t
+  :after tree-sitter)
+
+(use-package apheleia
+  :straight t
+  :config
+  (apheleia-global-mode +1))
+
 (defvar *compile-command-map* '(("py" . "python")
                                 ("go" . "go run")
                                 ("rb" . "ruby")
@@ -1063,6 +1078,9 @@
   (define-key evil-normal-state-map (kbd "H") 'lsp-ui-doc-glance)
   (setq lsp-ui-doc-position 'at-point))
 
+(use-package eglot
+  :straight t)
+
 (use-package ruby-mode
   :mode ("\\.rb\\'" "Rakefile\\'" "Gemfile\\'")
   :hook (ruby-mode . lsp)
@@ -1125,10 +1143,19 @@
   :straight t)
 
 (use-package typescript-mode
+  :after tree-sitter
   :mode (("\\.tsx?\\'" . typescript-mode)
          ("\\.tsx\\'" . rjsx-mode))
   :hook (typescript-mode . lsp)
   :config
+  (define-derived-mode typescriptreact-mode typescript-mode
+    "TypeScript TSX")
+
+  ;; use our derived mode for tsx files
+  (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescriptreact-mode))
+  ;; by default, typescript-mode is mapped to the treesitter typescript parser
+  ;; use our derived mode to map both .tsx AND .ts -> typescriptreact-mode -> treesitter tsx
+  (add-to-list 'tree-sitter-major-mode-language-alist '(typescriptreact-mode . tsx))
   (setq typescript-indent-level 2))
 
 (defun personal/set-js-indentation ()
@@ -1349,6 +1376,27 @@
 
 (use-package lua-mode
   :straight t)
+
+(use-package s
+  :straight (:host github :repo "magnars/s.el");; :files ("s.el"))
+  :ensure t)
+
+(use-package dash
+  :straight (:host github :repo "magnars/dash.el");; :files ("dash.el"))
+  :ensure t)
+
+(use-package copilot
+  :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
+  :bind (:map copilot-completion-map
+              ("M-l" . 'copilot-accept-completion)
+              ("<tab>" . 'copilot-accept-completion)
+              ("TAB" . 'copilot-accept-completion)
+              ("C-TAB" . 'copilot-accept-completion-by-word)
+              ("C-<tab>" . 'copilot-accept-completion-by-word)))
+
+(dolist (mode '(prog-mode-hook
+                org-mode-hook))
+  (add-hook mode 'copilot-mode))
 
 (use-package flycheck
   :straight t

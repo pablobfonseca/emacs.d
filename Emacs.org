@@ -1186,6 +1186,25 @@ Handy tip from [[https://leanpub.com/lit-config/read#leanpub-auto-configuring-em
 
 #+end_src
 * Development
+** tree-sitter
+#+begin_src emacs-lisp
+(use-package tree-sitter
+  :straight t
+  :config
+  (global-tree-sitter-mode)
+  (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+
+(use-package tree-sitter-langs
+  :straight t
+  :after tree-sitter)
+#+end_src
+** auto-format
+#+begin_src emacs-lisp
+  (use-package apheleia
+    :straight t
+    :config
+    (apheleia-global-mode +1))
+#+end_src
 ** Compile mode
 #+begin_src emacs-lisp
   (defvar *compile-command-map* '(("py" . "python")
@@ -1402,6 +1421,12 @@ This is an interesting extension to Magit that shows a TODOs section in your git
     (define-key evil-normal-state-map (kbd "H") 'lsp-ui-doc-glance)
     (setq lsp-ui-doc-position 'at-point))
 #+end_src
+**** eglot
+#+begin_src emacs-lisp
+  (use-package eglot
+    :straight t)
+#+end_src
+****
 *** Ruby
 #+begin_src emacs-lisp
   (use-package ruby-mode
@@ -1486,10 +1511,19 @@ Set up nvm so that we can manage Node versions
 
 #+begin_src emacs-lisp
   (use-package typescript-mode
+    :after tree-sitter
     :mode (("\\.tsx?\\'" . typescript-mode)
            ("\\.tsx\\'" . rjsx-mode))
     :hook (typescript-mode . lsp)
     :config
+    (define-derived-mode typescriptreact-mode typescript-mode
+      "TypeScript TSX")
+
+    ;; use our derived mode for tsx files
+    (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . typescriptreact-mode))
+    ;; by default, typescript-mode is mapped to the treesitter typescript parser
+    ;; use our derived mode to map both .tsx AND .ts -> typescriptreact-mode -> treesitter tsx
+    (add-to-list 'tree-sitter-major-mode-language-alist '(typescriptreact-mode . tsx))
     (setq typescript-indent-level 2))
 
   (defun personal/set-js-indentation ()
@@ -1744,6 +1778,29 @@ Set up nvm so that we can manage Node versions
 #+begin_src emacs-lisp
   (use-package lua-mode
     :straight t)
+#+end_src
+** Copilot
+#+begin_src emacs-lisp
+  (use-package s
+    :straight (:host github :repo "magnars/s.el");; :files ("s.el"))
+    :ensure t)
+
+  (use-package dash
+    :straight (:host github :repo "magnars/dash.el");; :files ("dash.el"))
+    :ensure t)
+
+  (use-package copilot
+    :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
+    :bind (:map copilot-completion-map
+                ("M-l" . 'copilot-accept-completion)
+                ("<tab>" . 'copilot-accept-completion)
+                ("TAB" . 'copilot-accept-completion)
+                ("C-TAB" . 'copilot-accept-completion-by-word)
+                ("C-<tab>" . 'copilot-accept-completion-by-word)))
+
+  (dolist (mode '(prog-mode-hook
+                  org-mode-hook))
+    (add-hook mode 'copilot-mode))
 #+end_src
 ** Productivity
 *** Syntax checking with Flycheck
