@@ -384,12 +384,6 @@ Don't warn for following symlinked files
 
 #+end_src
 
-*** nimbus
-#+begin_src emacs-lisp
-  (use-package nimbus-theme
-    :straight t)
-#+end_src
-
 ** Font
 *** Set the font
 
@@ -1974,7 +1968,7 @@ echo "Hello!" > #<buffer test-buffer>
     (eshell-toggle-run-command nil))
 #+end_src
 
-* SystemUtilities
+* System Utilities
 ** Docker
 #+begin_src emacs-lisp
   (use-package docker

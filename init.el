@@ -251,9 +251,6 @@
   :defer t
   :init (load-theme 'doom-dracula t))
 
-(use-package nimbus-theme
-  :straight t)
-
 (set-face-attribute 'default nil :font "FiraCode Nerd Font" :family "Retina" :height 190)
 
 ;; Set the fixed pitch face
