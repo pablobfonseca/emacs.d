@@ -1256,6 +1256,7 @@
 (defun personal/go-mode-defaults ()
   (add-hook 'before-save-hook #'lsp-format-buffer t t)
   (add-hook 'before-save-hook #'lsp-organize-imports t t)
+  (add-hook 'go-mode-hook #'lsp-deferred)
   (define-key 'help-command (kbd "G") 'godoc)
 
   (setq tab-width 4)
@@ -1266,9 +1267,6 @@
     (when goimports
       (setq gofmt-command goimports)))
 
-  ;; El-doc for go
-  (go-eldoc-setup)
-
   ;; gofmt on save
   (add-hook 'before-save-hook 'gofmt-before-save nil t))
 
@@ -1278,10 +1276,6 @@
   :hook (go-mode . lsp)
   :config
   (add-hook 'go-mode-hook #'personal/go-mode-defaults))
-
-(use-package go-eldoc
-  :straight t
-  :defer t)
 
 (use-package rust-mode
   :straight t
