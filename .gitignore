@@ -19,3 +19,4 @@ cache/
 /#init.el#
 /straight/
 /vim/plugged/
+undo
