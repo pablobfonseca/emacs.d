@@ -387,13 +387,13 @@ Don't warn for following symlinked files
 ** Font
 *** Set the font
 
-I am using the [[https://www.programmingfonts.org/#jetbrainsmono][JetBrainsMono]] and [[https://fonts.google.com/specimen/Cantarell][Cantarell]] fonts for this configuration which will more than likely need to be installed on your machine.  Both can usually be found in the various Linux distro package managers or downloaded from the links above.
+I am using the https://www.programmingfonts.org/#droidsansmono][DroidSansMono]] and [[https://fonts.google.com/specimen/Cantarell][Cantarell]] fonts for this configuration which will more than likely need to be installed on your machine.  Both can usually be found in the various Linux distro package managers or downloaded from the links above.
 
 #+begin_src emacs-lisp
-(set-face-attribute 'default nil :font "JetBrainsMono Nerd Font" :family "Regular" :height 190)
+(set-face-attribute 'default nil :font "DroidSansM Nerd Font" :family "Regular" :height 190)
 
 ;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil :font "JetBrainsMono Nerd Font" :family "Regular" :height 190)
+(set-face-attribute 'fixed-pitch nil :font "DroidSansM Nerd Font" :family "Regular" :height 190)
 
 ;; Set the variable pitch face
 (set-face-attribute 'variable-pitch nil :font "Andale Mono" :height 190 :weight 'normal)
@@ -1775,29 +1775,7 @@ Set up nvm so that we can manage Node versions
   (use-package lua-mode
     :straight t)
 #+end_src
-** Copilot
-#+begin_src emacs-lisp
-  (use-package s
-    :straight (:host github :repo "magnars/s.el");; :files ("s.el"))
-    :ensure t)
 
-  (use-package dash
-    :straight (:host github :repo "magnars/dash.el");; :files ("dash.el"))
-    :ensure t)
-
-  (use-package copilot
-    :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
-    :bind (:map copilot-completion-map
-                ("M-l" . 'copilot-accept-completion)
-                ("<tab>" . 'copilot-accept-completion)
-                ("TAB" . 'copilot-accept-completion)
-                ("C-TAB" . 'copilot-accept-completion-by-word)
-                ("C-<tab>" . 'copilot-accept-completion-by-word)))
-
-  (dolist (mode '(prog-mode-hook
-                  org-mode-hook))
-    (add-hook mode 'copilot-mode))
-#+end_src
 ** Productivity
 *** Syntax checking with Flycheck
 
