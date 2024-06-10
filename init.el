@@ -1383,19 +1383,6 @@
   :straight (:host github :repo "magnars/dash.el");; :files ("dash.el"))
   :ensure t)
 
-(use-package copilot
-  :straight (:host github :repo "zerolfx/copilot.el" :files ("dist" "*.el"))
-  :bind (:map copilot-completion-map
-              ("M-l" . 'copilot-accept-completion)
-              ("<tab>" . 'copilot-accept-completion)
-              ("TAB" . 'copilot-accept-completion)
-              ("C-TAB" . 'copilot-accept-completion-by-word)
-              ("C-<tab>" . 'copilot-accept-completion-by-word)))
-
-(dolist (mode '(prog-mode-hook
-                org-mode-hook))
-  (add-hook mode 'copilot-mode))
-
 (use-package flycheck
   :straight t
   :defer t

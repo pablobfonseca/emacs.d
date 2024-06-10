@@ -1266,7 +1266,7 @@ Handy tip from [[https://leanpub.com/lit-config/read#leanpub-auto-configuring-em
 #+begin_src emacs-lisp
   (use-package magit
     :straight t
-    :bind ("C-M-;" . magit-status)
+    :bind ("C-x-g" . magit-status)
     :commands (magit-status)
     :custom
     (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
